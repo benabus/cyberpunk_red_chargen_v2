@@ -1,7 +1,6 @@
 <script setup lang="ts">
-
-import type { EnumDeclaration } from 'typescript';
-import {ref} from 'vue';
+import {ref, computed} from 'vue';
+import TextField from './TextField.vue'
 
 enum Role {
   Solo = "Solo",
@@ -224,19 +223,60 @@ class Lifepath {
 }
 
 const char = ref(new Character())
+const hit_points = computed(()=>{
+  return 10 + (5 * Math.ceil((char.value.stats.BODY + char.value.stats.WILL) / 2))
+})
+const severe_wound_threshold = computed(()=>{
+  return Math.ceil(hit_points.value / 2)
+})
+const death_save = computed(()=>{
+  return char.value.stats.BODY;
+})
+const humanity = computed(()=>{
+  return char.value.stats.EMP * 10;
+})
 
 </script>
 
 <template>
-  <main>
-    <!-- {{ char }} -->
-    <div v-for="stat of Object.keys(char.stats)">
-      {{ stat }}: {{ char.stats[stat] }}
+  <main class="container p-4 mx-auto">
+
+    <TextField title="Handle" :value="char.handle" />
+    <TextField title="Role" :value="char.role" />
+    <TextField title="Rank" :value="char.role_ability_rank.toString()" />
+    <TextField title="Notes" :value="char.notes" />
+    
+    <hr class="my-2" />
+
+    <div class="font-bold">Stats</div>
+    <div class="grid grid-cols-5 gap-4">
+      <TextField v-for="stat of Object.keys(char.stats)" :title="stat" :value="char.stats[stat].toString()" />
     </div>
-    <hr />
-    <div v-for="skill of char.skills">
-      {{ skill.name }}: {{ skill.lvl }}
-    </div>
+
+    <hr class="my-2" />
+
+    <TextField title="Humanity" :value="humanity" />
+    <TextField title="Hit Points" :value="hit_points.toString()" />
+    <TextField title="Severely Wounded" :value="severe_wound_threshold" />
+    <TextField title="Death Save" :value="death_save" />
+
+    <hr class="my-2" />
+
+    <table class="">
+      <tr class="">
+        <th class="border text-sm">Skill (Stat)</th>
+        <th class="border ">LVL</th>
+        <th class="border ">Stat</th>
+        <th class="border ">Base</th>
+      </tr>
+      <tr v-for="skill of char.skills" class="">
+        <td class="border text-sm">{{ skill.name }} ({{ skill.stat }})</td>
+        <td class="border text-center">{{ skill.lvl }}</td>
+        <td class="border text-center">{{ char.stats[skill.stat] }}</td>
+        <td class="border text-center">{{ skill.lvl + char.stats[skill.stat] }}</td>
+      </tr>
+    </table>
+    
 
   </main>
 </template>
