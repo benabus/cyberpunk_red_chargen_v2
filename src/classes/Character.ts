@@ -1,4 +1,4 @@
-import { Role, Stat, CyberwareLocation, SkillList, RequiredSkills, SkillCategories } from "@/data";
+import { Role, Stat, CyberwareLocation, SkillList, RequiredSkills, SkillCategories, MeleeWeapons, RangedWeapons } from "@/data";
 import { Skill, Weapon, Lifepath } from ".";
 import { random_key } from "@/utilities";
 
@@ -54,19 +54,26 @@ export class Character {
             this.stats[stat] = 0;
         }
         for (const skill of SkillList) {
-            let name: string = skill[0];
-            let stat: Stat = skill[1];
-            let x2: boolean = skill[2] ? true : false;
-            let new_skill = new Skill(name, stat, x2);
-            this.skills[new_skill.key()] = new_skill;
+            this.skills[skill.key()] = skill;
         }
+        this.weapons.push(this.getRandomWeapon());
 
         this.randomize()
     }
+    getRandomWeapon = (): Weapon => {
+        const allWeapons: Weapon[] = [...Object.values(MeleeWeapons), ...Object.values(RangedWeapons)];
+        const randomIndex = Math.floor(Math.random() * allWeapons.length);
+        return allWeapons[randomIndex];
+    };
     randomize_skills() {
         let skill_points = this.skill_points
+        let required_skills = [...RequiredSkills]
+        for (const weapon of this.weapons) {
+            const skill_name = this.skills[weapon.skill].name;
+            required_skills.push(skill_name)
+        }
         for (const key in this.skills) {
-            if (RequiredSkills.includes(this.skills[key].name)) {
+            if (required_skills.includes(this.skills[key].name)) {
                 this.skills[key].lvl += 2;
                 skill_points -= 2;
             }

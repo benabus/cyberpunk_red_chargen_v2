@@ -114,7 +114,51 @@ const char = ref(new Character()) // Initializes reactive variable for character
                 </template>
             </div>
         </div>
-        <hr />
+        <hr class="my-2" />
 
+        Weapons:
+        <table class="w-full">
+            <thead>
+                <tr>
+                    <th class="border text-xs">Weapon</th>
+                    <th class="border text-xs">Description</th>
+                    <th class="border text-xs">Skill</th>
+                    <th class="border text-xs">Damage</th>
+                    <th class="border text-xs">Ammo</th>
+                    <th class="border text-xs">ROF</th>
+                    <th class="border text-xs">Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="weapon in char.weapons" :key="`weapon_${weapon.name}`">
+                    <td class="border">{{ weapon.name }}</td>
+                    <td class="border">
+                        {{ weapon.description }}
+                        <span v-if="weapon.quality">({{ weapon.quality.charAt(0).toUpperCase() +
+            weapon.quality.slice(1).toLowerCase() }} quality)</span>
+                    </td>
+                    <td class="border">{{ char.skills[weapon.skill].name }}</td>
+                    <td class="border">{{ weapon.damage }}</td>
+                    <td v-if="weapon.mag_size > 1" class="border">
+                        1 x {{ weapon.mag_size }} round mag {{ weapon.ammo_type }}
+                    </td>
+                    <td v-else class="border"></td>
+                    <td class="border">{{ weapon.rof }}</td>
+                    <td class="border">
+                        <ul>
+                            <li v-if="weapon.alt_fire && weapon.alt_fire.toLowerCase() != 'none'">
+                                Alt Fire: {{ weapon.alt_fire }}
+                            </li>
+                            <li v-if="weapon.special_features && weapon.special_features.toLowerCase() != 'none'">
+                                Special Features:
+                                {{ weapon.special_features }}
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br /><br /><br />
     </main>
 </template>
