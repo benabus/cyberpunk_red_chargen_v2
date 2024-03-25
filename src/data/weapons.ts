@@ -1,7 +1,7 @@
 import { Weapon } from "../classes/Weapon";
 
-const melee_weapons = {
-    light_melee_weapon: new Weapon({
+const melee_weapons = [
+    new Weapon({
         name: "Light Melee Weapon",
         skill: "melee_weapon",
         damage: "1d6",
@@ -10,7 +10,7 @@ const melee_weapons = {
         cost: 50,
         variants: ["Combat Knife", "Tomahawk"]
     }),
-    medium_melee_weapon: new Weapon({
+    new Weapon({
         name: "Medium Melee Weapon",
         skill: "melee_weapon",
         damage: "2d6",
@@ -19,7 +19,7 @@ const melee_weapons = {
         cost: 50,
         variants: ["Baseball Bat", "Crowbar", "Machete"]
     }),
-    heavy_melee_weapon: new Weapon({
+    new Weapon({
         name: "Heavy Melee Weapon",
         skill: "melee_weapon",
         damage: "3d6",
@@ -28,7 +28,7 @@ const melee_weapons = {
         cost: 100,
         variants: ["Lead Pipe", "Sword", "Spiked Bat"]
     }),
-    very_heavy_melee_weapon: new Weapon({
+    new Weapon({
         name: "Very Heavy Melee Weapon",
         skill: "melee_weapon",
         damage: "4d6",
@@ -37,15 +37,15 @@ const melee_weapons = {
         cost: 500,
         variants: ["Chainsaw", "Sledgehammer", "Helicopter Blades", "Naginata"]
     })
-};
+];
 
-const ranged_weapons = {
-    medium_pistol: new Weapon({
+const ranged_weapons = [
+    new Weapon({
         name: "Medium Pistol",
         skill: "handgun",
         damage: "2d6",
         mag_size: 12,
-        ammo_type: "(M Pistol)",
+        ammo_type: ["M Pistol"],
         rof: 2,
         num_hands: 1,
         concealed: true,
@@ -58,12 +58,12 @@ const ranged_weapons = {
             "excellent": "Militech Avenger"
         }
     }),
-    heavy_pistol: new Weapon({
+    new Weapon({
         name: "Heavy Pistol",
         skill: "handgun",
         damage: "3d6",
         mag_size: 8,
-        ammo_type: "(H Pistol)",
+        ammo_type: ["H Pistol"],
         rof: 2,
         num_hands: 1,
         concealed: true,
@@ -76,12 +76,12 @@ const ranged_weapons = {
             "excellent": "Nova Cityhunter"
         }
     }),
-    very_heavy_pistol: new Weapon({
+    new Weapon({
         name: "Very Heavy Pistol",
         skill: "handgun",
         damage: "4d6",
         mag_size: 8,
-        ammo_type: "(VH Pistol)",
+        ammo_type: ["VH Pistol"],
         rof: 1,
         num_hands: 1,
         concealed: false,
@@ -94,12 +94,12 @@ const ranged_weapons = {
             "excellent": "Militech Boomer Buster"
         }
     }),
-    smg: new Weapon({
+    new Weapon({
         name: "SMG",
         skill: "handgun",
         damage: "2d6",
         mag_size: 30,
-        ammo_type: "(M Pistol)",
+        ammo_type: ["M Pistol"],
         rof: 1,
         num_hands: 1,
         concealed: true,
@@ -112,12 +112,12 @@ const ranged_weapons = {
             "excellent": "Arasaka Minami 10"
         }
     }),
-    heavy_smg: new Weapon({
+    new Weapon({
         name: "Heavy SMG",
         skill: "handgun",
         damage: "3d6",
         mag_size: 40,
-        ammo_type: "(H Pistol)",
+        ammo_type: ["H Pistol"],
         rof: 1,
         num_hands: 1,
         concealed: false,
@@ -130,12 +130,12 @@ const ranged_weapons = {
             "excellent": "Militech Viper"
         }
     }),
-    shotgun: new Weapon({
+    new Weapon({
         name: "Shotgun",
         skill: "shoulder_arms",
         damage: "5d6",
         mag_size: 4,
-        ammo_type: "(Slug)",
+        ammo_type: ["Slug", "Shotgun Shell"],
         rof: 1,
         num_hands: 2,
         concealed: false,
@@ -148,12 +148,12 @@ const ranged_weapons = {
             "excellent": "Militech Bulldog"
         }
     }),
-    assault_rifle: new Weapon({
+    new Weapon({
         name: "Assault Rifle",
         skill: "shoulder_arms",
         damage: "5d6",
         mag_size: 25,
-        ammo_type: "(Rifle)",
+        ammo_type: ["Rifle"],
         rof: 1,
         num_hands: 2,
         concealed: false,
@@ -166,12 +166,12 @@ const ranged_weapons = {
             "excellent": "Militech Dragon"
         }
     }),
-    sniper_rifle: new Weapon({
+    new Weapon({
         name: "Sniper Rifle",
         skill: "shoulder_arms",
         damage: "5d6",
         mag_size: 4,
-        ammo_type: "(Rifle)",
+        ammo_type: ["Rifle"],
         rof: 1,
         num_hands: 2,
         concealed: false,
@@ -184,17 +184,17 @@ const ranged_weapons = {
             "excellent": "Arasaka WSSA Sniper System"
         }
     }),
-    bows_crossbows: new Weapon({
-        name: "Bows & Crossbows",
+    new Weapon({
+        name: "Bow",
         skill: "archery",
         damage: "4d6",
-        mag_size: 0,
-        ammo_type: "(Arrow)",
+        mag_size: 2,
+        ammo_type: ["Arrow"],
         rof: 1,
         num_hands: 2,
         concealed: false,
         cost: 100,
-        alt_fire: ["Arrows"].join(", "),
+        alt_fire: ["Arrow"].join(", "),
         special_features: "",
         quality_variants: {
             "poor": "GunMart Sherwood",
@@ -202,12 +202,30 @@ const ranged_weapons = {
             "excellent": "Eagletech Bearcat"
         }
     }),
-    grenade_launcher: new Weapon({
+    new Weapon({
+        name: "Crossbow",
+        skill: "archery",
+        damage: "4d6",
+        mag_size: 3,
+        ammo_type: ["Arrow"],
+        rof: 1,
+        num_hands: 2,
+        concealed: false,
+        cost: 100,
+        alt_fire: ["Arrow"].join(", "),
+        special_features: "",
+        quality_variants: {
+            "poor": "GunMart Hunter",
+            "standard": "Eagletech Striker",
+            "excellent": "Eagletech Scorpion"
+        }
+    }),
+    new Weapon({
         name: "Grenade Launcher",
         skill: "heavy_weapons",
         damage: "6d6",
         mag_size: 2,
-        ammo_type: "(Grenade)",
+        ammo_type: ["Grenade"],
         rof: 1,
         num_hands: 2,
         concealed: false,
@@ -220,12 +238,12 @@ const ranged_weapons = {
             "excellent": "Tsunami Arms Type-18"
         }
     }),
-    rocket_launcher: new Weapon({
+    new Weapon({
         name: "Rocket Launcher",
         skill: "heavy_weapons",
         damage: "8d6",
         mag_size: 1,
-        ammo_type: "(Rocket)",
+        ammo_type: ["Rocket"],
         rof: 1,
         num_hands: 2,
         concealed: false,
@@ -238,6 +256,8 @@ const ranged_weapons = {
             "excellent": "Militech Hotshot"
         }
     })
-};
+];
 
 export { melee_weapons as MeleeWeapons, ranged_weapons as RangedWeapons };
+
+

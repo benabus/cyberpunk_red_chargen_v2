@@ -26,10 +26,10 @@ const filtered_skills = computed(() => {
 <template>
     <table class="w-full">
         <tr class="">
-            <th class="border text-xs">{{ category }} Skills</th>
-            <th class="border text-xs">LVL</th>
-            <th class="border text-xs">STAT</th>
-            <th class="border text-xs">BASE</th>
+            <th class="border text-xs p-1">{{ category }} Skills</th>
+            <th class="border text-xs p-1">LVL</th>
+            <th class="border text-xs p-1">STAT</th>
+            <th class="border text-xs p-1">BASE</th>
         </tr>
         <SkillRow v-for="skill of filtered_skills" class="" :skill="skill" :stat="char.stats[skill.stat]" />
     </table>

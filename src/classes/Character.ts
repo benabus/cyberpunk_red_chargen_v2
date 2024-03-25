@@ -1,4 +1,4 @@
-import { Role, Stat, CyberwareLocation, SkillList, RequiredSkills, SkillCategories, MeleeWeapons, RangedWeapons } from "@/data";
+import { Role, Stat, CyberwareLocation, SkillList, RequiredSkills, SkillCategories, MeleeWeapons, RangedWeapons, WeaponAttachments } from "@/data";
 import { Skill, Weapon, Lifepath } from ".";
 import { random_key } from "@/utilities";
 
@@ -9,6 +9,8 @@ const Stat_Points: Record<string, number> = {
     "minor hero": 75,
     "major hero": 80
 }
+
+type WeaponType = "melee" | "ranged" | "exotic";
 
 export class Character {
     skill_points = 86
@@ -54,18 +56,36 @@ export class Character {
             this.stats[stat] = 0;
         }
         for (const skill of SkillList) {
-            this.skills[skill.key()] = skill;
+            this.skills[skill.getKey()] = skill;
         }
-        this.weapons.push(this.getRandomWeapon());
-
+        this.weapons.push(this.getRandomWeapon(["ranged"]));
+        // this.weapons.push(RangedWeapons[5])
+        let attachment = WeaponAttachments["drum_magazine"];
+        try {
+            this.weapons[0].addAttachment(attachment);
+        } catch (e) {
+            console.log(e);
+        }
         this.randomize()
     }
-    getRandomWeapon = (): Weapon => {
-        const allWeapons: Weapon[] = [...Object.values(MeleeWeapons), ...Object.values(RangedWeapons)];
+    getRandomWeapon(weaponTypes?: WeaponType[] | undefined): Weapon {
+        if (weaponTypes === undefined) {
+            weaponTypes = ["melee", "ranged"];
+        }
+        let allWeapons: Weapon[] = [];
+        for (const weaponType of weaponTypes) {
+            if (weaponType === "melee") {
+                allWeapons.push(...Object.values(MeleeWeapons));
+            } else if (weaponType === "ranged") {
+                allWeapons.push(...Object.values(RangedWeapons));
+            } else if (weaponType === "exotic") {
+                // Add your exotic weapons here
+            }
+        }
         const randomIndex = Math.floor(Math.random() * allWeapons.length);
         return allWeapons[randomIndex];
     };
-    randomize_skills() {
+    randomizeSkills() {
         let skill_points = this.skill_points
         let required_skills = [...RequiredSkills]
         for (const weapon of this.weapons) {
@@ -97,7 +117,7 @@ export class Character {
         }
 
     }
-    randomize_stats() {
+    randomizeStats() {
         let stat_points = Stat_Points[this.character_rank]
         for (const stat in this.stats) {
             this.stats[stat] = 2;
@@ -114,7 +134,7 @@ export class Character {
         }
     }
     randomize() {
-        this.randomize_stats();
-        this.randomize_skills();
+        this.randomizeStats();
+        this.randomizeSkills();
     }
 }

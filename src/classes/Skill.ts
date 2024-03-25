@@ -27,7 +27,8 @@ export class Skill {
     this.x2 = x2;
   }
 
-  key(): string {
-    return this.name.toLowerCase().replace(/\W/g, '_');
+
+  getKey(): string {
+    return this.name.toLowerCase().replace(/[^a-z0-9]+/g, '_');
   }
 }
