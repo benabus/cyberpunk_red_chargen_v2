@@ -105,8 +105,7 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
 
         <div class="font-bold">Stats</div>
         <div class="grid grid-cols-5 gap-1">
-            <TextField v-for="stat of Object.keys(char.stats)" :title="stat" :key="`stat_block_${stat}`"
-                :value="char.stats[stat].toString()" />
+            <TextField v-for="stat of Object.keys(char.stats)" :title="stat" :key="`stat_block_${stat}`" :value="char.stats[stat].toString()" />
         </div>
 
         <hr class="my-2" />
@@ -129,8 +128,7 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
         <div class="">
             <div class="border columns-3 space-y-4">
                 <template v-if="sort_method === 'group'">
-                    <SkillTable v-for="category in Object.keys(SkillCategories)" :key="`skill_cat_${category}`"
-                        :category :char="char" />
+                    <SkillTable v-for="category in Object.keys(SkillCategories)" :key="`skill_cat_${category}`" :category :char="char" />
                 </template>
                 <template v-else>
                     <table class="w-full" v-for="(chunks, index) in skillChunks" :key="`skill_chunk_${index}`">
@@ -140,8 +138,7 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
                             <th class="border text-xs p-1">STAT</th>
                             <th class="border text-xs p-1">BASE</th>
                         </tr>
-                        <SkillRow v-for="skill in chunks" :key="`skill_${skill.name}`" :skill="skill"
-                            :stat="char.stats[skill.stat]" />
+                        <SkillRow v-for="skill in chunks" :key="`skill_${skill.name}`" :skill="skill" :stat="char.stats[skill.stat]" />
                     </table>
                 </template>
             </div>
@@ -166,8 +163,7 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
                     <td class="border p-1">{{ weapon.name }}</td>
                     <td class="border p-1">
                         {{ weapon.description }}
-                        <span v-if="weapon.quality">({{ weapon.quality.charAt(0).toUpperCase() +
-            weapon.quality.slice(1).toLowerCase() }} quality)</span>
+                        <span v-if="weapon.quality">({{ weapon.quality.charAt(0).toUpperCase() + weapon.quality.slice(1).toLowerCase() }} quality)</span>
                     </td>
                     <td class="border p-1">{{ char.skills[weapon.skill].name }}</td>
                     <td class="border p-1">{{ weapon.damage }}</td>
@@ -175,26 +171,18 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
                         <div>{{ weapon.ammo_type.join(', ') }}</div>
                         <ul class="list-disc list-inside">
 
-                            <li v-if="weapon.ammo_type.some(type => ['arrow', 'grenade', 'rocket'].includes(type.toLowerCase()))"
-                                v-for="qty, ammo_name in weapon.ammo" :key="`ammo_agr_${ammo_name}`">
-                                {{ qty }} <span class="underline decoration-dashed cursor-pointer"
-                                    @click="OpenAmmoTypeModal(ammo_types[ammo_name])">{{
-            ammo_name.split(" ")[0] }}</span> {{ weapon.ammo_type[0].toLowerCase() }}{{ qty > 1
-            ? 's' :
-            '' }}
+                            <li v-if="weapon.ammo_type.some(type => ['arrow', 'grenade', 'rocket'].includes(type.toLowerCase()))" v-for="qty, ammo_name in weapon.ammo" :key="`ammo_agr_${ammo_name}`">
+                                {{ qty }} <span class="underline decoration-dashed cursor-pointer" @click="OpenAmmoTypeModal(ammo_types[ammo_name])">{{ ammo_name.split(" ")[0] }}</span> {{ weapon.ammo_type[0].toLowerCase() }}{{ qty > 1 ? 's' : '' }}
                             </li>
                             <li v-else v-for="qty, ammo_name in weapon.ammo" :key="`ammo_${ammo_name}`">
-                                {{ qty }} rounds of <span class="underline decoration-dashed cursor-pointer"
-                                    @click="OpenAmmoTypeModal(ammo_types[ammo_name])">{{
-            ammo_name }}</span>
+                                {{ qty }} rounds of <span class="underline decoration-dashed cursor-pointer" @click="OpenAmmoTypeModal(ammo_types[ammo_name])">{{ ammo_name }}</span>
                             </li>
                         </ul>
                         <Modal :visible="ammo_type_modal_visible" @close="ammo_type_modal_visible = false">
                             <div class="p-1">
                                 <h2 class="text-lg font-bold">{{ ammo_type_modal.name }}</h2>
                                 <p>{{ ammo_type_modal.description }}</p>
-                                <button class="border rounded px-4"
-                                    @click="ammo_type_modal_visible = false">Close</button>
+                                <button class="border rounded px-4" @click="ammo_type_modal_visible = false">Close</button>
                             </div>
                         </Modal>
 
@@ -215,8 +203,7 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
                             <li v-if="weapon.attachments.length > 0">
                                 Attachments:
                                 <ul class="list-disc list-inside">
-                                    <li v-for="attachment in weapon.attachments" class="cursor-pointer"
-                                        @click="OpenAttachmentModal(attachment)" :key="`attachment_${attachment}`">
+                                    <li v-for="attachment in weapon.attachments" class="cursor-pointer" @click="OpenAttachmentModal(attachment)" :key="`attachment_${attachment}`">
                                         <span class="underline decoration-dashed">{{ attachment.name }}</span>
                                         <span v-if="['Drum Magazine', 'Extended Magazine'].includes(attachment.name)">
                                             ({{ clip_chart[weapon.getKey()][attachment.name.split(" ")[0].toLowerCase()]
@@ -225,13 +212,11 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
                                         </span>
                                     </li>
                                 </ul>
-                                <Modal :visible="weapon_attachment_modal_visible"
-                                    @close="weapon_attachment_modal_visible = false">
+                                <Modal :visible="weapon_attachment_modal_visible" @close="weapon_attachment_modal_visible = false">
                                     <div class="p-1">
                                         <h2 class="text-lg font-bold">{{ weapon_attachment_modal.name }}</h2>
                                         <p>{{ weapon_attachment_modal.description }}</p>
-                                        <button class="border rounded px-4"
-                                            @click="weapon_attachment_modal_visible = false">Close</button>
+                                        <button class="border rounded px-4" @click="weapon_attachment_modal_visible = false">Close</button>
                                     </div>
                                 </Modal>
                             </li>
