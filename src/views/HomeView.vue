@@ -1,14 +1,22 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { Stat, Role, CyberwareLocation, SkillList, RequiredSkills, SkillCategories, WeaponAttachments } from '@/data';
-import { ClipChart } from "@/data/clip_chart";
+import {
+    Stat,
+    Role,
+    CyberwareLocation,
+    SkillList,
+    RequiredSkills,
+    SkillCategories,
+    WeaponAttachments,
+    ClipChart,
+    AmmoTypes
+} from '@/data';
 import { Lifepath, Skill, Character } from '@/classes';
-import type { WeaponAttachment, AmmoType } from '@/types'
+import type { WeaponAttachment, AmmoType, Armor } from '@/types'
 import TextField from '@/components/TextField.vue'
 import SkillTable from '@/components/SkillTable.vue'
 import SkillRow from '@/components/SkillRow.vue'
 import Modal from '@/components/Modal.vue'
-import { AmmoTypes } from '@/data/ammo_types';
 
 
 /**
@@ -69,6 +77,12 @@ function OpenAttachmentModal(attachment: WeaponAttachment) {
     weapon_attachment_modal.value = attachment;
     weapon_attachment_modal_visible.value = true;
 }
+const armor_modal_visible = ref(false)
+const armor_modal = ref<Armor>({ armor_type: '', sp: 0, penalty: [], cost: 0, description: "" })
+function OpenArmorModal(armor: Armor) {
+    armor_modal.value = armor;
+    armor_modal_visible.value = true;
+}
 
 const clip_chart = ref(ClipChart);
 const ammo_types = computed(() => {
@@ -96,24 +110,27 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
 <template>
     <main class="container p-1 mx-auto">
 
-        <TextField title="Handle" :value="char.handle" />
-        <TextField title="Role" :value="char.role" />
-        <TextField title="Rank" :value="char.role_ability_rank.toString()" />
-        <TextField title="Notes" :value="char.notes" />
-
-        <hr class="my-2" />
-
-        <div class="font-bold">Stats</div>
-        <div class="grid grid-cols-5 gap-1">
-            <TextField v-for="stat of Object.keys(char.stats)" :title="stat" :key="`stat_block_${stat}`" :value="char.stats[stat].toString()" />
+        <div class="grid grid-cols-4 gap-1">
+            <TextField title="Handle" :value="char.handle" />
+            <TextField title="Role" :value="char.role" />
+            <TextField title="Rank" :value="char.role_ability_rank.toString()" />
+            <TextField title="Notes" :value="char.notes" />
         </div>
 
         <hr class="my-2" />
 
-        <TextField title="Humanity" :value="humanity" />
-        <TextField title="Hit Points" :value="hit_points.toString()" />
-        <TextField title="Severely Wounded" :value="severe_wound_threshold" />
-        <TextField title="Death Save" :value="death_save" />
+        <div class="font-bold">Stats</div>
+        <div class="grid grid-cols-4 gap-1">
+            <TextField v-for="stat of Object.keys(char.stats)" :title="stat" :key="`stat_block_${stat}`" :value="char.stats[stat].toString()" />
+        </div>
+
+        <hr class="my-2" />
+        <div class="grid grid-cols-5 gap-1">
+            <TextField title="Humanity" :value="humanity" />
+            <TextField title="Hit Points" :value="hit_points.toString()" />
+            <TextField title="Severely Wounded" :value="severe_wound_threshold" />
+            <TextField title="Death Save" :value="death_save" />
+        </div>
 
         <hr class="my-2" />
         <div class="my-2">
@@ -225,6 +242,48 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
                 </tr>
             </tbody>
         </table>
+
+        <hr class="my-2" />
+
+        Armor:
+        <table class="w-full">
+            <thead>
+                <tr>
+                    <th class="border text-xs p-1">Location</th>
+                    <th class="border text-xs p-1">Armor</th>
+                    <th class="border text-xs p-1">SP</th>
+                    <th class="border text-xs p-1">Penalty</th>
+                    <th class="border text-xs p-1">Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="armor, location in char.armor" :key="`armor_${location}`">
+                    <td class="border p-1">
+                        {{ location }}
+                    </td>
+                    <td class="border p-1">
+                        <span v-if="armor != 'None'" class="underline decoration-dashed cursor-pointer" @click="OpenArmorModal(armor)">{{ armor.armor_type }}</span>
+                        <span v-else>None</span>
+                    </td>
+                    <td class="border p-1">
+                        {{ armor == "None" ? "" : armor.sp }}
+                    </td>
+                    <td class="border p-1">
+                        {{ armor == "None" ? "" : armor.penalty.length <= 0 ? "None" : armor.penalty.map(penalty => `${penalty.stat}: ${penalty.penalty}`).join(", ") }}
+                    </td>
+                    <td class=" border p-1">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <Modal :visible="armor_modal_visible" @close="armor_modal_visible = false">
+            <div class="p-1">
+                <h2 class="text-lg font-bold">{{ armor_modal.armor_type }}</h2>
+                <p>{{ armor_modal.description }}</p>
+                <button class="border rounded px-4" @click="armor_modal_visible = false">Close</button>
+            </div>
+        </Modal>
+
 
         <br /><br /><br />
 

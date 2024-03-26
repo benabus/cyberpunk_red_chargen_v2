@@ -91,8 +91,6 @@ export class Weapon {
             }
         }
         if (this.ammo_type.length !== 0) {
-            console.debug(this.getKey(), ClipChart)
-
             const default_ammo_quantity = ClipChart[this.getKey()]["standard"];
             if (this.ammo_type.includes("Grenade")) {
                 this.addAmmo("Basic Grenade", default_ammo_quantity);

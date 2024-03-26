@@ -4,5 +4,21 @@ import { Role } from './roles'
 import { CyberwareLocation } from './cyberware_locations'
 import { MeleeWeapons, RangedWeapons } from './weapons'
 import { WeaponAttachments } from './weapon_attachments'
+import { ArmorList } from './armor'
+import { ClipChart } from './clip_chart'
+import { AmmoTypes } from './ammo_types'
 
-export { Stat, WeaponAttachments, SkillList, Role, CyberwareLocation, RequiredSkills, SkillCategories, MeleeWeapons, RangedWeapons }
+export {
+    Stat,
+    WeaponAttachments,
+    SkillList,
+    Role,
+    CyberwareLocation,
+    RequiredSkills,
+    SkillCategories,
+    MeleeWeapons,
+    RangedWeapons,
+    ArmorList,
+    ClipChart,
+    AmmoTypes
+}
