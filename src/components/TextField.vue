@@ -1,14 +1,16 @@
 <script setup lang="ts">
-defineProps<{ 
-	title: string,
-	value: string | number
+defineProps<{
+    title: string,
+    value: string | number,
+    titleClass?: string,
+    valueClass?: string,
 }>()
 </script>
 
 <template>
-	<div class="font-bold">
-	      <span class="text-xs block">{{title}}</span>
-	      <span v-if="value">{{ value }}</span>
-		  <span v-else>-</span>
-	    </div>
+    <div class="font-bold">
+        <div :class="titleClass" class="text-xs">{{ title }}</div>
+        <div :class="valueClass" class="" v-if="value">{{ value }}</div>
+        <div :class="valueClass" class="" v-else>-</div>
+    </div>
 </template>

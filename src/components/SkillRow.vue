@@ -7,10 +7,10 @@ defineProps<{
 </script>
 
 <template>
-	<tr>
-		<td class="border p-1 text-sm">{{ skill.name }} ({{ skill.stat }})</td>
-		<td class="border p-1 text-center">{{ skill.lvl }}</td>
-		<td class="border p-1 text-center">{{ stat }}</td>
+	<tr class="border-t-4 border-red-500">
+		<td class="border-r-4 border-red-500 p-1 md:text-sm sm:text-xs">{{ skill.name }} ({{ skill.stat }})</td>
+		<td class="border-r-4 border-red-500 p-1 text-center">{{ skill.lvl }}</td>
+		<td class="border-r-4 border-red-500 p-1 text-center">{{ stat }}</td>
 		<td class="border p-1 text-center font-bold">{{ skill.lvl + stat }}</td>
 	</tr>
 </template>
