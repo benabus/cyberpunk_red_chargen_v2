@@ -30,7 +30,7 @@ export class Character {
 
     handle: string = "Unknown";
     role: Role = Role.Civilian;
-    role_ability_rank: number = 0;
+    role_ability_rank: number = 1;
     notes: string = ""
     humanity: number = 0
     stats: Record<string, number> = {}
@@ -80,6 +80,13 @@ export class Character {
         // }
         this.randomizeArmor()
         this.randomize()
+    }
+    getHumanityLoss(): number {
+        let humanity_loss = 1;
+        for (const cyberware of this.cyberware) {
+            humanity_loss += cyberware.humanity_loss;
+        }
+        return humanity_loss;
     }
     getRandomArmor(armorType: "all" | "include shield" | "shield only" = "all"): Armor | "None" {
         let availableArmor: (Armor | "None")[] = ["None"];

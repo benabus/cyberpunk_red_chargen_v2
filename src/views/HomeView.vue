@@ -13,10 +13,11 @@ import {
 } from '@/data';
 import { Lifepath, Skill, Character } from '@/classes';
 import type { WeaponAttachment, AmmoType, Armor } from '@/types'
-import TextField from '@/components/TextField.vue'
+import TextFieldRow from '@/components/TextFieldRow.vue'
 import SkillTable from '@/components/SkillTable.vue'
 import SkillRow from '@/components/SkillRow.vue'
 import Modal from '@/components/Modal.vue'
+import StatsBlock from '@/components/StatsBlock.vue'
 
 
 /**
@@ -29,8 +30,9 @@ import Modal from '@/components/Modal.vue'
 const sort_method = ref('base'); // Initializes reactive variable for sorting method, default 'base'.
 // Function to divide a skills array into three chunks.
 const createSkillsChunks = (skills: Skill[]) => {
-    const chunkSize = Math.ceil(skills.length / 3); // Calculates size of each chunk.
-    return [0, 1, 2].map(i => skills.slice(i * chunkSize, (i + 1) * chunkSize)); // Creates three chunks.
+    console.debug(skills.length)
+    const chunkSize = Math.ceil(skills.length / 6); // Calculates size of each chunk.
+    return [0, 1, 2, 3, 4, 5].map(i => skills.slice(i * chunkSize, (i + 1) * chunkSize)); // Creates three chunks.
 };
 const skillChunks = computed(() => {
     // Sort skills alphabetically as a baseline.
@@ -54,18 +56,38 @@ const skillChunks = computed(() => {
     }
 })
 
-// Derived Statistics
-const hit_points = computed(() => {
-    return 10 + (5 * Math.ceil((char.value.stats.BODY + char.value.stats.WILL) / 2))
+const char_info = computed(() => {
+    return {
+        "Handle": char.value.handle,
+        "Role": char.value.role,
+        "Rank": char.value.role_ability_rank,
+        "Notes": char.value.notes
+    }
 })
-const severe_wound_threshold = computed(() => {
-    return Math.ceil(hit_points.value / 2)
+
+const derived_stats = computed(() => {
+    const humanity = char.value.stats.EMP * 10;
+    const hit_points = 10 + (5 * Math.ceil((char.value.stats.BODY + char.value.stats.WILL) / 2));
+    const severe_wound_threshold = Math.ceil(hit_points / 2);
+    const death_save = char.value.stats.BODY;
+    return {
+        "Humanity": `${humanity - char.value.getHumanityLoss()} of ${humanity}`,
+        "Hit Points": hit_points,
+        "Severely Wounded": severe_wound_threshold,
+        "Death Save": death_save
+    }
 })
-const death_save = computed(() => {
-    return char.value.stats.BODY;
-})
-const humanity = computed(() => {
-    return char.value.stats.EMP * 10;
+
+const stats_block = computed(() => {
+    const stats: Record<string, number> = {}
+    for (const stat in char.value.stats) {
+        stats[stat] = char.value.stats[stat]
+    }
+    const current_humanity = (char.value.stats['EMP'] * 10) - char.value.getHumanityLoss();
+    const emp = Math.floor(current_humanity / 10);
+    stats['current_EMP'] = emp
+
+    return stats
 })
 
 
@@ -134,26 +156,17 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
 <template>
     <main class="container p-4 mx-auto">
 
-        <div class="notch grid grid-cols-4">
-            <TextField class="border-red-500 border-r-4 p-4" title="Handle" :value="char.handle" />
-            <TextField class="border-red-500 border-r-4 p-4" title="Role" :value="char.role" />
-            <TextField class="border-red-500 border-r-4 p-4" title="Rank" :value="char.role_ability_rank.toString()" />
-            <TextField class="p-4" title="Notes" :value="char.notes" />
-        </div>
+        <TextFieldRow :values="char_info" />
 
         <hr class="my-2" />
 
         <div class="font-bold">Stats</div>
-        <div class="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10">
-            <TextField title-class="text-right" value-class="text-center" class="notch px-1 pb-3" v-for="stat of Object.keys(char.stats)" :title="stat" :key="`stat_block_${stat}`" :value="char.stats[stat].toString()" />
-        </div>
+
+        <StatsBlock :stats="stats_block" />
+
         <hr class="my-2" />
-        <div class="grid grid-cols-4 gap-1 notch text-center">
-            <TextField class="border-red-500 border-r-4 p-4" title="Humanity" :value="humanity" />
-            <TextField class="border-red-500 border-r-4 p-4" title="Hit Points" :value="hit_points.toString()" />
-            <TextField class="border-red-500 border-r-4 p-4" title="Severely Wounded" :value="severe_wound_threshold" />
-            <TextField class="p-4" title="Death Save" :value="death_save" />
-        </div>
+
+        <TextFieldRow :values="derived_stats" />
 
         <hr class="my-2" />
         <div class="my-2">
@@ -166,31 +179,31 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
         </div>
 
         <div class="skills">
-            <div class=" sm:columns-3 columns-1 gap-1 bg-red-500">
+            <div class=" sm:columns-2 md:columns-3 columns-1 gap-1 bg-red-500 p-1">
                 <template v-if="sort_method === 'group'">
-                    <table class="w-full sm:text-xs md:text-base border-8 border-solid bg-white border-red-500">
-                        <SkillTable :category="'Awareness'" :char="char" />
-                        <SkillTable :category="'Body'" :char="char" />
-                        <SkillTable :category="'Control'" :char="char" />
-                        <SkillTable :category="'Ranged Weapon'" :char="char" />
-                    </table>
-                    <table class="w-full sm:text-xs md:text-base border-8 border-solid bg-white border-red-500">
-                        <SkillTable :category="'Education'" :char="char" />
-                        <SkillTable :category="'Fighting'" :char="char" />
-                        <SkillTable :category="'Performance'" :char="char" />
-                    </table>
-                    <table class="w-full sm:text-xs md:text-base border-8 border-solid bg-white border-red-500">
-                        <SkillTable :category="'Social'" :char="char" />
-                        <SkillTable :category="'Technique'" :char="char" />
-                    </table>
+                    <!-- <table class="w-full sm:text-xs md:text-base border-y-4 border-solid bg-white border-red-500"> -->
+                    <SkillTable :category="'Awareness'" :char="char" />
+                    <SkillTable :category="'Body'" :char="char" />
+                    <SkillTable :category="'Control'" :char="char" />
+                    <SkillTable :category="'Ranged Weapon'" :char="char" />
+                    <!-- </table> -->
+                    <!-- <table class="w-full sm:text-xs md:text-base border-8 border-solid bg-white border-red-500"> -->
+                    <SkillTable :category="'Education'" :char="char" />
+                    <SkillTable :category="'Fighting'" :char="char" />
+                    <SkillTable :category="'Performance'" :char="char" />
+                    <!-- </table> -->
+                    <!-- <table class="w-full sm:text-xs md:text-base border-8 border-solid bg-white border-red-500"> -->
+                    <SkillTable :category="'Social'" :char="char" />
+                    <SkillTable :category="'Technique'" :char="char" />
+                    <!-- </table> -->
                 </template>
                 <template v-else>
-                    <table class="w-full sm:text-xs md:text-base border-8 border-solid bg-white border-red-500" v-for="(chunks, index) in skillChunks" :key="`skill_chunk_${index}`">
+                    <table class="w-full text-xs md:text-base border-y-4 border-solid bg-white border-red-500" v-for="(chunks, index) in skillChunks" :key="`skill_chunk_${index}`">
                         <tr class="bg-black text-white">
-                            <th class="border-r-4 border-red-500 text-xs p-1">Skill</th>
-                            <th class="border-r-4 border-red-500 text-xs p-1">LVL</th>
-                            <th class="border-r-4 border-red-500 text-xs p-1">STAT</th>
-                            <th class="border text-xs p-1">BASE</th>
+                            <th class="border-x-4 border-red-500 text-xs p-1">Skill</th>
+                            <th class="border-r-4 border-red-500 text-xs p-1 w-1/12">LVL</th>
+                            <th class="border-r-4 border-red-500 text-xs p-1 w-1/12">STAT</th>
+                            <th class="border-r-4 border-red-500 text-xs p-1  w-1/12">BASE</th>
                         </tr>
                         <SkillRow v-for="skill in chunks" :key="`skill_${skill.name}`" :skill="skill" :stat="char.stats[skill.stat]" />
                     </table>

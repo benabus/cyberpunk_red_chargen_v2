@@ -24,13 +24,13 @@ const filtered_skills = computed(() => {
 </script>
 
 <template>
-    <!-- <table class="w-full"> -->
-    <tr class="w-full text-white bg-black sm:text-xs md:text-base border-t-4 border-solid border-red-500">
-        <th class="border-r-4 border-red-500 text-xs p-1">{{ category }} Skills</th>
-        <th class="border-r-4 border-red-500 text-xs p-1">LVL</th>
-        <th class="border-r-4 border-red-500 text-xs p-1">STAT</th>
-        <th class="border-r-4 border-red-500 text-xs p-1">BASE</th>
-    </tr>
-    <SkillRow v-for="skill of filtered_skills" class="" :skill="skill" :stat="char.stats[skill.stat]" />
-    <!-- </table> -->
+    <table class="w-full text-xs md:text-base border-y-4 border-solid bg-white border-red-500">
+        <tr class="bg-black text-white">
+            <th class="border-x-4 border-red-500 text-xs p-1">{{ category }} Skills</th>
+            <th class="border-r-4 border-red-500 text-xs p-1 w-1/12">LVL</th>
+            <th class="border-r-4 border-red-500 text-xs p-1 w-1/12">STAT</th>
+            <th class="border-r-4 border-red-500 text-xs p-1  w-1/12">BASE</th>
+        </tr>
+        <SkillRow v-for="skill of filtered_skills" class="" :skill="skill" :stat="char.stats[skill.stat]" />
+    </table>
 </template>
