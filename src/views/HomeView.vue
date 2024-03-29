@@ -19,9 +19,9 @@ import SkillRow from '@/components/SkillRow.vue'
 import Modal from '@/components/Modal.vue'
 import StatsBlock from '@/components/StatsBlock.vue'
 import SkillsByGroup from '@/components/SkillsByGroup.vue'
-import GenericTable from '@/components/GenericTable.vue';
-import GenericTableCell from '@/components/GenericTableCell.vue';
-import GenericTableRow from '@/components/GenericTableRow.vue';
+import CPTable from '@/components/CPTable.vue';
+import CPCell from '@/components/CPCell.vue';
+import CPRow from '@/components/CPRow.vue';
 
 
 /**
@@ -194,16 +194,16 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
         </div>
         <hr class="my-2" />
 
-        <GenericTable title="Weapons" :headers="['Weapon', 'Description', 'Skill', 'Damage', 'Ammo', 'ROF', 'Notes']">
-            <GenericTableRow v-for="weapon in char.weapons" :key="`weapon_${weapon.name}`">
-                <GenericTableCell>{{ weapon.name }}</GenericTableCell>
-                <GenericTableCell>
+        <CPTable title="Weapons" :headers="['Weapon', 'Description', 'Skill', 'Damage', 'Ammo', 'ROF', 'Notes']">
+            <CPRow v-for="weapon in char.weapons" :key="`weapon_${weapon.name}`">
+                <CPCell>{{ weapon.name }}</CPCell>
+                <CPCell>
                     {{ weapon.description }}
                     <span v-if="weapon.quality">({{ weapon.quality.charAt(0).toUpperCase() + weapon.quality.slice(1).toLowerCase() }} quality)</span>
-                </GenericTableCell>
-                <GenericTableCell>{{ char.skills[weapon.skill].name }}</GenericTableCell>
-                <GenericTableCell class="text-center">{{ weapon.damage }}</GenericTableCell>
-                <GenericTableCell v-if="weapon.ammo_type.length > 0">
+                </CPCell>
+                <CPCell>{{ char.skills[weapon.skill].name }}</CPCell>
+                <CPCell class="text-center">{{ weapon.damage }}</CPCell>
+                <CPCell v-if="weapon.ammo_type.length > 0">
                     <div>{{ weapon.ammo_type.join(', ') }}</div>
                     <ul class="list-disc list-inside">
 
@@ -214,10 +214,10 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
                             {{ qty }} rounds of <span class="underline decoration-dashed cursor-pointer" @click="OpenAmmoTypeModal(ammo_types[ammo_name])">{{ ammo_name }}</span>
                         </li>
                     </ul>
-                </GenericTableCell>
-                <GenericTableCell v-else></GenericTableCell>
-                <GenericTableCell class="text-center">{{ weapon.rof }}</GenericTableCell>
-                <GenericTableCell>
+                </CPCell>
+                <CPCell v-else></CPCell>
+                <CPCell class="text-center">{{ weapon.rof }}</CPCell>
+                <CPCell>
                     <ul>
                         <li v-if="weapon.ammo_type.length > 0 && !weapon.ammo_type.includes('Arrow')">Standard Mag
                             Size: {{ clip_chart[weapon.getKey()].standard }}</li>
@@ -242,9 +242,9 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
                             </ul>
                         </li>
                     </ul>
-                </GenericTableCell>
-            </GenericTableRow>
-        </GenericTable>
+                </CPCell>
+            </CPRow>
+        </CPTable>
         <Modal :visible="weapon_attachment_modal_visible" @close="weapon_attachment_modal_visible = false">
             <div class="p-1">
                 <h2 class="text-lg font-bold">{{ weapon_attachment_modal.name }}</h2>
@@ -263,18 +263,18 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
 
         <hr class="my-2" />
 
-        <GenericTable title="Armor" :headers="['Location', 'Armor', 'SP', 'Penalty', 'Notes']">
-            <GenericTableRow v-for="armor, location in char.armor" :key="`armor_${location}`">
-                <GenericTableCell>{{ location }}</GenericTableCell>
-                <GenericTableCell>
+        <CPTable title="Armor" :headers="['Location', 'Armor', 'SP', 'Penalty', 'Notes']">
+            <CPRow v-for="armor, location in char.armor" :key="`armor_${location}`">
+                <CPCell>{{ location }}</CPCell>
+                <CPCell>
                     <span v-if="armor != 'None'" class="underline decoration-dashed cursor-pointer" @click="OpenArmorModal(armor)">{{ armor.armor_type }}</span>
                     <span v-else>None</span>
-                </GenericTableCell>
-                <GenericTableCell>{{ armor == "None" ? "" : armor.sp }}</GenericTableCell>
-                <GenericTableCell>{{ armor == "None" ? "" : armor.penalty.length <= 0 ? "None" : armor.penalty.map(penalty => `${penalty.stat}: ${penalty.penalty}`).join(", ") }}</GenericTableCell>
-                <GenericTableCell></GenericTableCell>
-            </GenericTableRow>
-        </GenericTable>
+                </CPCell>
+                <CPCell>{{ armor == "None" ? "" : armor.sp }}</CPCell>
+                <CPCell>{{ armor == "None" ? "" : armor.penalty.length <= 0 ? "None" : armor.penalty.map(penalty => `${penalty.stat}: ${penalty.penalty}`).join(", ") }}</CPCell>
+                <CPCell></CPCell>
+            </CPRow>
+        </CPTable>
         <Modal :visible="armor_modal_visible" @close="armor_modal_visible = false">
             <div class="p-1">
                 <h2 class="text-lg font-bold">{{ armor_modal.armor_type }}</h2>
