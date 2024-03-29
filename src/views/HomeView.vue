@@ -18,6 +18,7 @@ import SkillTable from '@/components/SkillTable.vue'
 import SkillRow from '@/components/SkillRow.vue'
 import Modal from '@/components/Modal.vue'
 import StatsBlock from '@/components/StatsBlock.vue'
+import SkillsByGroup from '@/components/SkillsByGroup.vue'
 
 
 /**
@@ -181,32 +182,10 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
         <div class="skills">
             <div class=" sm:columns-2 md:columns-3 columns-1 gap-1 bg-red-500 p-1">
                 <template v-if="sort_method === 'group'">
-                    <!-- <table class="w-full sm:text-xs md:text-base border-y-4 border-solid bg-white border-red-500"> -->
-                    <SkillTable :category="'Awareness'" :char="char" />
-                    <SkillTable :category="'Body'" :char="char" />
-                    <SkillTable :category="'Control'" :char="char" />
-                    <SkillTable :category="'Ranged Weapon'" :char="char" />
-                    <!-- </table> -->
-                    <!-- <table class="w-full sm:text-xs md:text-base border-8 border-solid bg-white border-red-500"> -->
-                    <SkillTable :category="'Education'" :char="char" />
-                    <SkillTable :category="'Fighting'" :char="char" />
-                    <SkillTable :category="'Performance'" :char="char" />
-                    <!-- </table> -->
-                    <!-- <table class="w-full sm:text-xs md:text-base border-8 border-solid bg-white border-red-500"> -->
-                    <SkillTable :category="'Social'" :char="char" />
-                    <SkillTable :category="'Technique'" :char="char" />
-                    <!-- </table> -->
+                    <SkillsByGroup :char="char" />
                 </template>
                 <template v-else>
-                    <table class="w-full text-xs md:text-base border-y-4 border-solid bg-white border-red-500" v-for="(chunks, index) in skillChunks" :key="`skill_chunk_${index}`">
-                        <tr class="bg-black text-white">
-                            <th class="border-x-4 border-red-500 text-xs p-1">Skill</th>
-                            <th class="border-r-4 border-red-500 text-xs p-1 w-1/12">LVL</th>
-                            <th class="border-r-4 border-red-500 text-xs p-1 w-1/12">STAT</th>
-                            <th class="border-r-4 border-red-500 text-xs p-1  w-1/12">BASE</th>
-                        </tr>
-                        <SkillRow v-for="skill in chunks" :key="`skill_${skill.name}`" :skill="skill" :stat="char.stats[skill.stat]" />
-                    </table>
+                    <SkillTable v-for="(chunk, index) in skillChunks" :key="`skill_chunk_${index}`" :chunk :char />
                 </template>
             </div>
         </div>
@@ -338,4 +317,4 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
         <br /><br /><br />
 
     </main>
-</template>
+</template>../components/SkillsByGroup.vue
