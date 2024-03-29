@@ -71,6 +71,7 @@ export class Character {
             this.skills[skill.getKey()] = skill;
         }
         this.weapons.push(this.getRandomWeapon(["ranged"]));
+        this.weapons.push(this.getRandomWeapon(["ranged"]));
         // this.weapons.push(RangedWeapons[5])
         // let attachment = WeaponAttachments["drum_magazine"];
         // try {

@@ -19,6 +19,9 @@ import SkillRow from '@/components/SkillRow.vue'
 import Modal from '@/components/Modal.vue'
 import StatsBlock from '@/components/StatsBlock.vue'
 import SkillsByGroup from '@/components/SkillsByGroup.vue'
+import GenericTable from '@/components/GenericTable.vue';
+import GenericTableCell from '@/components/GenericTableCell.vue';
+import GenericTableRow from '@/components/GenericTableRow.vue';
 
 
 /**
@@ -191,120 +194,87 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
         </div>
         <hr class="my-2" />
 
-        Weapons:
-        <table class="w-full">
-            <thead>
-                <tr>
-                    <th class="border text-xs p-1">Weapon</th>
-                    <th class="border text-xs p-1">Description</th>
-                    <th class="border text-xs p-1">Skill</th>
-                    <th class="border text-xs p-1">Damage</th>
-                    <th class="border text-xs p-1">Ammo</th>
-                    <th class="border text-xs p-1">ROF</th>
-                    <th class="border text-xs p-1">Notes</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="weapon in char.weapons" :key="`weapon_${weapon.name}`">
-                    <td class="border p-1">{{ weapon.name }}</td>
-                    <td class="border p-1">
-                        {{ weapon.description }}
-                        <span v-if="weapon.quality">({{ weapon.quality.charAt(0).toUpperCase() + weapon.quality.slice(1).toLowerCase() }} quality)</span>
-                    </td>
-                    <td class="border p-1">{{ char.skills[weapon.skill].name }}</td>
-                    <td class="border p-1">{{ weapon.damage }}</td>
-                    <td v-if="weapon.ammo_type.length > 0" class="border p-1">
-                        <div>{{ weapon.ammo_type.join(', ') }}</div>
-                        <ul class="list-disc list-inside">
+        <GenericTable title="Weapons" :headers="['Weapon', 'Description', 'Skill', 'Damage', 'Ammo', 'ROF', 'Notes']">
+            <GenericTableRow v-for="weapon in char.weapons" :key="`weapon_${weapon.name}`">
+                <GenericTableCell>{{ weapon.name }}</GenericTableCell>
+                <GenericTableCell>
+                    {{ weapon.description }}
+                    <span v-if="weapon.quality">({{ weapon.quality.charAt(0).toUpperCase() + weapon.quality.slice(1).toLowerCase() }} quality)</span>
+                </GenericTableCell>
+                <GenericTableCell>{{ char.skills[weapon.skill].name }}</GenericTableCell>
+                <GenericTableCell class="text-center">{{ weapon.damage }}</GenericTableCell>
+                <GenericTableCell v-if="weapon.ammo_type.length > 0">
+                    <div>{{ weapon.ammo_type.join(', ') }}</div>
+                    <ul class="list-disc list-inside">
 
-                            <li v-if="weapon.ammo_type.some(type => ['arrow', 'grenade', 'rocket'].includes(type.toLowerCase()))" v-for="qty, ammo_name in weapon.ammo" :key="`ammo_agr_${ammo_name}`">
-                                {{ qty }} <span class="underline decoration-dashed cursor-pointer" @click="OpenAmmoTypeModal(ammo_types[ammo_name])">{{ ammo_name.split(" ")[0] }}</span> {{ weapon.ammo_type[0].toLowerCase() }}{{ qty > 1 ? 's' : '' }}
-                            </li>
-                            <li v-else v-for="qty, ammo_name in weapon.ammo" :key="`ammo_${ammo_name}`">
-                                {{ qty }} rounds of <span class="underline decoration-dashed cursor-pointer" @click="OpenAmmoTypeModal(ammo_types[ammo_name])">{{ ammo_name }}</span>
-                            </li>
-                        </ul>
-                        <Modal :visible="ammo_type_modal_visible" @close="ammo_type_modal_visible = false">
-                            <div class="p-1">
-                                <h2 class="text-lg font-bold">{{ ammo_type_modal.name }}</h2>
-                                <p>{{ ammo_type_modal.description }}</p>
-                                <button class="border rounded px-4" @click="ammo_type_modal_visible = false">Close</button>
-                            </div>
-                        </Modal>
+                        <li v-if="weapon.ammo_type.some(type => ['arrow', 'grenade', 'rocket'].includes(type.toLowerCase()))" v-for="qty, ammo_name in weapon.ammo" :key="`ammo_agr_${ammo_name}`">
+                            {{ qty }} <span class="underline decoration-dashed cursor-pointer" @click="OpenAmmoTypeModal(ammo_types[ammo_name])">{{ ammo_name.split(" ")[0] }}</span> {{ weapon.ammo_type[0].toLowerCase() }}{{ qty > 1 ? 's' : '' }}
+                        </li>
+                        <li v-else v-for="qty, ammo_name in weapon.ammo" :key="`ammo_${ammo_name}`">
+                            {{ qty }} rounds of <span class="underline decoration-dashed cursor-pointer" @click="OpenAmmoTypeModal(ammo_types[ammo_name])">{{ ammo_name }}</span>
+                        </li>
+                    </ul>
+                </GenericTableCell>
+                <GenericTableCell v-else></GenericTableCell>
+                <GenericTableCell class="text-center">{{ weapon.rof }}</GenericTableCell>
+                <GenericTableCell>
+                    <ul>
+                        <li v-if="weapon.ammo_type.length > 0 && !weapon.ammo_type.includes('Arrow')">Standard Mag
+                            Size: {{ clip_chart[weapon.getKey()].standard }}</li>
+                        <li v-if="weapon.alt_fire && weapon.alt_fire.toLowerCase() != 'none'">
+                            Alt Fire: {{ weapon.alt_fire }}
+                        </li>
+                        <li v-if="weapon.special_features && weapon.special_features.toLowerCase() != 'none'">
+                            Special Features:
+                            {{ weapon.special_features }}
+                        </li>
+                        <li v-if="weapon.attachments.length > 0">
+                            Attachments:
+                            <ul class="list-disc list-inside">
+                                <li v-for="attachment in weapon.attachments" class="cursor-pointer" @click="OpenAttachmentModal(attachment)" :key="`attachment_${attachment}`">
+                                    <span class="underline decoration-dashed">{{ attachment.name }}</span>
+                                    <span v-if="['Drum Magazine', 'Extended Magazine'].includes(attachment.name)">
+                                        ({{ clip_chart[weapon.getKey()][attachment.name.split(" ")[0].toLowerCase()]
+                                        }}
+                                        rounds)
+                                    </span>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </GenericTableCell>
+            </GenericTableRow>
+        </GenericTable>
+        <Modal :visible="weapon_attachment_modal_visible" @close="weapon_attachment_modal_visible = false">
+            <div class="p-1">
+                <h2 class="text-lg font-bold">{{ weapon_attachment_modal.name }}</h2>
+                <p>{{ weapon_attachment_modal.description }}</p>
+                <button class="border rounded px-4" @click="weapon_attachment_modal_visible = false">Close</button>
+            </div>
+        </Modal>
+        <Modal :visible="ammo_type_modal_visible" @close="ammo_type_modal_visible = false">
+            <div class="p-1">
+                <h2 class="text-lg font-bold">{{ ammo_type_modal.name }}</h2>
+                <p>{{ ammo_type_modal.description }}</p>
+                <button class="border rounded px-4" @click="ammo_type_modal_visible = false">Close</button>
+            </div>
+        </Modal>
 
-                    </td>
-                    <td v-else class="border p-1"></td>
-                    <td class="border p-1">{{ weapon.rof }}</td>
-                    <td class="border p-1">
-                        <ul>
-                            <li v-if="weapon.ammo_type.length > 0 && !weapon.ammo_type.includes('Arrow')">Standard Mag
-                                Size: {{ clip_chart[weapon.getKey()].standard }}</li>
-                            <li v-if="weapon.alt_fire && weapon.alt_fire.toLowerCase() != 'none'">
-                                Alt Fire: {{ weapon.alt_fire }}
-                            </li>
-                            <li v-if="weapon.special_features && weapon.special_features.toLowerCase() != 'none'">
-                                Special Features:
-                                {{ weapon.special_features }}
-                            </li>
-                            <li v-if="weapon.attachments.length > 0">
-                                Attachments:
-                                <ul class="list-disc list-inside">
-                                    <li v-for="attachment in weapon.attachments" class="cursor-pointer" @click="OpenAttachmentModal(attachment)" :key="`attachment_${attachment}`">
-                                        <span class="underline decoration-dashed">{{ attachment.name }}</span>
-                                        <span v-if="['Drum Magazine', 'Extended Magazine'].includes(attachment.name)">
-                                            ({{ clip_chart[weapon.getKey()][attachment.name.split(" ")[0].toLowerCase()]
-                                            }}
-                                            rounds)
-                                        </span>
-                                    </li>
-                                </ul>
-                                <Modal :visible="weapon_attachment_modal_visible" @close="weapon_attachment_modal_visible = false">
-                                    <div class="p-1">
-                                        <h2 class="text-lg font-bold">{{ weapon_attachment_modal.name }}</h2>
-                                        <p>{{ weapon_attachment_modal.description }}</p>
-                                        <button class="border rounded px-4" @click="weapon_attachment_modal_visible = false">Close</button>
-                                    </div>
-                                </Modal>
-                            </li>
-                        </ul>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
 
         <hr class="my-2" />
 
-        Armor:
-        <table class="w-full">
-            <thead>
-                <tr>
-                    <th class="border text-xs p-1">Location</th>
-                    <th class="border text-xs p-1">Armor</th>
-                    <th class="border text-xs p-1">SP</th>
-                    <th class="border text-xs p-1">Penalty</th>
-                    <th class="border text-xs p-1">Notes</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="armor, location in char.armor" :key="`armor_${location}`">
-                    <td class="border p-1">
-                        {{ location }}
-                    </td>
-                    <td class="border p-1">
-                        <span v-if="armor != 'None'" class="underline decoration-dashed cursor-pointer" @click="OpenArmorModal(armor)">{{ armor.armor_type }}</span>
-                        <span v-else>None</span>
-                    </td>
-                    <td class="border p-1">
-                        {{ armor == "None" ? "" : armor.sp }}
-                    </td>
-                    <td class="border p-1">
-                        {{ armor == "None" ? "" : armor.penalty.length <= 0 ? "None" : armor.penalty.map(penalty => `${penalty.stat}: ${penalty.penalty}`).join(", ") }}
-                    </td>
-                    <td class=" border p-1">
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <GenericTable title="Armor" :headers="['Location', 'Armor', 'SP', 'Penalty', 'Notes']">
+            <GenericTableRow v-for="armor, location in char.armor" :key="`armor_${location}`">
+                <GenericTableCell>{{ location }}</GenericTableCell>
+                <GenericTableCell>
+                    <span v-if="armor != 'None'" class="underline decoration-dashed cursor-pointer" @click="OpenArmorModal(armor)">{{ armor.armor_type }}</span>
+                    <span v-else>None</span>
+                </GenericTableCell>
+                <GenericTableCell>{{ armor == "None" ? "" : armor.sp }}</GenericTableCell>
+                <GenericTableCell>{{ armor == "None" ? "" : armor.penalty.length <= 0 ? "None" : armor.penalty.map(penalty => `${penalty.stat}: ${penalty.penalty}`).join(", ") }}</GenericTableCell>
+                <GenericTableCell></GenericTableCell>
+            </GenericTableRow>
+        </GenericTable>
         <Modal :visible="armor_modal_visible" @close="armor_modal_visible = false">
             <div class="p-1">
                 <h2 class="text-lg font-bold">{{ armor_modal.armor_type }}</h2>
@@ -312,6 +282,7 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
                 <button class="border rounded px-4" @click="armor_modal_visible = false">Close</button>
             </div>
         </Modal>
+
 
 
         <br /><br /><br />
