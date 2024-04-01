@@ -21,12 +21,19 @@ const Stat_Points: Record<string, number> = {
     "minor hero": 75,
     "major hero": 80
 }
+const Starting_Cash: Record<CreationMethod, number> = {
+    "edgerunner": 500,
+    "street rat": 500,
+    "complete": 2550
+}
 
 type WeaponType = "melee" | "ranged" | "exotic";
+type CreationMethod = "complete" | "edgerunner" | "street rat";
 
 export class Character {
     skill_points = 86
     character_rank = "starting"
+    cash = 0;
 
     handle: string = "Unknown";
     role: Role = Role.Civilian;
@@ -61,16 +68,23 @@ export class Character {
         humanity_loss: number
     }[] = []
 
-    lifepath: Lifepath | undefined
+    creation_method: CreationMethod = "complete"
 
-    constructor() {
+    constructor({ creation_method = "complete" }: { creation_method?: CreationMethod } = {}) {
+        this.creation_method = creation_method || "complete";
+        this.cash = Starting_Cash[this.creation_method];
+
         for (const stat of Object.values(Stat)) {
             this.stats[stat] = 0;
         }
         for (const skill of SkillList) {
             this.skills[skill.getKey()] = skill;
         }
-        this.weapons.push(this.getRandomWeapon(["ranged"]));
+        // const weapon = this.getRandomWeapon(["ranged"]);
+        // this.cash = this.cash - weapon.cost;
+        // this.weapons.push(weapon);
+
+        // this.weapons.push(this.getRandomWpeapon(["ranged"]));
         // this.weapons.push(this.getRandomWeapon(["ranged"]));
         // this.weapons.push(RangedWeapons[5])
         // let attachment = WeaponAttachments["drum_magazine"];
@@ -80,6 +94,7 @@ export class Character {
         //     console.log(e);
         // }
         this.randomizeArmor()
+        this.randomizeWeapons()
         this.randomize()
     }
     getHumanityLoss(): number {
@@ -100,7 +115,7 @@ export class Character {
         const randomIndex = Math.floor(Math.random() * availableArmor.length);
         return availableArmor[randomIndex];
     }
-    getRandomWeapon(weaponTypes?: WeaponType[] | undefined): Weapon {
+    getRandomWeapon({ weaponTypes, excluded_weapons }: { weaponTypes?: WeaponType[] | undefined; excluded_weapons?: string[]; } = {}): Weapon {
         if (weaponTypes === undefined) {
             weaponTypes = ["melee", "ranged"];
         }
@@ -114,17 +129,69 @@ export class Character {
                 // Add your exotic weapons here
             }
         }
+        if (excluded_weapons !== undefined && excluded_weapons.length > 0) {
+            allWeapons = allWeapons.filter(weapon => !excluded_weapons.includes(weapon.name));
+        }
+        if (allWeapons.length === 0) {
+            throw new Error("No weapons available");
+        }
         const randomIndex = Math.floor(Math.random() * allWeapons.length);
         return allWeapons[randomIndex];
     };
     randomizeArmor() {
-        this.armor.body = this.getRandomArmor();
-        this.armor.head = this.getRandomArmor();
-        if (this.armor.body != "None" && this.armor.body.armor_type === "Bodyweight Suit") {
-            const bodyweight_suit = ArmorList.find(armor => armor.armor_type === "Bodyweight Suit");
-            this.armor.head = bodyweight_suit || "None";
-        }
-        // this.armor.shield = this.getRandomArmor("shield only");
+        let cash = this.cash;
+        let body_armor: Armor | "None" = "None";
+        let head_armor: Armor | "None" = "None";
+        // let shield: Armor | "None" = "None";
+
+        let armor_cost = 0;
+        do {
+            armor_cost = 0;
+            body_armor = this.getRandomArmor();
+            armor_cost += body_armor == "None" ? 0 : body_armor.cost;
+            if (body_armor != "None" && body_armor.armor_type === "Bodyweight Suit") {
+                head_armor = body_armor
+            }
+            else {
+                head_armor = this.getRandomArmor();
+                armor_cost += head_armor == "None" ? 0 : head_armor.cost;
+                // if (head_armor != "None" && head_armor.armor_type === "Bodyweight Suit") {
+                //     body_armor = head_armor
+                // }
+            }
+            // this.armor.shield = this.getRandomArmor("shield only");
+            // cash -= shield == "None" ? 0 : shield.cost;
+        } while (armor_cost > cash)
+
+        this.armor.body = body_armor
+        this.armor.head = head_armor
+        // this.armor.shield = shield
+        this.cash -= armor_cost
+    }
+    randomizeWeapons() {
+        let cash = this.cash;
+        let weapons: Weapon[] = [];
+        let weapon_cost = 0;
+        let too_expensive: string[] = [];
+        do {
+            weapon_cost = 0;
+            let weapon: Weapon;
+            try {
+                weapon = this.getRandomWeapon({ excluded_weapons: too_expensive });
+            } catch (e) {
+                console.log(e)
+                break;
+            }
+            weapon_cost = weapon.cost;
+            if (weapon_cost > cash) {
+                too_expensive.push(weapon.name);
+                console.log(`${weapon.name} is too expensive`)
+                continue;
+            }
+            weapons.push(weapon);
+        } while (weapon_cost > cash)
+        this.weapons = weapons;
+        this.cash -= weapon_cost;
     }
     randomizeSkills() {
         let skill_points = this.skill_points

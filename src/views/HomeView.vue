@@ -131,6 +131,8 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
     ammo_type_modal_visible.value = true;
 }
 
+const cash = ref(char.value.cash);
+
 </script>
 <style>
 .notch {
@@ -282,8 +284,8 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
                 <button class="border rounded px-4" @click="armor_modal_visible = false">Close</button>
             </div>
         </Modal>
-
-
+        <hr class="my-2" />
+        <TextFieldRow :values="{ 'Cash': cash.toString() + 'eb' }" />
 
         <br /><br /><br />
 
