@@ -143,6 +143,10 @@ const cash = ref(char.value.cash);
     position: relative;
 }
 
+.notch.border-b-0 {
+    border-bottom-width: 0;
+}
+
 .notch:before {
     content: "";
     position: absolute;
@@ -165,8 +169,9 @@ const cash = ref(char.value.cash);
         <TextFieldRow :values="char_info" />
 
         <hr class="my-2" />
-
-        <div class="font-bold">Stats</div>
+        <div class="flex pl-4 py-2 border-b-0 notch ">
+            <div class="font-bold">Stats</div>
+        </div>
 
         <StatsBlock :stats="stats_block" />
 
@@ -175,16 +180,20 @@ const cash = ref(char.value.cash);
         <TextFieldRow :values="derived_stats" />
 
         <hr class="my-2" />
-        <div class="my-2">
-            Sorting by: <select v-model="sort_method">
-                <option value="alphabetical">Alphabetical</option>
-                <option value="base">Base</option>
-                <option value="group">Group</option>
-                <option value="level">Level</option>
-            </select>
-        </div>
+
 
         <div class="skills">
+            <div class="flex pl-4 py-2 border-b-0 notch ">
+                <div class="font-bold mr-4">Skills</div>
+                <div class="">
+                    Sorting by: <select v-model="sort_method">
+                        <option value="alphabetical">Alphabetical</option>
+                        <option value="base">Base</option>
+                        <option value="group">Group</option>
+                        <option value="level">Level</option>
+                    </select>
+                </div>
+            </div>
             <div class=" sm:columns-2 md:columns-3 columns-1 gap-1 bg-red-500 p-1">
                 <template v-if="sort_method === 'group'">
                     <SkillsByGroup :char="char" />
@@ -197,6 +206,9 @@ const cash = ref(char.value.cash);
         <hr class="my-2" />
 
         <CPTable title="Weapons" :headers="['Weapon', 'Description', 'Skill', 'Damage', 'Ammo', 'ROF', 'Notes']">
+            <CPRow v-if="char.weapons.length <= 0">
+                <td colspan="7" class="text-center">No Weapons</td>
+            </CPRow>
             <CPRow v-for="weapon in char.weapons" :key="`weapon_${weapon.name}`">
                 <CPCell>{{ weapon.name }}</CPCell>
                 <CPCell>

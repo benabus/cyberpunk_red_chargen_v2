@@ -104,7 +104,7 @@ const gear: Record<string, {
     "drum_synthesizer": {
         name: "Drum Synthesizer",
         cost: 500,
-        description: "Flat plastic pads of varying sizes, linked by cables to a central processor. Can simulate almost any kind of drum. Requires some type of amplification to be heard.
+        description: "Flat plastic pads of varying sizes, linked by cables to a central processor. Can simulate almost any kind of drum. Requires some type of amplification to be heard."
     },
     "duct_tape": {
         name: "Duct Tape",

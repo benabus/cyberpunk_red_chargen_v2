@@ -115,7 +115,7 @@ export class Character {
         const randomIndex = Math.floor(Math.random() * availableArmor.length);
         return availableArmor[randomIndex];
     }
-    getRandomWeapon({ weaponTypes, excluded_weapons }: { weaponTypes?: WeaponType[] | undefined; excluded_weapons?: string[]; } = {}): Weapon {
+    getRandomWeapon({ weaponTypes, excluded_weapons, max_cost }: { weaponTypes?: WeaponType[] | undefined; excluded_weapons?: string[]; max_cost?: number } = {}): Weapon {
         if (weaponTypes === undefined) {
             weaponTypes = ["melee", "ranged"];
         }
@@ -131,6 +131,9 @@ export class Character {
         }
         if (excluded_weapons !== undefined && excluded_weapons.length > 0) {
             allWeapons = allWeapons.filter(weapon => !excluded_weapons.includes(weapon.name));
+        }
+        if (max_cost !== undefined) {
+            allWeapons = allWeapons.filter(weapon => weapon.cost <= max_cost);
         }
         if (allWeapons.length === 0) {
             throw new Error("No weapons available");
@@ -167,31 +170,27 @@ export class Character {
         this.armor.head = head_armor
         // this.armor.shield = shield
         this.cash -= armor_cost
+        console.log(armor_cost)
     }
     randomizeWeapons() {
-        let cash = this.cash;
-        let weapons: Weapon[] = [];
-        let weapon_cost = 0;
-        let too_expensive: string[] = [];
-        do {
-            weapon_cost = 0;
-            let weapon: Weapon;
+        for (let i = 0; i < Math.floor(Math.random() * 4); i++) {
             try {
-                weapon = this.getRandomWeapon({ excluded_weapons: too_expensive });
+                const weapon: Weapon = this.getRandomWeapon({ max_cost: this.cash });
+                this.weapons.push(weapon);
+                this.cash -= weapon.cost;
+                console.log("weapon cost", weapon.cost, weapon.name)
             } catch (e) {
-                console.log(e)
-                break;
+                console.log(`Could not add any weapons: ${e}`)
             }
-            weapon_cost = weapon.cost;
-            if (weapon_cost > cash) {
-                too_expensive.push(weapon.name);
-                console.log(`${weapon.name} is too expensive`)
-                continue;
-            }
-            weapons.push(weapon);
-        } while (weapon_cost > cash)
-        this.weapons = weapons;
-        this.cash -= weapon_cost;
+        }
+        // try {
+        //     let weapon: Weapon = this.getRandomWeapon({ max_cost: cash });
+        //     this.weapons.push(weapon);
+        //     this.cash -= weapon.cost;
+        //     console.log("weapon cost:", weapon.cost)
+        // } catch (e) {
+        //     console.log(`Could not add any weapons: ${e}`)
+        // }
     }
     randomizeSkills() {
         let skill_points = this.skill_points
