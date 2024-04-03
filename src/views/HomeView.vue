@@ -22,6 +22,7 @@ import SkillsByGroup from '@/components/SkillsByGroup.vue'
 import CPTable from '@/components/CPTable.vue';
 import CPCell from '@/components/CPCell.vue';
 import CPRow from '@/components/CPRow.vue';
+import CPTitle from '@/components/CPTitle.vue';
 
 
 /**
@@ -169,10 +170,8 @@ const cash = ref(char.value.cash);
         <TextFieldRow :values="char_info" />
 
         <hr class="my-2" />
-        <div class="flex pl-4 py-2 border-b-0 notch ">
-            <div class="font-bold">Stats</div>
-        </div>
 
+        <CPTitle>Stats</CPTitle>
         <StatsBlock :stats="stats_block" />
 
         <hr class="my-2" />
@@ -183,9 +182,9 @@ const cash = ref(char.value.cash);
 
 
         <div class="skills">
-            <div class="flex pl-4 py-2 border-b-0 notch ">
-                <div class="font-bold mr-4">Skills</div>
-                <div class="">
+            <CPTitle>
+                <div class="mr-4">Skills</div>
+                <div class="font-normal">
                     Sorting by: <select v-model="sort_method">
                         <option value="alphabetical">Alphabetical</option>
                         <option value="base">Base</option>
@@ -193,7 +192,7 @@ const cash = ref(char.value.cash);
                         <option value="level">Level</option>
                     </select>
                 </div>
-            </div>
+            </CPTitle>
             <div class=" sm:columns-2 md:columns-3 columns-1 gap-1 bg-red-500 p-1">
                 <template v-if="sort_method === 'group'">
                     <SkillsByGroup :char="char" />
@@ -205,7 +204,7 @@ const cash = ref(char.value.cash);
         </div>
         <hr class="my-2" />
 
-        <CPTable title="Weapons" :headers="['Weapon', 'Description', 'Skill', 'Damage', 'Ammo', 'ROF', 'Notes']">
+        <CPTable title="Weapons" :headers="['Weapon', 'Description', 'Skill', 'Damage', 'Ammo', 'ROF', 'Notes', 'Cost']">
             <CPRow v-if="char.weapons.length <= 0">
                 <td colspan="7" class="text-center">No Weapons</td>
             </CPRow>
@@ -257,6 +256,7 @@ const cash = ref(char.value.cash);
                         </li>
                     </ul>
                 </CPCell>
+                <CPCell class="text-right">{{ weapon.cost }}eb</CPCell>
             </CPRow>
         </CPTable>
         <Modal :visible="weapon_attachment_modal_visible" @close="weapon_attachment_modal_visible = false">
@@ -277,7 +277,7 @@ const cash = ref(char.value.cash);
 
         <hr class="my-2" />
 
-        <CPTable title="Armor" :headers="['Location', 'Armor', 'SP', 'Penalty', 'Notes']">
+        <CPTable title="Armor" :headers="['Location', 'Armor', 'SP', 'Penalty', 'Cost']">
             <CPRow v-for="armor, location in char.armor" :key="`armor_${location}`">
                 <CPCell>{{ location }}</CPCell>
                 <CPCell>
@@ -286,7 +286,7 @@ const cash = ref(char.value.cash);
                 </CPCell>
                 <CPCell>{{ armor == "None" ? "" : armor.sp }}</CPCell>
                 <CPCell>{{ armor == "None" ? "" : armor.penalty.length <= 0 ? "None" : armor.penalty.map(penalty => `${penalty.stat}: ${penalty.penalty}`).join(", ") }}</CPCell>
-                <CPCell></CPCell>
+                <CPCell class="text-right">{{ armor == "None" ? "" : `${armor.cost}eb` }}</CPCell>
             </CPRow>
         </CPTable>
         <Modal :visible="armor_modal_visible" @close="armor_modal_visible = false">
@@ -297,9 +297,22 @@ const cash = ref(char.value.cash);
             </div>
         </Modal>
         <hr class="my-2" />
+
+        <CPTable title="Gear" :headers="['Item', 'Description', 'Cost']">
+            <CPRow v-if="char.gear.length <= 0">
+                <td colspan="3" class="text-center">No Gear</td>
+            </CPRow>
+            <CPRow v-for="gear in char.gear" :key="`gear_${gear.name}`">
+                <CPCell>{{ gear.name }}</CPCell>
+                <CPCell>{{ gear.description }}</CPCell>
+                <CPCell class="text-right">{{ gear.cost }}eb </CPCell>
+            </CPRow>
+        </CPTable>
+
+        <hr class="my-2" />
         <TextFieldRow :values="{ 'Cash': cash.toString() + 'eb' }" />
 
         <br /><br /><br />
 
     </main>
-</template>../components/SkillsByGroup.vue
+</template>

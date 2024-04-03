@@ -1,8 +1,11 @@
-const gear: Record<string, {
-    name: string,
-    cost: number,
-    description: string
-}> = {
+export interface GearItem {
+    name: string;
+    cost: number;
+    description: string;
+    bonus?: string;
+}
+
+const gear: Record<string, GearItem> = {
     "agent": {
         name: "Agent",
         cost: 100,
@@ -286,3 +289,5 @@ const gear: Record<string, {
         description: "Headset that projects cyberspace imagery over your view of the world around you. Highly advised for Netrunners. See Netrunning Section on pg. 195 for more info."
     },
 };
+
+export { gear as Gear }

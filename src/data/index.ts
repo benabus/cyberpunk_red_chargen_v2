@@ -7,6 +7,7 @@ import { WeaponAttachments } from './weapon_attachments'
 import { ArmorList } from './armor'
 import { ClipChart } from './clip_chart'
 import { AmmoTypes } from './ammo_types'
+import { Gear } from './gear'
 
 export {
     Stat,
@@ -20,5 +21,6 @@ export {
     RangedWeapons,
     ArmorList,
     ClipChart,
-    AmmoTypes
+    AmmoTypes,
+    Gear
 }

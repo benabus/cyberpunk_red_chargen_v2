@@ -8,10 +8,11 @@ import {
     MeleeWeapons,
     RangedWeapons,
     WeaponAttachments,
-    ArmorList
+    ArmorList,
+    Gear
 } from "@/data";
 import { Skill, Weapon, Lifepath } from ".";
-import type { Armor } from "@/types";
+import type { Armor, GearItem } from "@/types";
 import { random_key } from "@/utilities";
 
 const Stat_Points: Record<string, number> = {
@@ -50,7 +51,7 @@ export class Character {
         shield: "None"
     }
     weapons: Weapon[] = []
-    gear: string[] = []
+    gear: GearItem[] = []
     housing: string = ""
     rent: number = 0
     lifestyle: string = ""
@@ -80,21 +81,10 @@ export class Character {
         for (const skill of SkillList) {
             this.skills[skill.getKey()] = skill;
         }
-        // const weapon = this.getRandomWeapon(["ranged"]);
-        // this.cash = this.cash - weapon.cost;
-        // this.weapons.push(weapon);
 
-        // this.weapons.push(this.getRandomWpeapon(["ranged"]));
-        // this.weapons.push(this.getRandomWeapon(["ranged"]));
-        // this.weapons.push(RangedWeapons[5])
-        // let attachment = WeaponAttachments["drum_magazine"];
-        // try {
-        //     this.weapons[0].addAttachment(attachment);
-        // } catch (e) {
-        //     console.log(e);
-        // }
         this.randomizeArmor()
         this.randomizeWeapons()
+        this.randomizeGear()
         this.randomize()
     }
     getHumanityLoss(): number {
@@ -103,6 +93,11 @@ export class Character {
             humanity_loss += cyberware.humanity_loss;
         }
         return humanity_loss;
+    }
+    getRandomGearItem({ max_cost = this.cash }: { max_cost?: number } = {}) {
+        const gear = Object.values(Gear).filter(gear => gear.cost <= max_cost);
+        const randomIndex = Math.floor(Math.random() * gear.length);
+        return gear[randomIndex];
     }
     getRandomArmor(armorType: "all" | "include shield" | "shield only" = "all"): Armor | "None" {
         let availableArmor: (Armor | "None")[] = ["None"];
@@ -170,7 +165,6 @@ export class Character {
         this.armor.head = head_armor
         // this.armor.shield = shield
         this.cash -= armor_cost
-        console.log(armor_cost)
     }
     randomizeWeapons() {
         for (let i = 0; i < Math.floor(Math.random() * 4); i++) {
@@ -183,14 +177,19 @@ export class Character {
                 console.log(`Could not add any weapons: ${e}`)
             }
         }
-        // try {
-        //     let weapon: Weapon = this.getRandomWeapon({ max_cost: cash });
-        //     this.weapons.push(weapon);
-        //     this.cash -= weapon.cost;
-        //     console.log("weapon cost:", weapon.cost)
-        // } catch (e) {
-        //     console.log(`Could not add any weapons: ${e}`)
-        // }
+    }
+    randomizeGear() {
+        while (this.cash > 0 && Math.random() > 0.5) {
+            try {
+                const gearItem: GearItem = this.getRandomGearItem({ max_cost: this.cash });
+                this.gear.push(gearItem);
+                this.cash -= gearItem.cost;
+                console.log("gear cost", gearItem.cost, gearItem.name)
+            } catch (e) {
+                console.log(`Could not add any gear: ${e}`)
+                break;
+            }
+        }
     }
     randomizeSkills() {
         let skill_points = this.skill_points
