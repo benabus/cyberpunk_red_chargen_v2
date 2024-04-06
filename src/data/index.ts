@@ -2,6 +2,7 @@ import { Stat } from './stats'
 import { SKILLS_LIST as SkillList, required_skills as RequiredSkills, categories as SkillCategories } from './skills'
 import { Role } from './roles'
 import { CyberwareLocation } from './cyberware_locations'
+import { BodyLocation, CyberwareType, cyberware as Cyberware } from './cyberware'
 import { MeleeWeapons, RangedWeapons } from './weapons'
 import { WeaponAttachments } from './weapon_attachments'
 import { ArmorList } from './armor'
@@ -22,5 +23,8 @@ export {
     ArmorList,
     ClipChart,
     AmmoTypes,
-    Gear
+    Gear,
+    BodyLocation,
+    CyberwareType,
+    Cyberware
 }

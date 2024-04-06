@@ -286,7 +286,7 @@ const cash = ref(char.value.cash);
                 </CPCell>
                 <CPCell>{{ armor == "None" ? "" : armor.sp }}</CPCell>
                 <CPCell>{{ armor == "None" ? "" : armor.penalty.length <= 0 ? "None" : armor.penalty.map(penalty => `${penalty.stat}: ${penalty.penalty}`).join(", ") }}</CPCell>
-                <CPCell class="text-right">{{ armor == "None" ? "" : `${armor.cost}eb` }}</CPCell>
+                <CPCell class="text-right">{{ armor == "None" || (location == "body" && armor.armor_type == "Bodyweight Suit") ? "" : `${armor.cost}eb` }}</CPCell>
             </CPRow>
         </CPTable>
         <Modal :visible="armor_modal_visible" @close="armor_modal_visible = false">

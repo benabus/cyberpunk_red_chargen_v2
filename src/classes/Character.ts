@@ -1,7 +1,7 @@
 import {
     Role,
     Stat,
-    CyberwareLocation,
+    // CyberwareLocation,
     SkillList,
     RequiredSkills,
     SkillCategories,
@@ -9,9 +9,12 @@ import {
     RangedWeapons,
     WeaponAttachments,
     ArmorList,
-    Gear
+    Gear,
+    CyberwareType,
+    BodyLocation,
+    Cyberware as CyberwareList
 } from "@/data";
-import { Skill, Weapon, Lifepath } from ".";
+import { Skill, Weapon, Lifepath, Cyberware } from ".";
 import type { Armor, GearItem } from "@/types";
 import { random_key } from "@/utilities";
 
@@ -26,6 +29,13 @@ const Starting_Cash: Record<CreationMethod, number> = {
     "edgerunner": 500,
     "street rat": 500,
     "complete": 2550
+}
+
+const Open_Slots_Per_Location: Record<string, number> = {
+    "Internal": 7,
+    "External": 7,
+    "Fashionware": 7,
+    "Borgware": 3
 }
 
 type WeaponType = "melee" | "ranged" | "exotic";
@@ -60,14 +70,7 @@ export class Character {
     reputation: number = 0
     reputation_events: string[] = []
 
-    cyberware: {
-        location: CyberwareLocation,
-        // foundational: boolean,
-        // requirement: string,
-        name: string,
-        data: string,
-        humanity_loss: number
-    }[] = []
+    cyberware: Record<string, Cyberware | undefined | Cyberware[]> = {}
 
     creation_method: CreationMethod = "complete"
 
@@ -82,16 +85,155 @@ export class Character {
             this.skills[skill.getKey()] = skill;
         }
 
-        this.randomizeArmor()
-        this.randomizeWeapons()
-        this.randomizeGear()
-        this.randomize()
-    }
-    getHumanityLoss(): number {
-        let humanity_loss = 1;
-        for (const cyberware of this.cyberware) {
-            humanity_loss += cyberware.humanity_loss;
+        for (const location of Object.values(BodyLocation)) {
+            this.cyberware[location] = undefined;
         }
+        this.cyberware["Internal"] = [];
+        this.cyberware["External"] = [];
+        this.cyberware["Fashionware"] = [];
+        this.cyberware["Borgware"] = [];
+
+        const neural_link = CyberwareList.find(cyberware => cyberware.name === "Neural Link") as Cyberware;
+        const chipware_socket = CyberwareList.find(cyberware => cyberware.name === "Chipware Socket") as Cyberware;
+        this.installCyberware({ cyberware: neural_link });
+        this.installCyberware({ cyberware: chipware_socket });
+        for (let i = 0; i < 10; i++) {
+            try {
+                const random_cyberware = CyberwareList[Math.floor(Math.random() * CyberwareList.length)];
+                this.installCyberware({ cyberware: random_cyberware });
+            } catch (e) {
+                console.error(e + "")
+            }
+        }
+
+
+        console.debug(this.cyberware.Brain)
+
+        this.randomizeArmor();
+        this.randomizeWeapons();
+        this.randomizeGear();
+        this.randomize();
+    }
+
+    //TODO: Doesn't handle cyberware with requirements that aren't slotted directly into the requirement (e.g. Sensor Array)
+    //TODO: Throw error if the cyberware would reduce humanity below 0
+    installCyberware({ cyberware }: { cyberware: Cyberware }) {
+        // this.cyberware[location] = cyberware;
+
+        if (cyberware.type === CyberwareType.Speedware && this.hasSpeedware()) {
+            throw new Error(`Cannot install ${cyberware.name}.  Only one piece of speedware is allowed.`);
+        }
+
+        const possible_locations = cyberware.body_location;
+        const required_cyberware_name = cyberware.required_cyberware;
+        const required_slots = cyberware.slots_required;
+
+
+        const required_cyberware = this.findCyberware(required_cyberware_name);
+        // console.log(required_cyberware, required_cyberware_name != "", required_cyberware.length <= 0)
+
+        if (required_cyberware_name != "" && required_cyberware.length <= 0) {
+            throw new Error(`Cannot install ${cyberware.name} without ${required_cyberware_name}`);
+        }
+        if (cyberware.must_be_paired && required_cyberware.length < 2) {
+            throw new Error(`Cannot install ${cyberware.name} without two ${required_cyberware_name}`);
+        }
+
+        //if there are requirements and they've been installed
+        if (required_cyberware_name != "" && required_cyberware.length > 0) {
+            const available_foundational_cyberware = required_cyberware.filter(cyberware => {
+                const used_slots = (cyberware.slotted_options).reduce((acc, item) => acc + item.slots_required, 0);
+                const available_slot_count = cyberware.slots_available - used_slots;
+                return available_slot_count >= required_slots
+            });
+            if (available_foundational_cyberware.length <= 0) {
+                throw new Error(`Cannot install ${cyberware.name}.  Foundational cyberware has no available slots.`);
+            }
+            const random_foundational_cyberware = available_foundational_cyberware[Math.floor(Math.random() * available_foundational_cyberware.length)];
+            random_foundational_cyberware.slotted_options.push(cyberware);
+            return;
+        }
+
+        //if there's no requirements, try to install it as a foundational cyberware
+        let random_location = possible_locations[Math.floor(Math.random() * possible_locations.length)];
+        let current_cyberware_in_location = this.cyberware[random_location];
+
+        if (current_cyberware_in_location === undefined && cyberware.can_install_in_meat) {
+            this.cyberware[random_location] = cyberware;
+            return;
+        } else if (current_cyberware_in_location === undefined && !cyberware.can_install_in_meat) {
+            throw new Error(`Cannot install ${cyberware.name} in meat`);
+        }
+        if (Array.isArray(this.cyberware[random_location])) {
+            const used_slots = (this.cyberware[random_location] as Cyberware[]).reduce((acc, item) => acc + item.slots_required, 0);
+            const available_slot_count = Open_Slots_Per_Location[random_location] - used_slots;
+
+            if (available_slot_count >= required_slots) {
+                (this.cyberware[random_location] as Cyberware[]).push(cyberware);
+                return;
+            }
+            else {
+                throw new Error(`Cannot install ${cyberware.name} in ${random_location}.  Not enough empty slots.`);
+            }
+        }
+    }
+    hasSpeedware(): boolean {
+        const neural_link = this.findCyberware("Neural Link");
+        for (const cyberware of neural_link) {
+            if (cyberware.slotted_options) {
+                for (const option of cyberware.slotted_options) {
+                    if (option.type === CyberwareType.Speedware) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    findCyberware(cyberware_name: string): Cyberware[] {
+        let cyberware_list: Cyberware[] = [];
+        for (const location of Object.keys(this.cyberware)) {
+            const cyberware = this.cyberware[location];
+            if (cyberware === undefined) {
+                continue;
+            } else if (Array.isArray(cyberware)) {
+                for (const item of cyberware) {
+                    if (item.name === cyberware_name) {
+                        cyberware_list.push(item);
+                    }
+                }
+            } else if (cyberware.name === cyberware_name) {
+                cyberware_list.push(cyberware);
+            }
+            else if (cyberware.slotted_options?.length > 0) {
+                for (const option of cyberware.slotted_options) {
+                    if (option.name === cyberware_name) {
+                        cyberware_list.push(option);
+                    }
+                }
+            }
+        }
+        return cyberware_list;
+    }
+
+
+    getHumanityLoss(): number {
+        let humanity_loss = 0;
+
+        for (const location of Object.keys(this.cyberware)) {
+            const cyberware = this.cyberware[location];
+            if (cyberware === undefined) {
+                continue;
+            } else if (Array.isArray(cyberware)) {
+                for (const item of cyberware) {
+                    humanity_loss += item.getHumanityLoss();
+                }
+            } else {
+                humanity_loss += cyberware.getHumanityLoss();
+            }
+        }
+
         return humanity_loss;
     }
     getRandomGearItem({ max_cost = this.cash }: { max_cost?: number } = {}) {
@@ -99,7 +241,7 @@ export class Character {
         const randomIndex = Math.floor(Math.random() * gear.length);
         return gear[randomIndex];
     }
-    getRandomArmor(armorType: "all" | "include shield" | "shield only" = "all"): Armor | "None" {
+    getRandomArmor({ armorType = "all", max_cost = this.cash }: { armorType?: "all" | "include shield" | "shield only"; max_cost?: number } = {}): Armor | "None" {
         let availableArmor: (Armor | "None")[] = ["None"];
         if (armorType === "all" || armorType === "include shield") {
             availableArmor.push(...ArmorList.filter(armor => armor.armor_type !== "Bulletproof Shield"));
@@ -107,6 +249,7 @@ export class Character {
         if (armorType === "shield only" || armorType === "include shield") {
             availableArmor.push(...ArmorList.filter(armor => armor.armor_type === "Bulletproof Shield"));
         }
+        availableArmor = availableArmor.filter(armor => armor == "None" || armor.cost <= max_cost);
         const randomIndex = Math.floor(Math.random() * availableArmor.length);
         return availableArmor[randomIndex];
     }
@@ -145,13 +288,15 @@ export class Character {
         let armor_cost = 0;
         do {
             armor_cost = 0;
-            body_armor = this.getRandomArmor();
+            body_armor = this.getRandomArmor({ max_cost: cash - armor_cost });
             armor_cost += body_armor == "None" ? 0 : body_armor.cost;
             if (body_armor != "None" && body_armor.armor_type === "Bodyweight Suit") {
                 head_armor = body_armor
             }
             else {
-                head_armor = this.getRandomArmor();
+                do {
+                    head_armor = this.getRandomArmor({ max_cost: cash - armor_cost });
+                } while (head_armor != "None" && head_armor.armor_type === "Bodyweight Suit")
                 armor_cost += head_armor == "None" ? 0 : head_armor.cost;
                 // if (head_armor != "None" && head_armor.armor_type === "Bodyweight Suit") {
                 //     body_armor = head_armor
@@ -179,7 +324,11 @@ export class Character {
         }
     }
     randomizeGear() {
-        while (this.cash > 0 && Math.random() > 0.5) {
+        while (this.cash > 0) {
+            const rand = Math.random();
+            if (rand < 0.25) {
+                break;
+            }
             try {
                 const gearItem: GearItem = this.getRandomGearItem({ max_cost: this.cash });
                 this.gear.push(gearItem);
