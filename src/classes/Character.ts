@@ -70,7 +70,7 @@ export class Character {
     reputation: number = 0
     reputation_events: string[] = []
 
-    cyberware: Record<string, Cyberware | undefined | Cyberware[]> = {}
+    cyberware: Record<string, Cyberware | undefined> = {}
 
     creation_method: CreationMethod = "complete"
 
@@ -88,26 +88,94 @@ export class Character {
         for (const location of Object.values(BodyLocation)) {
             this.cyberware[location] = undefined;
         }
-        this.cyberware["Internal"] = [];
-        this.cyberware["External"] = [];
-        this.cyberware["Fashionware"] = [];
-        this.cyberware["Borgware"] = [];
+        // these are basic placeholders locations that don't have foundational cyberware
+        this.cyberware["Internal"] = new Cyberware({
+            name: "Internal Body Cyberware",
+            type: CyberwareType.InternalBodyCyberware,
+            body_location: [BodyLocation.Internal],
+            slots_available: 7,
+            placeholder: true
+        });
+        this.cyberware["External"] = new Cyberware({
+            name: "External Body Cyberware",
+            type: CyberwareType.ExternalBodyCyberware,
+            body_location: [BodyLocation.External],
+            slots_available: 7,
+            placeholder: true
+        });
+        this.cyberware["Fashionware"] = new Cyberware({
+            name: "Fashionware",
+            type: CyberwareType.Fashionware,
+            body_location: [BodyLocation.Fashionware],
+            slots_available: 7,
+            placeholder: true
+        });
+        this.cyberware["Borgware"] = new Cyberware({
+            name: "Borgware",
+            type: CyberwareType.Borgware,
+            body_location: [BodyLocation.Borgware],
+            slots_available: 7,
+            placeholder: true
+        });
 
-        const neural_link = CyberwareList.find(cyberware => cyberware.name === "Neural Link") as Cyberware;
-        const chipware_socket = CyberwareList.find(cyberware => cyberware.name === "Chipware Socket") as Cyberware;
-        this.installCyberware({ cyberware: neural_link });
-        this.installCyberware({ cyberware: chipware_socket });
-        for (let i = 0; i < 10; i++) {
-            try {
-                const random_cyberware = CyberwareList[Math.floor(Math.random() * CyberwareList.length)];
-                this.installCyberware({ cyberware: random_cyberware });
-            } catch (e) {
-                console.error(e + "")
+        // const neural_link = CyberwareList.find(cyberware => cyberware.name === "Neural Link") as Cyberware;
+        // const chipware_socket = CyberwareList.find(cyberware => cyberware.name === "Chipware Socket") as Cyberware;
+        // this.installCyberware({ cyberware: neural_link });
+        // this.installCyberware({ cyberware: chipware_socket });
+
+        try {
+            let cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Cybereye");
+            if (cyberware_prototype !== undefined) {
+                const cyberware = new Cyberware({ ...cyberware_prototype })
+                this.installCyberware({ cyberware: cyberware });
             }
+
+            cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Cybereye");
+            if (cyberware_prototype !== undefined) {
+                const cyberware = new Cyberware({ ...cyberware_prototype })
+                this.installCyberware({ cyberware: cyberware });
+            }
+
+            // cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Cybereye");
+            // if (cyberware_prototype !== undefined) {
+            //     const cyberware = new Cyberware({ ...cyberware_prototype })
+            //     this.installCyberware({ cyberware: cyberware });
+            // }
+
+            cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Dartgun");
+            if (cyberware_prototype !== undefined) {
+                const cyberware = new Cyberware({ ...cyberware_prototype })
+                this.installCyberware({ cyberware: cyberware });
+            }
+
+
+            cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Anti-Dazzle");
+            if (cyberware_prototype !== undefined) {
+                const cyberware = new Cyberware({ ...cyberware_prototype })
+                this.installCyberware({ cyberware: cyberware });
+            }
+
+        } catch (e) {
+            console.error(e.message)
         }
 
+        // cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Cybereye");
+        // if (cyberware_prototype !== undefined) {
+        //     const cyberware = new Cyberware({ ...cyberware_prototype })
+        //     this.installCyberware({ cyberware: cyberware });
+        // }
 
-        console.debug(this.cyberware.Brain)
+        // console.debug(this.cyberware)
+
+        // const cybereyeR = new Cyberware(CyberwareList.find(cyberware => cyberware.name === "Cybereye") as Cyberware);
+        // for (let i = 0; i < 100; i++) {
+        //     try {
+        //         const random_cyberware = CyberwareList[Math.floor(Math.random() * CyberwareList.length)];
+        //         this.installCyberware({ cyberware: random_cyberware });
+        //     } catch (e) {
+        //         console.error(e + "")
+        //     }
+        // }
 
         this.randomizeArmor();
         this.randomizeWeapons();
@@ -123,59 +191,65 @@ export class Character {
         if (cyberware.type === CyberwareType.Speedware && this.hasSpeedware()) {
             throw new Error(`Cannot install ${cyberware.name}.  Only one piece of speedware is allowed.`);
         }
+        const max_installs = cyberware.max_installs;
+        const current_installs = this.findCyberware(cyberware.name).length;
+        if (max_installs > 0 && current_installs >= max_installs) {
+            throw new Error(`Cannot install ${cyberware.name}.  Can only install a maximum of ${max_installs}.`);
+        }
 
         const possible_locations = cyberware.body_location;
         const required_cyberware_name = cyberware.required_cyberware;
         const required_slots = cyberware.slots_required;
 
-
         const required_cyberware = this.findCyberware(required_cyberware_name);
-        // console.log(required_cyberware, required_cyberware_name != "", required_cyberware.length <= 0)
 
         if (required_cyberware_name != "" && required_cyberware.length <= 0) {
             throw new Error(`Cannot install ${cyberware.name} without ${required_cyberware_name}`);
         }
         if (cyberware.must_be_paired && required_cyberware.length < 2) {
-            throw new Error(`Cannot install ${cyberware.name} without two ${required_cyberware_name}`);
+            throw new Error(`Cannot install ${cyberware.name} without 2x ${required_cyberware_name}`);
         }
 
         //if there are requirements and they've been installed
         if (required_cyberware_name != "" && required_cyberware.length > 0) {
             const available_foundational_cyberware = required_cyberware.filter(cyberware => {
-                const used_slots = (cyberware.slotted_options).reduce((acc, item) => acc + item.slots_required, 0);
-                const available_slot_count = cyberware.slots_available - used_slots;
+                const available_slot_count = cyberware.getOpenSlots();
                 return available_slot_count >= required_slots
             });
-            if (available_foundational_cyberware.length <= 0) {
-                throw new Error(`Cannot install ${cyberware.name}.  Foundational cyberware has no available slots.`);
+            if (available_foundational_cyberware.length <= 0 || (cyberware.must_be_paired && available_foundational_cyberware.length <= 1)) {
+                throw new Error(`Cannot install ${cyberware.name}.  Foundational cyberware doesn't have enough open slots.`);
             }
-            const random_foundational_cyberware = available_foundational_cyberware[Math.floor(Math.random() * available_foundational_cyberware.length)];
-            random_foundational_cyberware.slotted_options.push(cyberware);
+            if (this.cash < cyberware.cost) {
+                throw new Error(`Cannot install ${cyberware.name}.  Not enough cash.`);
+            }
+
+            available_foundational_cyberware.sort(() => Math.random() - 0.5);
+            available_foundational_cyberware[0].pushOption(cyberware);
+            this.cash -= cyberware.cost;
+            if (cyberware.must_be_paired) {
+                available_foundational_cyberware[1].pushOption(cyberware);
+                this.cash -= cyberware.cost;
+            }
             return;
         }
 
         //if there's no requirements, try to install it as a foundational cyberware
-        let random_location = possible_locations[Math.floor(Math.random() * possible_locations.length)];
-        let current_cyberware_in_location = this.cyberware[random_location];
-
-        if (current_cyberware_in_location === undefined && cyberware.can_install_in_meat) {
-            this.cyberware[random_location] = cyberware;
-            return;
-        } else if (current_cyberware_in_location === undefined && !cyberware.can_install_in_meat) {
-            throw new Error(`Cannot install ${cyberware.name} in meat`);
-        }
-        if (Array.isArray(this.cyberware[random_location])) {
-            const used_slots = (this.cyberware[random_location] as Cyberware[]).reduce((acc, item) => acc + item.slots_required, 0);
-            const available_slot_count = Open_Slots_Per_Location[random_location] - used_slots;
-
-            if (available_slot_count >= required_slots) {
-                (this.cyberware[random_location] as Cyberware[]).push(cyberware);
+        possible_locations.sort(() => Math.random() - 0.5);
+        for (let random_location of possible_locations) {
+            let current_cyberware_in_location = this.cyberware[random_location];
+            if (current_cyberware_in_location === undefined && cyberware.can_install_in_meat) {
+                if (this.cash < cyberware.cost) {
+                    throw new Error(`Cannot install ${cyberware.name}.  Not enough cash.`);
+                }
+                this.cyberware[random_location] = cyberware;
+                this.cash -= cyberware.cost;
                 return;
-            }
-            else {
-                throw new Error(`Cannot install ${cyberware.name} in ${random_location}.  Not enough empty slots.`);
+            } else if (current_cyberware_in_location === undefined && !cyberware.can_install_in_meat) {
+                throw new Error(`Cannot install ${cyberware.name} in meat`);
             }
         }
+
+        throw new Error(`Cannot install ${cyberware.name}.  No locations available.`);
     }
     hasSpeedware(): boolean {
         const neural_link = this.findCyberware("Neural Link");
@@ -197,22 +271,10 @@ export class Character {
             const cyberware = this.cyberware[location];
             if (cyberware === undefined) {
                 continue;
-            } else if (Array.isArray(cyberware)) {
-                for (const item of cyberware) {
-                    if (item.name === cyberware_name) {
-                        cyberware_list.push(item);
-                    }
-                }
             } else if (cyberware.name === cyberware_name) {
                 cyberware_list.push(cyberware);
             }
-            else if (cyberware.slotted_options?.length > 0) {
-                for (const option of cyberware.slotted_options) {
-                    if (option.name === cyberware_name) {
-                        cyberware_list.push(option);
-                    }
-                }
-            }
+            cyberware_list = cyberware_list.concat(cyberware.findCyberwareInSlots(cyberware_name));
         }
         return cyberware_list;
     }

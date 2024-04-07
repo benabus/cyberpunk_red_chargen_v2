@@ -310,7 +310,49 @@ const cash = ref(char.value.cash);
         </CPTable>
 
         <hr class="my-2" />
+
+        <CPTable title="Cyberware" :headers="['Name', 'Description', 'Cost', 'Humanity Loss']">
+            <template v-for="(cyberware, location) in char.cyberware">
+                <template v-if="!(cyberware === undefined || (cyberware.placeholder && cyberware.slotted_options.length == 0))">
+                    <CPRow>
+                        <td colspan="4" class="font-bold p-2">{{ location }}</td>
+                    </CPRow>
+                    <CPRow v-if="cyberware === undefined || (cyberware.placeholder && cyberware.slotted_options.length == 0)">
+                        <td colspan="4" class="text-center">No Cyberware installed in {{ location }}</td>
+                    </CPRow>
+                    <template v-else-if="cyberware.placeholder === false">
+                        <CPRow :key="`cyberware_${location}`">
+                            <CPCell>{{ cyberware.name }}</CPCell>
+                            <CPCell>{{ cyberware.description }}</CPCell>
+                            <CPCell class="text-right">{{ cyberware.cost }}eb</CPCell>
+                            <CPCell>{{ cyberware.humanity_loss }}</CPCell>
+                        </CPRow>
+                    </template>
+                    <template v-if="cyberware?.slotted_options && cyberware.slotted_options.length > 0" v-for="(option, index) in cyberware.slotted_options" :key="`cyberware_${location}_${index}`">
+                        <CPRow>
+                            <CPCell>{{ option.name }}</CPCell>
+                            <CPCell>{{ option.description }}</CPCell>
+                            <CPCell class="text-right">{{ option.cost }}eb</CPCell>
+                            <CPCell>{{ option.humanity_loss }}</CPCell>
+                        </CPRow>
+                        <template v-if="option?.slotted_options && option.slotted_options.length > 0" v-for="(option2, index2) in option.slotted_options" :key="`cyberware_option_${location}_${index}_${index2}`">
+                            <CPRow>
+                                <CPCell>{{ option2.name }}</CPCell>
+                                <CPCell>{{ option2.description }}</CPCell>
+                                <CPCell class="text-right">{{ option2.cost }}eb</CPCell>
+                                <CPCell>{{ option2.humanity_loss }}</CPCell>
+                            </CPRow>
+                        </template>
+                    </template>
+                </template>
+            </template>
+        </CPTable>
+
+        <hr class="my-2" />
         <TextFieldRow :values="{ 'Cash': cash.toString() + 'eb' }" />
+
+
+
 
         <br /><br /><br />
 

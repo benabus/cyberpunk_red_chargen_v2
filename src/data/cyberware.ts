@@ -33,21 +33,72 @@ export enum CyberwareType {
 export type FoundationalCyberware = "Neural Link" | "Cybereye" | "Cyberaudio Suite" | "Cyberarm" | "Cyberleg" | "Chipware Socket" | "Meat";
 
 export class Cyberware {
-    constructor(
-        public name: string,
-        public type: CyberwareType,
-        public description: string,
-        public cost: number,
-        public humanity_loss: number,
-        public body_location: string[],
-        public install_location: string,
-        public slots_required: number,
-        public slots_available: number,
-        public required_cyberware: string,
-        public slotted_options: Cyberware[],
-        public must_be_paired: boolean,
-        public can_install_in_meat: boolean
-    ) { }
+    name: string;
+    type: CyberwareType;
+    description: string = "";
+    cost: number = 0;
+    humanity_loss: number = 0;
+    body_location: string[] = [];
+    install_location: string = "";
+    slots_required: number = 1;
+    slots_available: number = 0;
+    required_cyberware: string = "";
+    slotted_options: Cyberware[] = [];
+    must_be_paired: boolean = false;
+    can_install_in_meat: boolean = false;
+    max_installs: number = 0;
+    placeholder: boolean = false;
+    constructor({
+        name,
+        type,
+        cost = 0,
+        description = "",
+        humanity_loss = 0,
+        body_location = [],
+        install_location = "",
+        slots_required = 1,
+        slots_available = 0,
+        required_cyberware = "",
+        slotted_options = [],
+        must_be_paired = false,
+        can_install_in_meat = false,
+        max_installs = 0,
+        placeholder = false
+    }: {
+        name: string,
+        type: CyberwareType,
+        description?: string,
+        cost?: number,
+        humanity_loss?: number,
+        body_location?: string[],
+        install_location?: string,
+        slots_required?: number,
+        slots_available?: number,
+        required_cyberware?: string,
+        slotted_options?: Cyberware[],
+        must_be_paired?: boolean,
+        can_install_in_meat?: boolean,
+        max_installs?: number,
+        placeholder?: boolean
+    }) {
+        this.name = name;
+        this.type = type;
+        this.description = description;
+        this.cost = cost;
+        this.humanity_loss = humanity_loss;
+        this.body_location = body_location;
+        this.install_location = install_location;
+        this.slots_required = slots_required;
+        this.slots_available = slots_available;
+        this.required_cyberware = required_cyberware;
+        this.slotted_options = [...slotted_options];
+        // this.slotted_options = slotted_options;
+        this.must_be_paired = must_be_paired;
+        this.can_install_in_meat = can_install_in_meat;
+        this.max_installs = max_installs;
+        this.placeholder = placeholder;
+    }
+
     getHumanityLoss(): number {
         let humanityLoss = this.humanity_loss;
         humanityLoss += this.slotted_options.reduce((acc, option) => {
@@ -55,11 +106,68 @@ export class Cyberware {
         }, 0);
         return humanityLoss
     }
+    getOpenSlots(): number {
+        let slots = this.slots_available;
+        slots -= this.slotted_options.reduce((acc, option) => {
+            return acc + option.slots_required;
+        }, 0);
+        return slots
+    }
+    pushOption(option: Cyberware) {
+        if (this.getOpenSlots() < option.slots_required) {
+            throw new Error("Not enough slots available for this option")
+        }
+        this.slotted_options.push(option);
+    }
+    findCyberwareInSlots(name: string): Cyberware[] {
+        let cyberware_list: Cyberware[] = [];
+        for (let item of this.slotted_options) {
+            if (item.name === name) {
+                cyberware_list.push(item);
+            }
+            cyberware_list = cyberware_list.concat(item.findCyberwareInSlots(name));
+        }
+        return cyberware_list;
+    }
 }
 
-
+// const placeholders = [
+//     {
+//         name: "Fashionware",
+//         type: CyberwareType.Fashionware,
+//         description: "Fashionware is a catch-all term for cosmetic and aesthetic cyberware.",
+//         body_location: [BodyLocation.Fashionware],
+//         slots_available: 7,
+//         placeholder: true
+//     },
+//     {
+//         name: "Borgware",
+//         type: CyberwareType.Borgware,
+//         description: "Borgware is a catch-all term for cyberware that replaces or enhances a body part.",
+//         body_location: [BodyLocation.Borgware],
+//         slots_available: 7,
+//         placeholder: true
+//     },
+//     {
+//         name: "Internal Body Cyberware",
+//         type: CyberwareType.InternalBodyCyberware,
+//         description: "Internal Body Cyberware is a catch-all term for cyberware that is installed inside the body.",
+//         body_location: [BodyLocation.Internal],
+//         slots_available: 7,
+//         placeholder: true
+//     },
+//     {
+//         name: "External Body Cyberware",
+//         type: CyberwareType.ExternalBodyCyberware,
+//         description: "External Body Cyberware is a catch-all term for cyberware that is installed outside the body.",
+//         body_location: [BodyLocation.External],
+//         slots_available: 7,
+//         placeholder: true
+//     },
+// ]
 
 const fashionware = [
+
     {
         name: "Biomonitor",
         type: CyberwareType.Fashionware,
@@ -68,12 +176,8 @@ const fashionware = [
         humanity_loss: 0,
         body_location: [BodyLocation.Fashionware],
         install_location: "Mall",
-        slots_required: 1,
-        slots_available: 0,
-        required_cyberware: "",
-        slotted_options: [],
-        must_be_paired: false,
-        can_install_in_meat: false
+        required_cyberware: "Fashionware",
+        max_installs: 1,
     },
     {
         name: "Chemskin",
@@ -83,27 +187,19 @@ const fashionware = [
         humanity_loss: 0,
         body_location: [BodyLocation.Fashionware],
         install_location: "Mall",
-        slots_required: 1,
-        slots_available: 0,
-        required_cyberware: "",
-        slotted_options: [],
-        must_be_paired: false,
-        can_install_in_meat: false
+        required_cyberware: "Fashionware",
+        max_installs: 1,
     },
     {
         name: "EMP Threading",
         type: CyberwareType.Fashionware,
-        description: "Popularized by the media sensation UR, these thin silver lines run in circuit-like patterns across the body. Many people believe they act as a 'Faraday cage' to protect you from radiation and EMP effects but so far there’s no scientific backing to these claims. But they sure do look cool. Most people wear EMP Threading as a fashion statement.",
+        description: "Popularized by the media sensation UR, these thin silver lines run in circuit-like patterns across the body. Many people believe they act as a 'Faraday cage' to protect you from radiation and EMP effects but so far there's no scientific backing to these claims. But they sure do look cool. Most people wear EMP Threading as a fashion statement.",
         cost: 10,
         humanity_loss: 0,
         body_location: [BodyLocation.Fashionware],
         install_location: "Mall",
-        slots_required: 1,
-        slots_available: 0,
-        required_cyberware: "",
-        slotted_options: [],
-        must_be_paired: false,
-        can_install_in_meat: false
+        required_cyberware: "Fashionware",
+        max_installs: 1,
     },
     {
         name: "Light Tattoo",
@@ -113,12 +209,7 @@ const fashionware = [
         humanity_loss: 0,
         body_location: [BodyLocation.Fashionware],
         install_location: "Mall",
-        slots_required: 1,
-        slots_available: 0,
-        required_cyberware: "",
-        slotted_options: [],
-        must_be_paired: false,
-        can_install_in_meat: false
+        required_cyberware: "Fashionware",
     },
     {
         name: "Shift Tacts",
@@ -128,12 +219,8 @@ const fashionware = [
         humanity_loss: 0,
         body_location: [BodyLocation.Fashionware],
         install_location: "Mall",
-        slots_required: 1,
-        slots_available: 0,
-        required_cyberware: "",
-        slotted_options: [],
-        must_be_paired: false,
-        can_install_in_meat: false
+        required_cyberware: "Fashionware",
+        max_installs: 1,
     },
     {
         name: "Skinwatch",
@@ -143,12 +230,8 @@ const fashionware = [
         humanity_loss: 0,
         body_location: [BodyLocation.Fashionware],
         install_location: "Mall",
-        slots_required: 1,
-        slots_available: 0,
-        required_cyberware: "",
-        slotted_options: [],
-        must_be_paired: false,
-        can_install_in_meat: false
+        required_cyberware: "Fashionware",
+        max_installs: 1,
     },
     {
         name: "Techhair",
@@ -158,12 +241,8 @@ const fashionware = [
         humanity_loss: 0,
         body_location: [BodyLocation.Fashionware],
         install_location: "Mall",
-        slots_required: 1,
-        slots_available: 0,
-        required_cyberware: "",
-        slotted_options: [],
-        must_be_paired: false,
-        can_install_in_meat: false
+        required_cyberware: "Fashionware",
+        max_installs: 1,
     }
 ];
 
@@ -179,10 +258,8 @@ const neuralware = [
         install_location: "Clinic",
         slots_required: 0,
         slots_available: 5,
-        required_cyberware: "",
-        slotted_options: [],
-        must_be_paired: false,
-        can_install_in_meat: true
+        can_install_in_meat: true,
+        max_installs: 1,
     },
     {
         name: "Braindance Recorder",
@@ -192,12 +269,8 @@ const neuralware = [
         humanity_loss: 7,
         body_location: [BodyLocation.Brain],
         install_location: "Clinic",
-        slots_required: 1,
-        slots_available: 0,
         required_cyberware: "Neural Link",
-        slotted_options: [],
-        must_be_paired: false,
-        can_install_in_meat: false
+        max_installs: 1,
     },
     {
         name: "Chipware Socket",
@@ -207,12 +280,8 @@ const neuralware = [
         humanity_loss: 7,
         body_location: [BodyLocation.Brain],
         install_location: "Clinic",
-        slots_required: 1,
-        slots_available: 1, // Chipware doesn't take up Neural Link Option Slot
+        slots_available: 1,
         required_cyberware: "Neural Link",
-        slotted_options: [],
-        must_be_paired: false,
-        can_install_in_meat: false
     },
     {
         name: "Interface Plugs",
@@ -222,12 +291,7 @@ const neuralware = [
         humanity_loss: 7,
         body_location: [BodyLocation.Brain],
         install_location: "Clinic",
-        slots_required: 1,
-        slots_available: 0, // Chipware doesn't take up Neural Link Option Slot
         required_cyberware: "Neural Link",
-        slotted_options: [],
-        must_be_paired: false,
-        can_install_in_meat: false
     },
     {
         name: "Kerenzikov",
@@ -237,12 +301,8 @@ const neuralware = [
         humanity_loss: 14,
         body_location: [BodyLocation.Brain],
         install_location: "Clinic",
-        slots_required: 1,
-        slots_available: 0, // Chipware doesn't take up Neural Link Option Slot
         required_cyberware: "Neural Link",
-        slotted_options: [],
-        must_be_paired: false,
-        can_install_in_meat: false
+        max_installs: 1,
     },
     {
         name: "Sandevistan",
@@ -252,12 +312,8 @@ const neuralware = [
         humanity_loss: 7,
         body_location: [BodyLocation.Brain],
         install_location: "Clinic",
-        slots_required: 1,
-        slots_available: 0, // Chipware doesn't take up Neural Link Option Slot
         required_cyberware: "Neural Link",
-        slotted_options: [],
-        must_be_paired: false,
-        can_install_in_meat: false
+        max_installs: 1,
     },
     // Chipware options
     {
@@ -268,12 +324,7 @@ const neuralware = [
         humanity_loss: 3,
         body_location: [BodyLocation.Brain],
         install_location: "N/A",
-        slots_required: 1,
-        slots_available: 0, // Each Chipware option takes up its own slot
         required_cyberware: "Chipware Socket",
-        slotted_options: [],
-        must_be_paired: false,
-        can_install_in_meat: false
     },
     {
         name: "Memory Chip",
@@ -283,12 +334,7 @@ const neuralware = [
         humanity_loss: 0,
         body_location: [BodyLocation.Brain],
         install_location: "N/A",
-        slots_required: 1,
-        slots_available: 0, // Each Chipware option takes up its own slot
         required_cyberware: "Chipware Socket",
-        slotted_options: [],
-        must_be_paired: false,
-        can_install_in_meat: false
     },
     {
         name: "Olfactory Boost",
@@ -298,22 +344,143 @@ const neuralware = [
         humanity_loss: 7,
         body_location: [BodyLocation.Brain],
         install_location: "N/A",
-        slots_required: 1,
-        slots_available: 0, // Each Chipware option takes up its own slot
         required_cyberware: "Chipware Socket",
-        slotted_options: [],
-        must_be_paired: false,
-        can_install_in_meat: false
+    },
+    {
+        name: "Pain Editor",
+        type: CyberwareType.Chipware,
+        description: "While installed into a Chipware Socket, a Pain Editor shuts off the user's pain receptors dynamically, allowing them to ignore the effects of the Seriously Wounded Wound State. Requires Chipware Socket.",
+        cost: 1000,
+        humanity_loss: 14,
+        body_location: [BodyLocation.Brain],
+        install_location: "N/A",
+        required_cyberware: "Chipware Socket",
+    },
+    {
+        name: "Skill Chip",
+        type: CyberwareType.Chipware,
+        description: "While installed into a Chipware Socket, a Skill Chip makes the Skill it was made for trained for the user at +3, unless the user's Skill was already trained higher than +3, in which case it does nothing. Skill Chips for (x2) cost Skills are 1,000eb, chips for all other skills are 500eb. Requires Chipware Socket.",
+        cost: 500,
+        humanity_loss: 7,
+        body_location: [BodyLocation.Brain],
+        install_location: "N/A",
+        required_cyberware: "Chipware Socket",
+    },
+    {
+        name: "Tactile Boost",
+        type: CyberwareType.Chipware,
+        description: "While installed into a Chipware Socket, it boosts the user's sense of touch, allowing them to detect motion within 20m/yds of them, as long as their hand is touching a surface. While in use as a motion detector, that hand can't be used to do anything else. Requires Chipware Socket.",
+        cost: 100,
+        humanity_loss: 7,
+        body_location: [BodyLocation.Brain],
+        install_location: "N/A",
+        required_cyberware: "Chipware Socket",
+    }
+];
+const cyberoptics = [
+    {
+        name: "Cybereye",
+        type: CyberwareType.Cyberoptics,
+        description: "All following options are installed in an artificial eye that replaces a meat one. Each Cybereye has 3 Option Slots for Cybereye Options. Some options must be paired to work properly (purchased twice and installed in two different Cybereyes on a user. Humanity Loss is calculated separately for each purchase).",
+        cost: 100,
+        humanity_loss: 7,
+        body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
+        install_location: "Clinic",
+        slots_available: 3,
+        can_install_in_meat: true
+    },
+    {
+        name: "Anti-Dazzle",
+        type: CyberwareType.Cyberoptics,
+        description: "Cybereye Option. User is immune to blindness or other effects caused by dangerous flashes of light, like those of a flashbang. Requires two Cybereyes and must be paired.",
+        cost: 100,
+        humanity_loss: 2,
+        body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
+        install_location: "Mall",
+        required_cyberware: "Cybereye",
+        must_be_paired: true,
+    },
+    {
+        name: "Chyron",
+        type: CyberwareType.Cyberoptics,
+        description: "Cybereye Option. Projects a tiny subscreen into user's normal field of vision for messages, video, etc. from a user's other cyberware or electronics. Picture in a picture for real life. Requires a Cybereye.",
+        cost: 100,
+        humanity_loss: 2,
+        body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
+        install_location: "Mall",
+        required_cyberware: "Cybereye",
+    },
+
+    {
+        name: "Color Shift",
+        type: CyberwareType.Cyberoptics,
+        description: "Cybereye Option. Cosmetic upgrade allows unlimited color and pattern changes to be made as an Action. Eye can optionally be temperature sensitive or reactant to hormone changes in the body. Requires a Cybereye.",
+        cost: 100,
+        humanity_loss: 2,
+        body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
+        install_location: "Mall",
+        required_cyberware: "Cybereye",
+    },
+    {
+        name: "Dartgun",
+        type: CyberwareType.Cyberoptics,
+        description: "Cybereye Option. Dartgun Exotic Weapon, with only a single shot in the clip, concealed inside the Cybereye. Requires a Cybereye and takes 3 Option Slots.",
+        cost: 500,
+        humanity_loss: 2,
+        body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
+        install_location: "Clinic",
+        slots_required: 3,
+        required_cyberware: "Cybereye",
+    },
+    {
+        name: "Image Enhance",
+        type: CyberwareType.Cyberoptics,
+        description: "Cybereye Option. User adds +2 to their Perception, Lip Reading, and Conceal/Reveal Object Skills for Checks which include sight. Requires two Cybereyes and must be paired. Multiple installations of this option provide user no additional benefit.",
+        cost: 500,
+        humanity_loss: 3,
+        body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
+        install_location: "Mall",
+        required_cyberware: "Cybereye",
+        must_be_paired: true,
+    },
+    {
+        name: "Tactile Boost",
+        type: CyberwareType.Cyberoptics,
+        description: "Cybereye Option. User adds +2 to their Perception, Lip Reading, and Conceal/Reveal Object Skills for Checks which include sight. Requires two Cybereyes and must be paired. Multiple installations of this option provide user no additional benefit.",
+        cost: 100,
+        humanity_loss: 7,
+        body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
+        install_location: "Mall",
+        required_cyberware: "Cybereye",
+        must_be_paired: true,
+    },
+    {
+        name: "Low Light/Infrared/UV",
+        type: CyberwareType.Cyberoptics,
+        description: "Cybereye Option. Reduces penalties imposed by darkness and other intangible obscurment, like smoke, fog, etc. to 0. User can distinguish hot meat from cold metal but cannot see through anything that could provide cover. Requires two Cybereyes, must be paired, and takes 2 Option Slots per Cybereye.",
+        cost: 500,
+        humanity_loss: 3,
+        body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
+        install_location: "Mall",
+        slots_required: 2,
+        required_cyberware: "Cybereye",
+        must_be_paired: true,
     }
 ];
 
 
 let all_cyberware: Cyberware[] = []
+// for (let item of placeholders) {
+//     all_cyberware.push(new Cyberware({ ...item }))
+// }
 for (let item of fashionware) {
-    all_cyberware.push(new Cyberware(item.name, item.type, item.description, item.cost, item.humanity_loss, item.body_location, item.install_location, item.slots_required, item.slots_available, item.required_cyberware, item.slotted_options, item.must_be_paired, item.can_install_in_meat))
+    all_cyberware.push(new Cyberware({ ...item }))
 }
 for (let item of neuralware) {
-    all_cyberware.push(new Cyberware(item.name, item.type, item.description, item.cost, item.humanity_loss, item.body_location, item.install_location, item.slots_required, item.slots_available, item.required_cyberware, item.slotted_options, item.must_be_paired, item.can_install_in_meat))
+    all_cyberware.push(new Cyberware({ ...item }))
+}
+for (let item of cyberoptics) {
+    all_cyberware.push(new Cyberware({ ...item }))
 }
 
 export { all_cyberware as cyberware }
