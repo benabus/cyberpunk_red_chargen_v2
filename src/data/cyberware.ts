@@ -666,6 +666,143 @@ const cyberaudio = [
     }
 ];
 
+const internal_cyberware = [
+    {
+        name: "AudioVox",
+        type: CyberwareType.InternalBodyCyberware,
+        description: "Vocal synthesizer. User adds +2 to their Acting skill and also adds +2 to their Play Instrument Skill while singing. Multiple installations of this option provide user no additional benefit.",
+        cost: 500,
+        humanity_loss: 3,
+        body_location: [BodyLocation.Internal],
+        install_location: "Clinic",
+        max_installs: 1,
+        required_cyberware: "Internal Body Cyberware",
+    },
+    {
+        name: "Contraceptive Implant",
+        type: CyberwareType.InternalBodyCyberware,
+        description: "Implant prevents undesired pregnancy.",
+        cost: 10,
+        humanity_loss: 0,
+        body_location: [BodyLocation.Internal],
+        install_location: "Mall",
+        max_installs: 1,
+        required_cyberware: "Internal Body Cyberware",
+    },
+    {
+        name: "Enhanced Antibodies",
+        type: CyberwareType.InternalBodyCyberware,
+        description: "After stabilization, the user heals a number of Hit Points equal to twice their BODY for each day they spend resting, doing only light activity, and spending the majority of the day taking it easy until returning to full HP, instead of at their typical rate.",
+        cost: 500,
+        humanity_loss: 2,
+        body_location: [BodyLocation.Internal],
+        install_location: "Mall",
+        required_cyberware: "Internal Body Cyberware",
+    },
+
+    {
+        name: "Cybersnake",
+        type: CyberwareType.ExternalBodyCyberware,
+        description: "Horrifying throat/esophagus-mounted tentacle weapon. A Very Heavy Melee Weapon (4d6, 1 ROF) that can be successfully concealed without a Check.",
+        cost: 1000,
+        humanity_loss: 14,
+
+        body_location: [BodyLocation.Internal],
+        install_location: "Hospital",
+        required_cyberware: "Internal Body Cyberware",
+    },
+    {
+        name: "Gills",
+        type: CyberwareType.ExternalBodyCyberware,
+        description: "User can breathe underwater.",
+        cost: 1000,
+        humanity_loss: 7,
+        body_location: [BodyLocation.Internal],
+        install_location: "Hospital",
+        required_cyberware: "Internal Body Cyberware",
+    },
+    {
+        name: "Grafted Muscle and Bone Lace",
+        type: CyberwareType.InternalBodyCyberware,
+        description: "User increases their BODY by 2. This increase in BODY changes a Character's HP and Death Save. Multiple installments stack. This cannot increase the user's BODY to 11 or higher.",
+        cost: 1000,
+        humanity_loss: 14,
+        body_location: [BodyLocation.Internal],
+        install_location: "Hospital",
+        required_cyberware: "Internal Body Cyberware",
+    },
+    {
+        name: "Independent Air Supply",
+        type: CyberwareType.InternalBodyCyberware,
+        description: "Contains 30 minutes of air, before the user needs to refill the tank from the ambient air, which takes an hour. Alternatively, replacing an empty tank with a full one (50eb), takes an Action.",
+        cost: 1000,
+        humanity_loss: 2,
+        body_location: [BodyLocation.Internal],
+        install_location: "Hospital",
+        required_cyberware: "Internal Body Cyberware",
+    },
+    {
+        name: "Midnight Lady™ Sexual Implant",
+        type: CyberwareType.InternalBodyCyberware,
+        description: "Be a Venus, be the fire. Be desire.",
+        cost: 100,
+        humanity_loss: 7,
+        body_location: [BodyLocation.Internal],
+        install_location: "Clinic",
+        required_cyberware: "Internal Body Cyberware",
+    },
+    {
+        name: "Mr. Studd™ Sexual Implant",
+        type: CyberwareType.InternalBodyCyberware,
+        description: "All night, every night. And they'll never know.",
+        cost: 100,
+        humanity_loss: 7,
+        body_location: [BodyLocation.Internal],
+        install_location: "Clinic",
+        required_cyberware: "Internal Body Cyberware",
+    },
+    {
+        name: "Nasal Filters",
+        type: CyberwareType.InternalBodyCyberware,
+        description: "User is immune to the effects of toxic gases, fumes, and all similar dangers that must be inhaled to affect the user. User can deactivate nasal filters, if desired, without an Action.",
+        cost: 100,
+        humanity_loss: 2,
+        body_location: [BodyLocation.Internal],
+        install_location: "Clinic",
+        required_cyberware: "Internal Body Cyberware",
+    },
+    {
+        name: "Radar/Sonar Implant",
+        type: CyberwareType.InternalBodyCyberware,
+        description: "Constantly scans terrain within 50m/yds of user, including underwater, for new threats. Scan does not include anything behind cover, like the contents of a room behind a closed door. User receives a beep from the GM along with the direction of its source whenever a new moving object is detected on the scan.",
+        cost: 1000,
+        humanity_loss: 7,
+        body_location: [BodyLocation.Internal],
+        install_location: "Clinic",
+        required_cyberware: "Internal Body Cyberware",
+    },
+    {
+        name: "Toxin Binders",
+        type: CyberwareType.InternalBodyCyberware,
+        description: "User adds +2 to their Resist Torture/Drugs Skill. Multiple installations of this option provide user no additional benefit.",
+        cost: 100,
+        humanity_loss: 2,
+        body_location: [BodyLocation.Internal],
+        install_location: "Clinic",
+        max_installs: 1,
+        required_cyberware: "Internal Body Cyberware",
+    },
+    {
+        name: "Vampyres",
+        type: CyberwareType.InternalBodyCyberware,
+        description: "Fangs implanted in the user's mouth. An Excellent Quality Light Melee Weapon (1d6 damage, 2 ROF) that can be successfully concealed without a Check. A Vial of Poison or Biotoxin (purchased separately, see Gear List on pg. 355) can be safely stored and concealed in a compartment in the roof of the mouth near the fangs without a Check. The contents of the stored vial can then be applied to the Vampyres silently anytime without an Action. Each application uses an entire vial and lasts for 30 minutes. Installation of Vampyres includes a complete rework of the user's mouth which prevents the possibility of poisoning yourself accidentally with your fangs halfway through a slice of pizza or due to a bad Check.",
+        cost: 500,
+        humanity_loss: 14,
+        body_location: [BodyLocation.Internal],
+        install_location: "Clinic",
+        required_cyberware: "Internal Body Cyberware",
+    }
+]
 
 
 let all_cyberware: Cyberware[] = []
@@ -679,6 +816,9 @@ for (let item of neuralware) {
     all_cyberware.push(new Cyberware({ ...item }))
 }
 for (let item of cyberoptics) {
+    all_cyberware.push(new Cyberware({ ...item }))
+}
+for (let item of internal_cyberware) {
     all_cyberware.push(new Cyberware({ ...item }))
 }
 

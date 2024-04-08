@@ -64,7 +64,7 @@ function randomize() {
         <div class="ml-4 my-2 font-bold">{{ title }}</div>
         <div class="mr-2 my-2" v-if="show_randomize_button">
             <div class="notchbtn_cont">
-                <button @click="randomize()" class=" notchbtn bg-red-100 text-sm text-black active:bg-red-800 hover:bg-red-500 hover:text-white px-2 ">Randomize</button>
+                <button @click="randomize()" class=" notchbtn bg-red-100 text-sm font-bold text-black active:bg-red-800 hover:bg-red-500 hover:text-white px-2 ">Randomize</button>
             </div>
         </div>
     </div>
