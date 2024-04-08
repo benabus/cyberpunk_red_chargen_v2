@@ -271,7 +271,7 @@ const neuralware = [
     {
         name: "Braindance Recorder",
         type: CyberwareType.Neuralware,
-        description: "Neuralware Option. Share your story from your point of view! Records braindance content to a standard Memory Chip or a linked Agent. Braindances can be viewed using a Braindance Viewer. Requires Neural Link.",
+        description: "Share your story from your point of view! Records braindance content to a standard Memory Chip or a linked Agent. Braindances can be viewed using a Braindance Viewer. Requires Neural Link.",
         cost: 500,
         humanity_loss: 7,
         body_location: [BodyLocation.Brain],
@@ -282,7 +282,7 @@ const neuralware = [
     {
         name: "Chipware Socket",
         type: CyberwareType.Neuralware,
-        description: "Neuralware Option. A single socket installed in the back of the neck that allows quick installation of a single piece of Chipware, of which there are many varieties. Installing or uninstalling a single piece of Chipware from a Chipware Socket is an Action. The first time you install a piece of Chipware you've never used before, you always accrue Humanity Loss. Re-installing Chipware you've already used doesn't do this. Chipware does not take up a Neural Link Option Slot. Multiple sockets may be installed, but each must be paid for individually. Requires Neural Link.",
+        description: "A single socket installed in the back of the neck that allows quick installation of a single piece of Chipware, of which there are many varieties. Installing or uninstalling a single piece of Chipware from a Chipware Socket is an Action. The first time you install a piece of Chipware you've never used before, you always accrue Humanity Loss. Re-installing Chipware you've already used doesn't do this. Chipware does not take up a Neural Link Option Slot. Multiple sockets may be installed, but each must be paid for individually. Requires Neural Link.",
         cost: 500,
         humanity_loss: 7,
         body_location: [BodyLocation.Brain],
@@ -293,7 +293,7 @@ const neuralware = [
     {
         name: "Interface Plugs",
         type: CyberwareType.Neuralware,
-        description: "Neuralware Option. Plugs in the wrist or head that allow user to jack into and make use of Smartguns, Cyberdecks, heavy machinery, and drive vehicles with no hands! Multiple installations allow user to be plugged into multiple things at the same time. Requires Neural Link.",
+        description: "Plugs in the wrist or head that allow user to jack into and make use of Smartguns, Cyberdecks, heavy machinery, and drive vehicles with no hands! Multiple installations allow user to be plugged into multiple things at the same time. Requires Neural Link.",
         cost: 500,
         humanity_loss: 7,
         body_location: [BodyLocation.Brain],
@@ -303,7 +303,7 @@ const neuralware = [
     {
         name: "Kerenzikov",
         type: CyberwareType.Speedware,
-        description: "Neuralware Option. Always-on Speedware that provides consistently improved reaction time. User adds +2 to their Initiative Rolls. Only a single piece of Speedware can be installed into a user at a time. Requires Neural Link.",
+        description: "Always-on Speedware that provides consistently improved reaction time. User adds +2 to their Initiative Rolls. Only a single piece of Speedware can be installed into a user at a time. Requires Neural Link.",
         cost: 500,
         humanity_loss: 14,
         body_location: [BodyLocation.Brain],
@@ -314,7 +314,7 @@ const neuralware = [
     {
         name: "Sandevistan",
         type: CyberwareType.Speedware,
-        description: "Neuralware Option. Speedware that provides short boosts of highly improved reaction time. When activated as an Action, the user adds +3 to any Initiative Roll they make in the next minute, after which Sandevistan cannot be activated again for an hour. Only a single piece of Speedware can be installed into a user at a time. Requires Neural Link.",
+        description: "Speedware that provides short boosts of highly improved reaction time. When activated as an Action, the user adds +3 to any Initiative Roll they make in the next minute, after which Sandevistan cannot be activated again for an hour. Only a single piece of Speedware can be installed into a user at a time. Requires Neural Link.",
         cost: 500,
         humanity_loss: 7,
         body_location: [BodyLocation.Brain],
@@ -399,7 +399,7 @@ const cyberoptics = [
     {
         name: "Anti-Dazzle",
         type: CyberwareType.Cyberoptics,
-        description: "Cybereye Option. User is immune to blindness or other effects caused by dangerous flashes of light, like those of a flashbang. Requires two Cybereyes and must be paired.",
+        description: "User is immune to blindness or other effects caused by dangerous flashes of light, like those of a flashbang. Requires two Cybereyes and must be paired.",
         cost: 100,
         humanity_loss: 2,
         body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
@@ -410,7 +410,7 @@ const cyberoptics = [
     {
         name: "Chyron",
         type: CyberwareType.Cyberoptics,
-        description: "Cybereye Option. Projects a tiny subscreen into user's normal field of vision for messages, video, etc. from a user's other cyberware or electronics. Picture in a picture for real life. Requires a Cybereye.",
+        description: "Projects a tiny subscreen into user's normal field of vision for messages, video, etc. from a user's other cyberware or electronics. Picture in a picture for real life. Requires a Cybereye.",
         cost: 100,
         humanity_loss: 2,
         body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
@@ -421,7 +421,7 @@ const cyberoptics = [
     {
         name: "Color Shift",
         type: CyberwareType.Cyberoptics,
-        description: "Cybereye Option. Cosmetic upgrade allows unlimited color and pattern changes to be made as an Action. Eye can optionally be temperature sensitive or reactant to hormone changes in the body. Requires a Cybereye.",
+        description: "Cosmetic upgrade allows unlimited color and pattern changes to be made as an Action. Eye can optionally be temperature sensitive or reactant to hormone changes in the body. Requires a Cybereye.",
         cost: 100,
         humanity_loss: 2,
         body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
@@ -431,7 +431,7 @@ const cyberoptics = [
     {
         name: "Dartgun",
         type: CyberwareType.Cyberoptics,
-        description: "Cybereye Option. Dartgun Exotic Weapon, with only a single shot in the clip, concealed inside the Cybereye. Requires a Cybereye and takes 3 Option Slots.",
+        description: "Dartgun Exotic Weapon, with only a single shot in the clip, concealed inside the Cybereye. Requires a Cybereye and takes 3 Option Slots.",
         cost: 500,
         humanity_loss: 2,
         body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
@@ -442,7 +442,7 @@ const cyberoptics = [
     {
         name: "Image Enhance",
         type: CyberwareType.Cyberoptics,
-        description: "Cybereye Option. User adds +2 to their Perception, Lip Reading, and Conceal/Reveal Object Skills for Checks which include sight. Requires two Cybereyes and must be paired. Multiple installations of this option provide user no additional benefit.",
+        description: "User adds +2 to their Perception, Lip Reading, and Conceal/Reveal Object Skills for Checks which include sight. Requires two Cybereyes and must be paired. Multiple installations of this option provide user no additional benefit.",
         cost: 500,
         humanity_loss: 3,
         body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
@@ -453,7 +453,7 @@ const cyberoptics = [
     {
         name: "Tactile Boost",
         type: CyberwareType.Cyberoptics,
-        description: "Cybereye Option. User adds +2 to their Perception, Lip Reading, and Conceal/Reveal Object Skills for Checks which include sight. Requires two Cybereyes and must be paired. Multiple installations of this option provide user no additional benefit.",
+        description: "User adds +2 to their Perception, Lip Reading, and Conceal/Reveal Object Skills for Checks which include sight. Requires two Cybereyes and must be paired. Multiple installations of this option provide user no additional benefit.",
         cost: 100,
         humanity_loss: 7,
         body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
@@ -464,7 +464,7 @@ const cyberoptics = [
     {
         name: "Low Light/Infrared/UV",
         type: CyberwareType.Cyberoptics,
-        description: "Cybereye Option. Reduces penalties imposed by darkness and other intangible obscurment, like smoke, fog, etc. to 0. User can distinguish hot meat from cold metal but cannot see through anything that could provide cover. Requires two Cybereyes, must be paired, and takes 2 Option Slots per Cybereye.",
+        description: "Reduces penalties imposed by darkness and other intangible obscurment, like smoke, fog, etc. to 0. User can distinguish hot meat from cold metal but cannot see through anything that could provide cover. Requires two Cybereyes, must be paired, and takes 2 Option Slots per Cybereye.",
         cost: 500,
         humanity_loss: 3,
         body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
@@ -478,7 +478,7 @@ const cyberoptics = [
     {
         name: "MicroOptics",
         type: CyberwareType.Cyberoptics,
-        description: "Cybereye Option. Microscope providing user up to 400x magnification. Requires a Cybereye.",
+        description: "Microscope providing user up to 400x magnification. Requires a Cybereye.",
         cost: 100,
         humanity_loss: 2,
         body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
@@ -488,7 +488,7 @@ const cyberoptics = [
     {
         name: "MicroVideo",
         type: CyberwareType.Cyberoptics,
-        description: "Cybereye Option. Camera in eye records video and audio to a standard Memory Chip or a linked Agent. Requires a Cybereye and takes 2 Option Slots.",
+        description: "Camera in eye records video and audio to a standard Memory Chip or a linked Agent. Requires a Cybereye and takes 2 Option Slots.",
         cost: 500,
         humanity_loss: 2,
         body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
@@ -499,7 +499,7 @@ const cyberoptics = [
     {
         name: "Radiation Detector",
         type: CyberwareType.Cyberoptics,
-        description: "Cybereye Option. Radiation readings within 100m/yds of the user are displayed in user's vision hovering over their source in the form of a blue glow. Requires a Cybereye.",
+        description: "Radiation readings within 100m/yds of the user are displayed in user's vision hovering over their source in the form of a blue glow. Requires a Cybereye.",
         cost: 1000,
         humanity_loss: 3,
         body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
@@ -509,7 +509,7 @@ const cyberoptics = [
     {
         name: "Targeting Scope",
         type: CyberwareType.Cyberoptics,
-        description: "Cybereye Option. User gets a +1 to their Check when making an Aimed Shot. Multiple installations of this option provide user no additional benefit. Requires a Cybereye.",
+        description: "User gets a +1 to their Check when making an Aimed Shot. Multiple installations of this option provide user no additional benefit. Requires a Cybereye.",
         cost: 500,
         humanity_loss: 3,
         body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
@@ -519,7 +519,7 @@ const cyberoptics = [
     {
         name: "TeleOptics",
         type: CyberwareType.Cyberoptics,
-        description: "Cybereye Option. User can see detail up to 800m/yds away. When attacking a target 51m/yds or further away with either a weapon's single shot firing mode or an Aimed Shot, you can add a +1 to your Check. Multiple installations of this option provide user no additional benefit. Does not stack with Sniping Scope Weapon Attachment. Requires a Cybereye.",
+        description: "User can see detail up to 800m/yds away. When attacking a target 51m/yds or further away with either a weapon's single shot firing mode or an Aimed Shot, you can add a +1 to your Check. Multiple installations of this option provide user no additional benefit. Does not stack with Sniping Scope Weapon Attachment. Requires a Cybereye.",
         cost: 500,
         humanity_loss: 3,
         body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
@@ -529,7 +529,7 @@ const cyberoptics = [
     {
         name: "Virtuality",
         type: CyberwareType.Cyberoptics,
-        description: "Cybereye Option. Projects cyberspace imagery over user's view of the world. Never forget your Virtuality Goggles again. Requires two Cybereyes and must be paired.",
+        description: "Projects cyberspace imagery over user's view of the world. Never forget your Virtuality Goggles again. Requires two Cybereyes and must be paired.",
         cost: 100,
         humanity_loss: 2,
         body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
@@ -555,7 +555,7 @@ const cyberaudio = [
     {
         name: "Amplified Hearing",
         type: CyberwareType.Cyberaudio,
-        description: "Cyberaudio Option. User adds +2 to their Perception Skill for Checks which include hearing. Requires a Cyberaudio Suite. Multiple installations of this option provide user no additional benefit.",
+        description: "User adds +2 to their Perception Skill for Checks which include hearing. Requires a Cyberaudio Suite. Multiple installations of this option provide user no additional benefit.",
         cost: 100,
         humanity_loss: 3,
         body_location: [BodyLocation.Ear],
@@ -566,7 +566,7 @@ const cyberaudio = [
     {
         name: "Audio Recorder",
         type: CyberwareType.Cyberaudio,
-        description: "Cyberaudio Option. Records audio to a standard Memory Chip or a linked Agent. Requires a Cyberaudio Suite.",
+        description: "Records audio to a standard Memory Chip or a linked Agent. Requires a Cyberaudio Suite.",
         cost: 100,
         humanity_loss: 2,
         body_location: [BodyLocation.Ear],
@@ -576,7 +576,7 @@ const cyberaudio = [
     {
         name: "Bug Detector",
         type: CyberwareType.Cyberaudio,
-        description: "Cyberaudio Option. Beeps when user is within 2m/yds of a tap, bug, or other listening device. Requires a Cyberaudio Suite.",
+        description: "Beeps when user is within 2m/yds of a tap, bug, or other listening device. Requires a Cyberaudio Suite.",
         cost: 100,
         humanity_loss: 2,
         body_location: [BodyLocation.Ear],
@@ -586,7 +586,7 @@ const cyberaudio = [
     {
         name: "Homing Tracer",
         type: CyberwareType.Cyberaudio,
-        description: "Cyberaudio Option. Can follow a linked tracer up to 1 mile away. Comes with a free button-sized linked tracer. Replacements are 50eb. Requires a Cyberaudio Suite.",
+        description: "Can follow a linked tracer up to 1 mile away. Comes with a free button-sized linked tracer. Replacements are 50eb. Requires a Cyberaudio Suite.",
         cost: 100,
         humanity_loss: 2,
         body_location: [BodyLocation.Ear],
@@ -596,7 +596,7 @@ const cyberaudio = [
     {
         name: "Internal Agent",
         type: CyberwareType.Cyberaudio,
-        description: "Cyberaudio Option. Fully functional Agent (See Gear Section pg. 352), controlled entirely via voice commands. Images are described, but output can be linked to a Cybereye with Chyron or a nearby screen if visual output is desired. The implanted Agent's Memory Chip cannot be removed without surgery. Requires a Cyberaudio Suite.",
+        description: "Fully functional Agent (See Gear Section pg. 352), controlled entirely via voice commands. Images are described, but output can be linked to a Cybereye with Chyron or a nearby screen if visual output is desired. The implanted Agent's Memory Chip cannot be removed without surgery. Requires a Cyberaudio Suite.",
         cost: 100,
         humanity_loss: 3,
         body_location: [BodyLocation.Ear],
@@ -606,7 +606,7 @@ const cyberaudio = [
     {
         name: "Level Damper",
         type: CyberwareType.Cyberaudio,
-        description: "Cyberaudio Option. Automatic noise compensation. User is immune to deafness or other effects caused by dangerously loud noises, like those produced by a flashbang. Requires a Cyberaudio Suite.",
+        description: "Automatic noise compensation. User is immune to deafness or other effects caused by dangerously loud noises, like those produced by a flashbang. Requires a Cyberaudio Suite.",
         cost: 100,
         humanity_loss: 2,
         body_location: [BodyLocation.Ear],
@@ -616,7 +616,7 @@ const cyberaudio = [
     {
         name: "Radio Communicator",
         type: CyberwareType.Cyberaudio,
-        description: "Cyberaudio Option. User can communicate via radio, 1-mile range. Requires a Cyberaudio Suite.",
+        description: "User can communicate via radio, 1-mile range. Requires a Cyberaudio Suite.",
         cost: 100,
         humanity_loss: 2,
         body_location: [BodyLocation.Ear],
@@ -626,7 +626,7 @@ const cyberaudio = [
     {
         name: "Radio Scanner/Music Player",
         type: CyberwareType.Cyberaudio,
-        description: "Cyberaudio Option. User can use an Action to scan all radio bands within a mile that are currently being used and tune into them. Music player can link to the Data Pool to listen to the hottest music or play directly from a Memory Chip. Understanding scrambled channels requires a Scrambler/Descrambler. Requires a Cyberaudio Suite.",
+        description: "User can use an Action to scan all radio bands within a mile that are currently being used and tune into them. Music player can link to the Data Pool to listen to the hottest music or play directly from a Memory Chip. Understanding scrambled channels requires a Scrambler/Descrambler. Requires a Cyberaudio Suite.",
         cost: 50,
         humanity_loss: 2,
         body_location: [BodyLocation.Ear],
@@ -636,7 +636,7 @@ const cyberaudio = [
     {
         name: "Radar Detector",
         type: CyberwareType.Cyberaudio,
-        description: "Cyberaudio Option. Beeps if active radar beam is present within 100m/yds. Requires a Cyberaudio Suite.",
+        description: "Beeps if active radar beam is present within 100m/yds. Requires a Cyberaudio Suite.",
         cost: 500,
         humanity_loss: 2,
         body_location: [BodyLocation.Ear],
@@ -646,7 +646,7 @@ const cyberaudio = [
     {
         name: "Scrambler/Descrambler",
         type: CyberwareType.Cyberaudio,
-        description: "Cyberaudio Option. Allows user to scramble outgoing communications so they cannot be understood without a descrambler, which is also included at no extra charge. Requires a Cyberaudio Suite.",
+        description: "Allows user to scramble outgoing communications so they cannot be understood without a descrambler, which is also included at no extra charge. Requires a Cyberaudio Suite.",
         cost: 100,
         humanity_loss: 2,
         body_location: [BodyLocation.Ear],
@@ -656,7 +656,7 @@ const cyberaudio = [
     {
         name: "Voice Stress Analyzer",
         type: CyberwareType.Cyberaudio,
-        description: "Cyberaudio Option. User adds +2 to their Human Perception and Interrogation Skills User can activate a special lie-detecting function for a minute with an Action, during which time the GM rolls all your Character's Human Perception and Interrogation Checks privately, beeping once whenever it detects a lie, or whenever they desire after a failed roll. Beware of false positives and negatives. Requires a Cyberaudio Suite. Multiple installations of this option provide user no additional benefit.",
+        description: "User adds +2 to their Human Perception and Interrogation Skills User can activate a special lie-detecting function for a minute with an Action, during which time the GM rolls all your Character's Human Perception and Interrogation Checks privately, beeping once whenever it detects a lie, or whenever they desire after a failed roll. Beware of false positives and negatives. Requires a Cyberaudio Suite. Multiple installations of this option provide user no additional benefit.",
         cost: 100,
         humanity_loss: 3,
         body_location: [BodyLocation.Ear],
@@ -699,7 +699,6 @@ const internal_cyberware = [
         install_location: "Mall",
         required_cyberware: "Internal Body Cyberware",
     },
-
     {
         name: "Cybersnake",
         type: CyberwareType.ExternalBodyCyberware,
@@ -801,8 +800,193 @@ const internal_cyberware = [
         body_location: [BodyLocation.Internal],
         install_location: "Clinic",
         required_cyberware: "Internal Body Cyberware",
+    },
+]
+
+const external_cyberware = [
+    {
+        name: "Hidden Holster",
+        type: CyberwareType.ExternalBodyCyberware,
+        description: "Holster inside the user's body can store a weapon already capable of concealment so that it can be successfully concealed without a roll. Weapon can be drawn from the hidden holster without an Action, as long as it is implanted in an easily accessible place on the user's body. You don't want one in your thigh unless you don't wear pants.",
+        cost: 500,
+        humanity_loss: 7,
+        body_location: [BodyLocation.External],
+        install_location: "Clinic",
+        required_cyberware: "External Body Cyberware",
+    },
+
+    {
+        name: "Skin Weave",
+        type: CyberwareType.ExternalBodyCyberware,
+        description: "User's body and head are armored at SP7. Your SP in any location is determined by your highest source of SP in that location. Additionally, whenever your armor is ablated in a location, all your sources of SP in that location are ablated at the same time. Whenever the user successfully completes a day of natural healing, nanomachines present in the Skin Weave repair both the body and head location of the Skin Weave for one point of its lost SP.",
+        cost: 500,
+        humanity_loss: 7,
+        body_location: [BodyLocation.External],
+        install_location: "Hospital",
+        required_cyberware: "External Body Cyberware",
+    },
+
+    {
+        name: "Subdermal Armor",
+        type: CyberwareType.ExternalBodyCyberware,
+        description: "User's body and head are armored at SP11. Your SP in any location is determined by your highest source of SP in that location. Additionally, whenever your armor is ablated in a location, all your sources of SP in that location are ablated at the same time. Whenever the user successfully completes a day of natural healing, nanomachines present in the Subdermal Armor repair both the body and head location of the Subdermal Armor for one point of its lost SP.",
+        cost: 1000,
+        humanity_loss: 14,
+        body_location: [BodyLocation.External],
+        install_location: "Hospital",
+        required_cyberware: "External Body Cyberware",
+    },
+    {
+        name: "Subdermal Pocket",
+        type: CyberwareType.ExternalBodyCyberware,
+        description: '2"x4" (5cm x 10cm) space with a Realskinn™ zipper. Contents can be successfully concealed without a Check.',
+        cost: 100,
+        humanity_loss: 3,
+        body_location: [BodyLocation.External],
+        install_location: "Clinic",
+        required_cyberware: "External Body Cyberware",
     }
 ]
+
+const cyberarms = [
+    {
+        name: "Cyberarm",
+        type: CyberwareType.Cyberlimbs,
+        description: "Replacement arm. Does not have to be paired. A Cyberarm has 4 Option Slots for Cyberarm or Cyberlimb Options, and each comes pre-installed with a Standard Hand that doesn't cost any Humanity Loss or take up a Cyberarm Option Slot.",
+        cost: 500,
+        humanity_loss: 7,
+        body_location: [BodyLocation.LeftArm, BodyLocation.RightArm],
+        install_location: "Hospital",
+        slots_available: 4,
+        required_cyberware: "",
+        can_install_in_meat: true,
+    },
+    {
+        name: "Standard Hand",
+        type: CyberwareType.Cyberlimbs,
+        description: "Resembles a normal hand. If installed into a meat arm, a standard hand doesn't count towards the number of pieces of cyberware installed in a meat arm. Doesn't take up a Cyberarm Option Slot.",
+        cost: 100,
+        humanity_loss: 0,
+        body_location: [BodyLocation.LeftArm, BodyLocation.RightArm],
+        install_location: "Clinic",
+        slots_required: 0,
+        required_cyberware: "Cyberarm/Meat",
+        can_install_in_meat: true,
+    },
+    {
+        name: "Big Knucks",
+        type: CyberwareType.Cyberlimbs,
+        description: "Armored knuckles. A Medium Melee Weapon (2d6 damage, 2 ROF) that can be successfully concealed without a Check. When wielded as a weapon, user can't hold anything in this arm's hand. Can be installed as the only piece of Cyberware in a meat arm.",
+        cost: 100,
+        humanity_loss: 3,
+        body_location: [BodyLocation.LeftArm, BodyLocation.RightArm],
+        install_location: "Clinic",
+        required_cyberware: "Cyberarm/Meat",
+        can_install_in_meat: true,
+    },
+    // {
+    //     name: "Cyberdeck",
+    //     type: CyberwareType.Cyberlimbs,
+    //     description: "Cyberdeck permanently installed into the user's Cyberarm. A Cyberdeck must be provided by the user at the time of installation. In addition to never accidentally misplacing your Cyberdeck, integration into a Cyberarm gives any Cyberdeck 1 extra slot that can be used for either Programs or Hardware. This is a permanent upgrade. Attempting to uninstall the Cyberdeck from the Cyberarm breaks it beyond repair, but any Programs or Hardware on it could be easily recovered. Requires a Cyberarm and takes 3 Option Slots. Cyberdeck still requires Interface Plugs and Neural Link to be operated by the user.",
+    //     cost: 500,
+    //     humanity_loss: 3,
+    //     body_location: [BodyLocation.LeftArm, BodyLocation.RightArm],
+    //     install_location: "Clinic",
+    //     slots_required: 3,
+    //     required_cyberware: "Cyberarm+Interface Plugs+Neural Link",
+    // },
+
+    {
+        name: "Grapple Hand",
+        type: CyberwareType.Cyberlimbs,
+        description: "User, as an Action, can fire a rocket propelled grapple that will attach securely to any Thick cover up to 30m/yds away. Line can only support two times the user's body weight, and has 10 HP. The user negates the normal movement penalty for climbing when they climb this line, and can retract the line without an Action, including as they climb. When used as a grapple, user can't hold anything in this arm's hand. Ineffective as a weapon and cannot be used to make the Grab Action. Requires a Cyberarm.",
+        cost: 100,
+        humanity_loss: 3,
+        body_location: [BodyLocation.LeftArm, BodyLocation.RightArm],
+        install_location: "Clinic",
+        required_cyberware: "Cyberarm",
+    },
+    {
+        name: "Medscanner",
+        type: CyberwareType.Cyberlimbs,
+        description: "Scanner with external probes and contacts diagnoses injury and illness, assisting user in medical emergencies not requiring the Surgery Skill. User adds +2 to their First Aid and Paramedic Skills. Requires a Cyberarm and takes 2 Option Slots. Multiple installations of this option provide user no additional benefit.",
+        cost: 500,
+        humanity_loss: 7,
+        body_location: [BodyLocation.LeftArm, BodyLocation.RightArm],
+        install_location: "Clinic",
+        slots_available: 2,
+        required_cyberware: "Cyberarm",
+        max_install: 1,
+    },
+    {
+        name: "Popup Grenade Launcher",
+        type: CyberwareType.Cyberlimbs,
+        description: "A One-Handed Grenade Launcher with only a single grenade in its magazine that is incompatible with all Weapon Attachments, except Smartgun Link, is installed into the Cyberarm. Launcher can be successfully concealed without a Check and can be drawn and stowed without an Action. While the weapon is 'popped up,' the user can't hold anything in this arm's hand. Requires a Cyberarm and takes 2 Option Slots.",
+        cost: 500,
+        humanity_loss: 7,
+        body_location: [BodyLocation.LeftArm, BodyLocation.RightArm],
+        install_location: "Clinic",
+        slots_available: 2,
+        required_cyberware: "Cyberarm",
+    },
+    {
+        name: "Popup Melee Weapon",
+        type: CyberwareType.Cyberlimbs,
+        description: "A One-Handed Light, Medium, or Heavy Melee Weapon (that need not be concealable before its installation) is installed in a Cyberarm so that it can be successfully concealed without a roll, and can be drawn and stowed without an Action. While the weapon is 'popped up,' the user can't hold anything in this arm's hand. Requires a Cyberarm and takes 2 Option Slots.",
+        cost: 500,
+        humanity_loss: 7,
+        body_location: [BodyLocation.LeftArm, BodyLocation.RightArm],
+        install_location: "Clinic",
+        slots_available: 2,
+        required_cyberware: "Cyberarm",
+    },
+    {
+        name: "Popup Shield",
+        type: CyberwareType.Cyberlimbs,
+        description: "A Bulletproof Shield which is concealed while it is folded inside the Cyberarm. It can be drawn or stowed without an Action, provided that the shield has more than 0 HP. When extended, you can't use the Cyberarm to do anything else other than serve as a shield, and you can't hold anything in that Cyberarm's hand other than the shield. The Bulletproof Shield installed inside your Cyberarm is easily removable and replaceable with another Bulletproof Shield, for ease of cleaning and repair. Requires a Cyberarm and takes 3 Option Slots.",
+        cost: 500,
+        humanity_loss: 7,
+        body_location: [BodyLocation.LeftArm, BodyLocation.RightArm],
+        install_location: "Clinic",
+        slots_available: 3,
+        required_cyberware: "Cyberarm",
+    },
+    {
+        name: "Popup Ranged Weapon",
+        type: CyberwareType.Cyberlimbs,
+        description: "A One-Handed Ranged Weapon (that need not be concealable before its installation) provided by the user is permanently installed into the Cyberarm (along with any weapon attachments attached to it) so that it can be successfully concealed without a Check, and can be drawn and stowed without an Action. While the weapon is 'popped up,' the user can't hold anything in this arm's hand. Requires a Cyberarm and takes 2 Option Slots.",
+        cost: 500,
+        humanity_loss: 7,
+        body_location: [BodyLocation.LeftArm, BodyLocation.RightArm],
+        install_location: "Clinic",
+        slots_available: 2,
+        required_cyberware: "Cyberarm",
+    },
+    {
+        name: "Quick Change Mount",
+        type: CyberwareType.Cyberlimbs,
+        description: "Cyberarm can be installed in an open socket or uninstalled with an Action. The first time you install a brand new Cyberarm, whether using a Quick Change Mount or otherwise, you always accrue Humanity Loss. Reattaching one you've already used before with a Quick Change Mount does not do this. Requires a Cyberarm.",
+        cost: 100,
+        humanity_loss: 7,
+        body_location: [BodyLocation.LeftArm, BodyLocation.RightArm],
+        install_location: "Clinic",
+        required_cyberware: "Cyberarm",
+    },
+    {
+        name: "Rippers",
+        type: CyberwareType.Cyberlimbs,
+        description: "Extendable Carbo-glass fingernails. A Medium Melee Weapon (2d6 damage, 2 ROF) that can be successfully concealed without a Check. When wielded as a weapon, user can't hold anything in this arm's hand. Can be installed as the only piece of Cyberware in a meat arm.",
+        cost: 500,
+        humanity_loss: 3,
+        body_location: [BodyLocation.LeftArm, BodyLocation.RightArm],
+        install_location: "Clinic",
+        required_cyberware: "Cyberarm/Meat",
+        can_install_in_meat: true,
+    }
+
+]
+
+
 
 
 let all_cyberware: Cyberware[] = []
@@ -821,5 +1005,15 @@ for (let item of cyberoptics) {
 for (let item of internal_cyberware) {
     all_cyberware.push(new Cyberware({ ...item }))
 }
+for (let item of external_cyberware) {
+    all_cyberware.push(new Cyberware({ ...item }))
+}
+for (let item of cyberaudio) {
+    all_cyberware.push(new Cyberware({ ...item }))
+}
+for (let item of cyberarms) {
+    all_cyberware.push(new Cyberware({ ...item }))
+}
+
 
 export { all_cyberware as cyberware }
