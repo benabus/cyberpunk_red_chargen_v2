@@ -132,7 +132,45 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
     ammo_type_modal_visible.value = true;
 }
 
-const cash = ref(char.value.cash);
+const cash = computed(() => {
+    return char.value.cash;
+})
+
+const cyberwareCount = computed(() => {
+    let count = 0;
+    for (const cyberware of Object.values(char.value.cyberware)) {
+        if (cyberware === undefined) {
+            continue;
+        }
+        if (cyberware.placeholder && cyberware.slotted_options.length == 0) {
+            continue;
+        }
+        if (cyberware.placeholder === false) {
+            count += 1
+        }
+        if (cyberware.slotted_options && cyberware.slotted_options.length > 0) {
+            count += cyberware.slotted_options.length
+            for (const option of cyberware.slotted_options) {
+                if (option.slotted_options && option.slotted_options.length > 0) {
+                    count += option.slotted_options.length
+                }
+            }
+        }
+    }
+
+    return count;
+})
+function randomizeCyberware() {
+    char.value.randomizeCyberware();
+}
+
+const value_of_cyberware = computed(() => {
+    let total = 0;
+    for (const cyberware of Object.values(char.value.cyberware)) {
+        total += cyberware?.totalCost() || 0;
+    }
+    return total;
+})
 
 </script>
 <style>
@@ -311,7 +349,7 @@ const cash = ref(char.value.cash);
 
         <hr class="my-2" />
 
-        <CPTable title="Cyberware" :headers="['Name', 'Description', 'Cost', 'Humanity Loss']">
+        <CPTable title="Cyberware" :headers="['Name', 'Description', 'Cost', 'Humanity Loss']" :randomize="randomizeCyberware">
             <template v-for="(cyberware, location) in char.cyberware">
                 <template v-if="!(cyberware === undefined || (cyberware.placeholder && cyberware.slotted_options.length == 0))">
                     <CPRow>
@@ -346,8 +384,13 @@ const cash = ref(char.value.cash);
                     </template>
                 </template>
             </template>
+            <template v-if="cyberwareCount === 0">
+                <CPRow>
+                    <td colspan="4" class="text-center">No Cyberware</td>
+                </CPRow>
+            </template>
         </CPTable>
-
+        {{ value_of_cyberware }}
         <hr class="my-2" />
         <TextFieldRow :values="{ 'Cash': cash.toString() + 'eb' }" />
 

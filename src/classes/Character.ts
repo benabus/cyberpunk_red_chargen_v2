@@ -31,13 +31,6 @@ const Starting_Cash: Record<CreationMethod, number> = {
     "complete": 2550
 }
 
-const Open_Slots_Per_Location: Record<string, number> = {
-    "Internal": 7,
-    "External": 7,
-    "Fashionware": 7,
-    "Borgware": 3
-}
-
 type WeaponType = "melee" | "ranged" | "exotic";
 type CreationMethod = "complete" | "edgerunner" | "street rat";
 
@@ -85,6 +78,83 @@ export class Character {
             this.skills[skill.getKey()] = skill;
         }
 
+        this.resetCyberware();
+
+        // const neural_link = CyberwareList.find(cyberware => cyberware.name === "Neural Link") as Cyberware;
+        // const chipware_socket = CyberwareList.find(cyberware => cyberware.name === "Chipware Socket") as Cyberware;
+        // this.installCyberware({ cyberware: neural_link });
+        // this.installCyberware({ cyberware: chipware_socket });
+
+        // try {
+        //     let cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Cybereye");
+        //     if (cyberware_prototype !== undefined) {
+        //         const cyberware = new Cyberware({ ...cyberware_prototype })
+        //         this.installCyberware({ cyberware: cyberware });
+        //     }
+
+        //     cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Cybereye");
+        //     if (cyberware_prototype !== undefined) {
+        //         const cyberware = new Cyberware({ ...cyberware_prototype })
+        //         this.installCyberware({ cyberware: cyberware });
+        //     }
+
+        //     // cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Cybereye");
+        //     // if (cyberware_prototype !== undefined) {
+        //     //     const cyberware = new Cyberware({ ...cyberware_prototype })
+        //     //     this.installCyberware({ cyberware: cyberware });
+        //     // }
+
+        //     cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Dartgun");
+        //     if (cyberware_prototype !== undefined) {
+        //         const cyberware = new Cyberware({ ...cyberware_prototype })
+        //         this.installCyberware({ cyberware: cyberware });
+        //     }
+
+
+        //     cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Anti-Dazzle");
+        //     if (cyberware_prototype !== undefined) {
+        //         const cyberware = new Cyberware({ ...cyberware_prototype })
+        //         this.installCyberware({ cyberware: cyberware });
+        //     }
+
+        // } catch (e) {
+        //     console.error(e.message)
+        // }
+
+        // cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Cybereye");
+        // if (cyberware_prototype !== undefined) {
+        //     const cyberware = new Cyberware({ ...cyberware_prototype })
+        //     this.installCyberware({ cyberware: cyberware });
+        // }
+
+        // console.debug(this.cyberware)
+
+        // const cybereyeR = new Cyberware(CyberwareList.find(cyberware => cyberware.name === "Cybereye") as Cyberware);
+        // for (let i = 0; i < 100; i++) {
+        //     try {
+        //         const random_cyberware = CyberwareList[Math.floor(Math.random() * CyberwareList.length)];
+        //         this.installCyberware({ cyberware: random_cyberware });
+        //     } catch (e) {
+        //         console.error(e + "")
+        //     }
+        // }
+
+        this.randomizeStats();
+        this.randomizeSkills();
+
+        // this.randomizeArmor();
+        // this.randomizeWeapons();
+        // this.randomizeGear();
+
+        this.randomizeCyberware();
+    }
+
+    resetCyberware() {
+        let total_value_of_cyberware = 0;
+        for (const cyberware of Object.values(this.cyberware)) {
+            total_value_of_cyberware += cyberware?.totalCost() || 0;
+        }
+        this.cash += total_value_of_cyberware;
         for (const location of Object.values(BodyLocation)) {
             this.cyberware[location] = undefined;
         }
@@ -118,69 +188,6 @@ export class Character {
             placeholder: true
         });
 
-        // const neural_link = CyberwareList.find(cyberware => cyberware.name === "Neural Link") as Cyberware;
-        // const chipware_socket = CyberwareList.find(cyberware => cyberware.name === "Chipware Socket") as Cyberware;
-        // this.installCyberware({ cyberware: neural_link });
-        // this.installCyberware({ cyberware: chipware_socket });
-
-        try {
-            let cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Cybereye");
-            if (cyberware_prototype !== undefined) {
-                const cyberware = new Cyberware({ ...cyberware_prototype })
-                this.installCyberware({ cyberware: cyberware });
-            }
-
-            cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Cybereye");
-            if (cyberware_prototype !== undefined) {
-                const cyberware = new Cyberware({ ...cyberware_prototype })
-                this.installCyberware({ cyberware: cyberware });
-            }
-
-            // cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Cybereye");
-            // if (cyberware_prototype !== undefined) {
-            //     const cyberware = new Cyberware({ ...cyberware_prototype })
-            //     this.installCyberware({ cyberware: cyberware });
-            // }
-
-            cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Dartgun");
-            if (cyberware_prototype !== undefined) {
-                const cyberware = new Cyberware({ ...cyberware_prototype })
-                this.installCyberware({ cyberware: cyberware });
-            }
-
-
-            cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Anti-Dazzle");
-            if (cyberware_prototype !== undefined) {
-                const cyberware = new Cyberware({ ...cyberware_prototype })
-                this.installCyberware({ cyberware: cyberware });
-            }
-
-        } catch (e) {
-            console.error(e.message)
-        }
-
-        // cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Cybereye");
-        // if (cyberware_prototype !== undefined) {
-        //     const cyberware = new Cyberware({ ...cyberware_prototype })
-        //     this.installCyberware({ cyberware: cyberware });
-        // }
-
-        // console.debug(this.cyberware)
-
-        // const cybereyeR = new Cyberware(CyberwareList.find(cyberware => cyberware.name === "Cybereye") as Cyberware);
-        // for (let i = 0; i < 100; i++) {
-        //     try {
-        //         const random_cyberware = CyberwareList[Math.floor(Math.random() * CyberwareList.length)];
-        //         this.installCyberware({ cyberware: random_cyberware });
-        //     } catch (e) {
-        //         console.error(e + "")
-        //     }
-        // }
-
-        this.randomizeArmor();
-        this.randomizeWeapons();
-        this.randomizeGear();
-        this.randomize();
     }
 
     //TODO: Doesn't handle cyberware with requirements that aren't slotted directly into the requirement (e.g. Sensor Array)
@@ -277,6 +284,18 @@ export class Character {
             cyberware_list = cyberware_list.concat(cyberware.findCyberwareInSlots(cyberware_name));
         }
         return cyberware_list;
+    }
+    randomizeCyberware() {
+        this.resetCyberware();
+        const loops = 50;
+        for (let i = 0; i < loops; i++) {
+            try {
+                const random_cyberware = CyberwareList[Math.floor(Math.random() * CyberwareList.length)];
+                this.installCyberware({ cyberware: new Cyberware({ ...random_cyberware }) });
+            } catch (e) {
+                console.error(e + "")
+            }
+        }
     }
 
 

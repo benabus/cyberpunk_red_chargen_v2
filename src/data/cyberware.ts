@@ -129,6 +129,13 @@ export class Cyberware {
         }
         return cyberware_list;
     }
+    totalCost(): number {
+        let cost = this.cost;
+        cost += this.slotted_options.reduce((acc, option) => {
+            return acc + option.totalCost();
+        }, 0);
+        return cost
+    }
 }
 
 // const placeholders = [
@@ -465,8 +472,200 @@ const cyberoptics = [
         slots_required: 2,
         required_cyberware: "Cybereye",
         must_be_paired: true,
+    },
+
+
+    {
+        name: "MicroOptics",
+        type: CyberwareType.Cyberoptics,
+        description: "Cybereye Option. Microscope providing user up to 400x magnification. Requires a Cybereye.",
+        cost: 100,
+        humanity_loss: 2,
+        body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
+        install_location: "Clinic",
+        required_cyberware: "Cybereye",
+    },
+    {
+        name: "MicroVideo",
+        type: CyberwareType.Cyberoptics,
+        description: "Cybereye Option. Camera in eye records video and audio to a standard Memory Chip or a linked Agent. Requires a Cybereye and takes 2 Option Slots.",
+        cost: 500,
+        humanity_loss: 2,
+        body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
+        install_location: "Clinic",
+        slots_required: 2,
+        required_cyberware: "Cybereye",
+    },
+    {
+        name: "Radiation Detector",
+        type: CyberwareType.Cyberoptics,
+        description: "Cybereye Option. Radiation readings within 100m/yds of the user are displayed in user's vision hovering over their source in the form of a blue glow. Requires a Cybereye.",
+        cost: 1000,
+        humanity_loss: 3,
+        body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
+        install_location: "Clinic",
+        required_cyberware: "Cybereye",
+    },
+    {
+        name: "Targeting Scope",
+        type: CyberwareType.Cyberoptics,
+        description: "Cybereye Option. User gets a +1 to their Check when making an Aimed Shot. Multiple installations of this option provide user no additional benefit. Requires a Cybereye.",
+        cost: 500,
+        humanity_loss: 3,
+        body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
+        install_location: "Clinic",
+        required_cyberware: "Cybereye",
+    },
+    {
+        name: "TeleOptics",
+        type: CyberwareType.Cyberoptics,
+        description: "Cybereye Option. User can see detail up to 800m/yds away. When attacking a target 51m/yds or further away with either a weapon's single shot firing mode or an Aimed Shot, you can add a +1 to your Check. Multiple installations of this option provide user no additional benefit. Does not stack with Sniping Scope Weapon Attachment. Requires a Cybereye.",
+        cost: 500,
+        humanity_loss: 3,
+        body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
+        install_location: "Clinic",
+        required_cyberware: "Cybereye",
+    },
+    {
+        name: "Virtuality",
+        type: CyberwareType.Cyberoptics,
+        description: "Cybereye Option. Projects cyberspace imagery over user's view of the world. Never forget your Virtuality Goggles again. Requires two Cybereyes and must be paired.",
+        cost: 100,
+        humanity_loss: 2,
+        body_location: [BodyLocation.LeftEye, BodyLocation.RightEye],
+        install_location: "Mall",
+        required_cyberware: "Cybereye",
+        must_be_paired: true,
     }
 ];
+
+const cyberaudio = [
+    {
+        name: "Cyberaudio Suite",
+        type: CyberwareType.Cyberaudio,
+        description: "Cyberaudio Suite is installed invisibly in the inner skull. System has 3 Option Slots for Cyberaudio Options. User can only have one Cyberaudio Suite installed.",
+        cost: 500,
+        humanity_loss: 7,
+        body_location: [BodyLocation.Ear],
+        install_location: "Clinic",
+        slots_available: 3,
+        can_install_in_meat: true,
+        max_installs: 1,
+    },
+    {
+        name: "Amplified Hearing",
+        type: CyberwareType.Cyberaudio,
+        description: "Cyberaudio Option. User adds +2 to their Perception Skill for Checks which include hearing. Requires a Cyberaudio Suite. Multiple installations of this option provide user no additional benefit.",
+        cost: 100,
+        humanity_loss: 3,
+        body_location: [BodyLocation.Ear],
+        install_location: "Mall",
+        required_cyberware: "Cyberaudio Suite",
+        max_installs: 1,
+    },
+    {
+        name: "Audio Recorder",
+        type: CyberwareType.Cyberaudio,
+        description: "Cyberaudio Option. Records audio to a standard Memory Chip or a linked Agent. Requires a Cyberaudio Suite.",
+        cost: 100,
+        humanity_loss: 2,
+        body_location: [BodyLocation.Ear],
+        install_location: "Clinic",
+        required_cyberware: "Cyberaudio Suite",
+    },
+    {
+        name: "Bug Detector",
+        type: CyberwareType.Cyberaudio,
+        description: "Cyberaudio Option. Beeps when user is within 2m/yds of a tap, bug, or other listening device. Requires a Cyberaudio Suite.",
+        cost: 100,
+        humanity_loss: 2,
+        body_location: [BodyLocation.Ear],
+        install_location: "Mall",
+        required_cyberware: "Cyberaudio Suite",
+    },
+    {
+        name: "Homing Tracer",
+        type: CyberwareType.Cyberaudio,
+        description: "Cyberaudio Option. Can follow a linked tracer up to 1 mile away. Comes with a free button-sized linked tracer. Replacements are 50eb. Requires a Cyberaudio Suite.",
+        cost: 100,
+        humanity_loss: 2,
+        body_location: [BodyLocation.Ear],
+        install_location: "Clinic",
+        required_cyberware: "Cyberaudio Suite",
+    },
+    {
+        name: "Internal Agent",
+        type: CyberwareType.Cyberaudio,
+        description: "Cyberaudio Option. Fully functional Agent (See Gear Section pg. 352), controlled entirely via voice commands. Images are described, but output can be linked to a Cybereye with Chyron or a nearby screen if visual output is desired. The implanted Agent's Memory Chip cannot be removed without surgery. Requires a Cyberaudio Suite.",
+        cost: 100,
+        humanity_loss: 3,
+        body_location: [BodyLocation.Ear],
+        install_location: "Mall",
+        required_cyberware: "Cyberaudio Suite",
+    },
+    {
+        name: "Level Damper",
+        type: CyberwareType.Cyberaudio,
+        description: "Cyberaudio Option. Automatic noise compensation. User is immune to deafness or other effects caused by dangerously loud noises, like those produced by a flashbang. Requires a Cyberaudio Suite.",
+        cost: 100,
+        humanity_loss: 2,
+        body_location: [BodyLocation.Ear],
+        install_location: "Mall",
+        required_cyberware: "Cyberaudio Suite",
+    },
+    {
+        name: "Radio Communicator",
+        type: CyberwareType.Cyberaudio,
+        description: "Cyberaudio Option. User can communicate via radio, 1-mile range. Requires a Cyberaudio Suite.",
+        cost: 100,
+        humanity_loss: 2,
+        body_location: [BodyLocation.Ear],
+        install_location: "Mall",
+        required_cyberware: "Cyberaudio Suite",
+    },
+    {
+        name: "Radio Scanner/Music Player",
+        type: CyberwareType.Cyberaudio,
+        description: "Cyberaudio Option. User can use an Action to scan all radio bands within a mile that are currently being used and tune into them. Music player can link to the Data Pool to listen to the hottest music or play directly from a Memory Chip. Understanding scrambled channels requires a Scrambler/Descrambler. Requires a Cyberaudio Suite.",
+        cost: 50,
+        humanity_loss: 2,
+        body_location: [BodyLocation.Ear],
+        install_location: "Clinic",
+        required_cyberware: "Cyberaudio Suite",
+    },
+    {
+        name: "Radar Detector",
+        type: CyberwareType.Cyberaudio,
+        description: "Cyberaudio Option. Beeps if active radar beam is present within 100m/yds. Requires a Cyberaudio Suite.",
+        cost: 500,
+        humanity_loss: 2,
+        body_location: [BodyLocation.Ear],
+        install_location: "Clinic",
+        required_cyberware: "Cyberaudio Suite",
+    },
+    {
+        name: "Scrambler/Descrambler",
+        type: CyberwareType.Cyberaudio,
+        description: "Cyberaudio Option. Allows user to scramble outgoing communications so they cannot be understood without a descrambler, which is also included at no extra charge. Requires a Cyberaudio Suite.",
+        cost: 100,
+        humanity_loss: 2,
+        body_location: [BodyLocation.Ear],
+        install_location: "Mall",
+        required_cyberware: "Cyberaudio Suite",
+    },
+    {
+        name: "Voice Stress Analyzer",
+        type: CyberwareType.Cyberaudio,
+        description: "Cyberaudio Option. User adds +2 to their Human Perception and Interrogation Skills User can activate a special lie-detecting function for a minute with an Action, during which time the GM rolls all your Character's Human Perception and Interrogation Checks privately, beeping once whenever it detects a lie, or whenever they desire after a failed roll. Beware of false positives and negatives. Requires a Cyberaudio Suite. Multiple installations of this option provide user no additional benefit.",
+        cost: 100,
+        humanity_loss: 3,
+        body_location: [BodyLocation.Ear],
+        install_location: "Mall",
+        required_cyberware: "Cyberaudio Suite",
+        max_installs: 1,
+    }
+];
+
 
 
 let all_cyberware: Cyberware[] = []
