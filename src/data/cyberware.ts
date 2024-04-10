@@ -870,8 +870,8 @@ const cyberarms = [
         body_location: [BodyLocation.LeftArm, BodyLocation.RightArm],
         install_location: "Clinic",
         slots_required: 0,
-        required_cyberware: "Cyberarm/Meat",
-        can_install_in_meat: true,
+        required_cyberware: "Cyberarm",
+        can_install_in_meat: false,
     },
     {
         name: "Big Knucks",

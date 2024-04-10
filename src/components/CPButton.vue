@@ -1,0 +1,60 @@
+<script setup lang="ts">
+
+import { ref, getCurrentInstance } from 'vue'
+
+const instance = getCurrentInstance();
+
+function emitClick() {
+    if(instance){
+        instance.emit("click")
+    }
+}
+
+</script>
+
+<style>
+.notchbtn_cont {
+    overflow: hidden;
+    position: relative;
+    background-color: red;
+    padding: 4px 5px 3px 5px;
+    height: calc(1.5em + 8px);
+}
+
+
+.notchbtn_cont:after {
+    content: "";
+    position: absolute;
+    top: calc(-1.5em + 2px);
+    left: calc(-2em);
+    width: 2em;
+    height: 3em;
+    background-color: white;
+    transform: rotate(45deg);
+
+}
+
+.notchbtn {
+    overflow: hidden;
+    height: 1.5em;
+    position: relative;
+}
+
+
+.notchbtn:before {
+    content: "";
+    position: absolute;
+    top: -1em;
+    left: -2em;
+    width: 2em;
+    height: 2em;
+    background-color: red;
+    transform: rotate(45deg);
+
+}
+</style>
+<template>
+    <button @click="emitClick()" class="notchbtn_cont">
+        <div class=" notchbtn bg-red-100 text-sm font-bold text-black active:bg-red-800 hover:bg-red-500 hover:text-white px-2 "><slot>Click Me!</slot></div>
+    </button>
+</template>

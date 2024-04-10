@@ -24,6 +24,7 @@ import CPTable from '@/components/CPTable.vue';
 import CPCell from '@/components/CPCell.vue';
 import CPRow from '@/components/CPRow.vue';
 import CPTitle from '@/components/CPTitle.vue';
+import CPButton from '@/components/CPButton.vue';
 
 
 /**
@@ -180,6 +181,11 @@ const value_of_cyberware = computed(() => {
     return total;
 })
 
+function randomizeStats() {
+    char.value.randomizeStats();
+}
+function randomizeSkills(){ char.value.randomizeSkills() }
+
 </script>
 <style>
 .notch {
@@ -217,7 +223,10 @@ const value_of_cyberware = computed(() => {
 
         <hr class="my-2" />
 
-        <CPTitle>Stats</CPTitle>
+        <CPTitle class="flex justify-between pr-2">
+            <span>Stats</span>
+            <CPButton @click="randomizeStats()">Randomize</CPButton>
+        </CPTitle>
         <StatsBlock :stats="stats_block" />
 
         <hr class="my-2" />
@@ -228,15 +237,20 @@ const value_of_cyberware = computed(() => {
 
 
         <div class="skills">
-            <CPTitle>
-                <div class="mr-4">Skills</div>
-                <div class="font-normal">
-                    Sorting by: <select v-model="sort_method">
-                        <option value="alphabetical">Alphabetical</option>
-                        <option value="base">Base</option>
-                        <option value="group">Group</option>
-                        <option value="level">Level</option>
-                    </select>
+            <CPTitle class="flex justify-between pr-2">
+                <div>
+                    <div class="mr-4">Skills</div>
+                    <div class="font-normal">
+                        Sorting by: <select v-model="sort_method">
+                            <option value="alphabetical">Alphabetical</option>
+                            <option value="base">Base</option>
+                            <option value="group">Group</option>
+                            <option value="level">Level</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <CPButton @click="randomizeSkills()">Randomize</CPButton>
                 </div>
             </CPTitle>
             <div class=" sm:columns-2 md:columns-3 columns-1 gap-1 bg-red-500 p-1">

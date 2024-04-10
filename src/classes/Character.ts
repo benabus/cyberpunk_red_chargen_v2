@@ -192,7 +192,7 @@ export class Character {
 
     //TODO: Doesn't handle cyberware with requirements that aren't slotted directly into the requirement (e.g. Sensor Array)
     //TODO: Throw error if the cyberware would reduce humanity below 0
-    installCyberware({ cyberware }: { cyberware: Cyberware }) {
+    installCyberware({ cyberware, free = false }: { cyberware: Cyberware, free?: boolean }) {
         // this.cyberware[location] = cyberware;
 
         if (cyberware.type === CyberwareType.Speedware && this.hasSpeedware()) {
@@ -201,14 +201,25 @@ export class Character {
         const max_installs = cyberware.max_installs;
         const current_installs = this.findCyberware(cyberware.name).length;
         if (max_installs > 0 && current_installs >= max_installs) {
-            throw new Error(`Cannot install ${cyberware.name}.  Can only install a maximum of ${max_installs}.`);
+            throw new Error(`Cannot install ${cyberware.name}.  Can install a maximum of ${max_installs}.`);
         }
 
         const possible_locations = cyberware.body_location;
-        const required_cyberware_name = cyberware.required_cyberware;
+        const required_cyberware_names = cyberware.required_cyberware.split("/");
         const required_slots = cyberware.slots_required;
 
-        const required_cyberware = this.findCyberware(required_cyberware_name);
+        let required_cyberware: Cyberware[] = [];
+        let required_cyberware_name = ""
+
+        while (required_cyberware_names.length > 0 && required_cyberware.length <= 0) {
+            required_cyberware_name = required_cyberware_names.shift() || "";
+            if (required_cyberware_name == "Meat") {
+                required_cyberware_name = "";
+            }
+            required_cyberware = this.findCyberware(required_cyberware_name);
+        }
+
+        required_cyberware = this.findCyberware(required_cyberware_name);
 
         if (required_cyberware_name != "" && required_cyberware.length <= 0) {
             throw new Error(`Cannot install ${cyberware.name} without ${required_cyberware_name}`);
@@ -232,10 +243,14 @@ export class Character {
 
             available_foundational_cyberware.sort(() => Math.random() - 0.5);
             available_foundational_cyberware[0].pushOption(cyberware);
-            this.cash -= cyberware.cost;
+            if (!free) {
+                this.cash -= cyberware.cost;
+            }
             if (cyberware.must_be_paired) {
                 available_foundational_cyberware[1].pushOption(cyberware);
-                this.cash -= cyberware.cost;
+                if (!free) {
+                    this.cash -= cyberware.cost;
+                }
             }
             return;
         }
@@ -249,7 +264,13 @@ export class Character {
                     throw new Error(`Cannot install ${cyberware.name}.  Not enough cash.`);
                 }
                 this.cyberware[random_location] = cyberware;
-                this.cash -= cyberware.cost;
+                if (!free) {
+                    this.cash -= cyberware.cost;
+                }
+                if (cyberware.name == "Cyberarm") {
+                    const standard_hand = CyberwareList.find(cyberware => cyberware.name === "Standard Hand") as Cyberware;
+                    this.installCyberware({ cyberware: standard_hand, free: true });
+                }
                 return;
             } else if (current_cyberware_in_location === undefined && !cyberware.can_install_in_meat) {
                 throw new Error(`Cannot install ${cyberware.name} in meat`);
@@ -296,6 +317,12 @@ export class Character {
                 console.error(e + "")
             }
         }
+
+        // const cyberarm = CyberwareList.find(cyberware => cyberware.name === "Cyberarm") as Cyberware;
+        // this.installCyberware({ cyberware: cyberarm });
+        // const rippers = CyberwareList.find(cyberware => cyberware.name === "Rippers") as Cyberware;
+        // this.installCyberware({ cyberware: rippers });
+
     }
 
 
@@ -421,7 +448,14 @@ export class Character {
             }
         }
     }
+    resetSkills() {
+        for (const skill of Object.values(this.skills)) {
+            skill.lvl = 0;
+        }
+    }
     randomizeSkills() {
+        this.resetSkills();
+
         let skill_points = this.skill_points
         let required_skills = [...RequiredSkills]
         for (const weapon of this.weapons) {
