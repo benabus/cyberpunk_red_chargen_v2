@@ -982,11 +982,156 @@ const cyberarms = [
         install_location: "Clinic",
         required_cyberware: "Cyberarm/Meat",
         can_install_in_meat: true,
+    },
+    {
+        name: "Scratchers",
+        type: CyberwareType.Cyberlimbs,
+        description: "Cyberarm Option. Carbo-glass artificial fingernails that cut on a diagonal slice. A Light Melee Weapon (1d6 damage, 2 ROF) that can be successfully concealed without a Check. When wielded as a weapon, user can't hold anything in this arm's hand. Can be installed as the only piece of Cyberware in a meat arm.",
+        cost: 100,
+        humanity_loss: 2,
+        body_location: [BodyLocation.LeftArm, BodyLocation.RightArm],
+        install_location: "Mall",
+        required_cyberware: "Cyberarm/Meat",
+        can_install_in_meat: true,
+    },
+    {
+        name: "Shoulder Cam",
+        type: CyberwareType.Cyberlimbs,
+        description: "Camera in a popup in the user's shoulder that tracks independently of the user and records video and audio to an onboard Memory Chip or a linked Agent. Camera can be successfully concealed without a Check and can be drawn and stowed without an Action. Requires a Cyberarm and takes 2 Option Slots.",
+        cost: 500,
+        humanity_loss: 7,
+        body_location: [BodyLocation.LeftArm, BodyLocation.RightArm],
+        install_location: "Clinic",
+        slots_required: 2,
+        required_cyberware: "Cyberarm",
+    },
+    {
+        name: "Slice 'N Dice",
+        type: CyberwareType.Cyberlimbs,
+        description: "Monofilament whip implanted in the user's thumb. A Medium Melee Weapon (2d6 damage, 2 ROF) that can be successfully concealed without a Check. When wielded as a weapon, user can't hold anything in this arm's hand. Can be installed as the only piece of Cyberware in a meat arm.",
+        cost: 500,
+        humanity_loss: 3,
+        body_location: [BodyLocation.LeftArm, BodyLocation.RightArm],
+        install_location: "Clinic",
+        required_cyberware: "Cyberarm/Meat",
+        can_install_in_meat: true,
+    },
+    // {
+    //     name: "Subdermal Grip",
+    //     type: CyberwareType.Cyberlimbs,
+    //     description: "Neuralware Option. Subdermal plate under the palm allows user to make use of Smartguns. A cost-effective alternative to Interface Plugs. Can be installed as the only piece of Cyberware in a meat arm. Requires Neural Link and takes up a Neuralware Option Slot.",
+    //     cost: 100,
+    //     humanity_loss: 3,
+    //     body_location: [BodyLocation.LeftArm, BodyLocation.RightArm],
+    //     install_location: "Clinic",
+    //     required_cyberware: "Cyberarm/Meat",
+    //     can_install_in_meat: true,
+    // },
+    // {
+    //     name: "Subdermal Grip",
+    //     type: CyberwareType.Neuralware,
+    //     description: "Neuralware Option. Subdermal plate under the palm allows user to make use of Smartguns. A cost-effective alternative to Interface Plugs. Can be installed as the only piece of Cyberware in a meat arm. Requires Neural Link and takes up a Neuralware Option Slot.",
+    //     cost: 100,
+    //     humanity_loss: 3,
+    //     body_location: [BodyLocation.Brain],
+    //     install_location: "Clinic",
+    //     required_cyberware: "Neuralware",
+    // },
+    {
+        name: "Techscanner",
+        type: CyberwareType.Cyberlimbs,
+        description: "Scanner diagnoses a wide variety of machinery and electronics, assisting the user in repairs or other technical work. User adds +2 to their Basic Tech, Cybertech, Land Vehicle Tech, Sea Vehicle Tech, Air Vehicle Tech, Electronics/Security Tech, and Weaponstech Skills. Requires a Cyberarm and takes 2 Option Slots. Multiple installations of this option provide user no additional benefit.",
+        cost: 500,
+        humanity_loss: 7,
+        body_location: [BodyLocation.LeftArm, BodyLocation.RightArm],
+        install_location: "Clinic",
+        slots_required: 2,
+        required_cyberware: "Cyberarm",
+        max_installs: 1,
+    },
+    {
+        name: "Tool Hand",
+        type: CyberwareType.Cyberlimbs,
+        description: "Fingers contain screwdriver, wrench, small drill, etc. Never be without your Techtool! Can be installed as the only piece of Cyberware in a meat arm.",
+        cost: 100,
+        humanity_loss: 3,
+        body_location: [BodyLocation.LeftArm, BodyLocation.RightArm],
+        install_location: "Clinic",
+        slots_required: 1,
+        required_cyberware: "Cyberarm/Meat",
+        can_install_in_meat: true,
+    },
+    {
+        name: "Wolvers",
+        type: CyberwareType.Cyberlimbs,
+        description: "Extendable Carbo-glass claws in the knuckles. A Heavy Melee Weapon (3d6 damage, 2 ROF) that can be successfully concealed without a Check. When wielded as a weapon, user can't hold anything in this arm's hand. Can be installed as the only piece of Cyberware in a meat arm.",
+        cost: 500,
+        humanity_loss: 7,
+        body_location: [BodyLocation.LeftArm, BodyLocation.RightArm],
+        install_location: "Clinic",
+        required_cyberware: "Cyberarm/Meat",
+        can_install_in_meat: true,
     }
-
 ]
 
-
+const cyberlegs = [
+    {
+        name: "Cyberleg",
+        type: CyberwareType.Cyberlimbs,
+        description: "Replacement leg. Does not have to be paired. A Cyberleg has 3 Option Slots for Cyberleg or Cyberlimb Options and each comes pre-installed with a Standard Foot that doesn't cost any Humanity Loss or take up a Cyberleg Option Slot. Most Cyberleg options must be paired to work properly (purchased twice and installed in two different Cyberlegs on a user. Humanity Loss is calculated separately for each purchase).",
+        cost: 100,
+        humanity_loss: 3,
+        body_location: [BodyLocation.LeftLeg, BodyLocation.RightLeg],
+        install_location: "Hospital",
+        slots_available: 3,
+        can_install_in_meat: true,
+    },
+    {
+        name: "Standard Foot",
+        type: CyberwareType.Cyberlimbs,
+        description: "Resembles a normal foot. If installed into a meat leg, a Standard Foot doesn't count towards the number of pieces of cyberware installed in a meat leg. Doesn't take up a Cyberleg Option Slot.",
+        cost: 100,
+        humanity_loss: 0,
+        body_location: [BodyLocation.LeftLeg, BodyLocation.RightLeg],
+        install_location: "Clinic",
+        slots_required: 0,
+        required_cyberware: "Cyberleg",
+    },
+    {
+        name: "Grip Foot",
+        type: CyberwareType.Cyberlimbs,
+        description: "Feet are coated with state-of-the-art traction material. The user negates the normal movement penalty for climbing. Requires two Cyberlegs and must be paired.",
+        cost: 500,
+        humanity_loss: 3,
+        body_location: [BodyLocation.LeftLeg, BodyLocation.RightLeg],
+        install_location: "Clinic",
+        required_cyberware: "Cyberleg",
+        must_be_paired: true,
+    },
+    {
+        name: "Jump Booster",
+        type: CyberwareType.Cyberlimbs,
+        description: "Hydraulics in legs. Negates movement penalty when jumping. Requires two Cyberlegs, takes up 2 Option Slots, and must be paired.",
+        cost: 500,
+        humanity_loss: 3,
+        body_location: [BodyLocation.LeftLeg, BodyLocation.RightLeg],
+        install_location: "Clinic",
+        slots_required: 2,
+        required_cyberware: "Cyberleg",
+        must_be_paired: true,
+    },
+    {
+        name: "Skate Foot",
+        type: CyberwareType.Cyberlimbs,
+        description: "Inline skates built into feet. Can be concealed. Increases movement by 6m/yds when using Run Action. Requires two Cyberlegs and must be paired.",
+        cost: 500,
+        humanity_loss: 3,
+        body_location: [BodyLocation.LeftLeg, BodyLocation.RightLeg],
+        install_location: "Clinic",
+        slots_required: 3,
+        required_cyberware: "Cyberleg",
+        must_be_paired: true,
+    }];
 
 
 let all_cyberware: Cyberware[] = []
@@ -1012,6 +1157,9 @@ for (let item of cyberaudio) {
     all_cyberware.push(new Cyberware({ ...item }))
 }
 for (let item of cyberarms) {
+    all_cyberware.push(new Cyberware({ ...item }))
+}
+for (let item of cyberlegs) {
     all_cyberware.push(new Cyberware({ ...item }))
 }
 

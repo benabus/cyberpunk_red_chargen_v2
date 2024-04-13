@@ -17,6 +17,7 @@ import {
 import { Skill, Weapon, Lifepath, Cyberware } from ".";
 import type { Armor, GearItem } from "@/types";
 import { random_key } from "@/utilities";
+import { lifepath as sampleLifepath } from "./Lifepath";
 
 const Stat_Points: Record<string, number> = {
     "minor supporting": 50,
@@ -147,6 +148,10 @@ export class Character {
         // this.randomizeGear();
 
         this.randomizeCyberware();
+
+        sampleLifepath.walkPath();
+        sampleLifepath.printPath();
+
     }
 
     resetCyberware() {
@@ -270,6 +275,10 @@ export class Character {
                 if (cyberware.name == "Cyberarm") {
                     const standard_hand = CyberwareList.find(cyberware => cyberware.name === "Standard Hand") as Cyberware;
                     this.installCyberware({ cyberware: standard_hand, free: true });
+                }
+                if (cyberware.name == "Cyberleg") {
+                    const standard_foot = CyberwareList.find(cyberware => cyberware.name === "Standard Foot") as Cyberware;
+                    this.installCyberware({ cyberware: standard_foot, free: true });
                 }
                 return;
             } else if (current_cyberware_in_location === undefined && !cyberware.can_install_in_meat) {
