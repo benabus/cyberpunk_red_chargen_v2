@@ -2,13 +2,17 @@
 import { computed } from 'vue'
 import CPButton from '@/components/CPButton.vue'
 const props = defineProps<{
-    headers: string[],
+    headers?: string[],
     title: string,
     randomize?: Function
 }>()
 
 const show_randomize_button = computed(() => {
     return props.randomize !== undefined
+})
+
+const show_header = computed(() => {
+    return props.headers !== undefined && props.headers.length > 0
 })
 
 function randomize() {
@@ -27,7 +31,7 @@ function randomize() {
         </div>
     </div>
     <table class="w-full">
-        <thead>
+        <thead v-if="show_header">
             <tr class="text-xs bg-black text-white ">
                 <th class="text-left border-x-4 border-red-500 p-1" v-for="column_header of headers">{{ column_header }}</th>
             </tr>

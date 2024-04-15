@@ -27,6 +27,11 @@ import CPTitle from '@/components/CPTitle.vue';
 import CPButton from '@/components/CPButton.vue';
 
 
+
+const char = ref(new Character()) // Initializes reactive variable for character.
+walkLifepath();
+
+
 /**
  * Valid Skill Sort Methods:
  *  level - level of the skill
@@ -98,7 +103,6 @@ const stats_block = computed(() => {
 })
 
 
-const char = ref(new Character()) // Initializes reactive variable for character.
 
 const weapon_attachment_modal_visible = ref(false)
 const weapon_attachment_modal = ref<WeaponAttachment>({ name: '', description: '', cost: 0, eligible: [], attachment_slots: 0 })
@@ -184,9 +188,47 @@ const value_of_cyberware = computed(() => {
 function randomizeStats() {
     char.value.randomizeStats();
 }
-function randomizeSkills(){ char.value.randomizeSkills() }
+function randomizeSkills() { char.value.randomizeSkills() }
+
+
+const lifepath = computed(() => {
+    return char?.value?.lifepath?.path || [];
+})
+function walkLifepath() {
+    char.value.resetLifepath();
+    char.value.walkLifepath()
+}
 
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <style>
 .notch {
     overflow: hidden;
@@ -423,7 +465,14 @@ function randomizeSkills(){ char.value.randomizeSkills() }
         <hr class="my-2" />
         <TextFieldRow :values="{ 'Cash': cash.toString() + 'eb' }" />
 
+        <hr class="my-2" />
 
+        <CPTable title="Lifepath" :randomize="walkLifepath">
+            <CPRow v-for="event, index in lifepath" :key="`lifepath_${event.table}_${index}`">
+                <CPCell>{{ event.table }}</CPCell>
+                <CPCell>{{ event.value }}</CPCell>
+            </CPRow>
+        </CPTable>
 
 
         <br /><br /><br />

@@ -17,7 +17,7 @@ import {
 import { Skill, Weapon, Lifepath, Cyberware } from ".";
 import type { Armor, GearItem } from "@/types";
 import { random_key } from "@/utilities";
-import { lifepath as sampleLifepath } from "./Lifepath";
+import { CulturalOriginTable } from "@/data/lifepath_tables";
 
 const Stat_Points: Record<string, number> = {
     "minor supporting": 50,
@@ -68,6 +68,8 @@ export class Character {
 
     creation_method: CreationMethod = "complete"
 
+    lifepath: Lifepath = new Lifepath();
+
     constructor({ creation_method = "complete" }: { creation_method?: CreationMethod } = {}) {
         this.creation_method = creation_method || "complete";
         this.cash = Starting_Cash[this.creation_method];
@@ -80,6 +82,7 @@ export class Character {
         }
 
         this.resetCyberware();
+        this.lifepath.setStartingTable(CulturalOriginTable);
 
         // const neural_link = CyberwareList.find(cyberware => cyberware.name === "Neural Link") as Cyberware;
         // const chipware_socket = CyberwareList.find(cyberware => cyberware.name === "Chipware Socket") as Cyberware;
@@ -147,10 +150,8 @@ export class Character {
         // this.randomizeWeapons();
         // this.randomizeGear();
 
-        this.randomizeCyberware();
+        // this.randomizeCyberware();
 
-        sampleLifepath.walkPath();
-        sampleLifepath.printPath();
 
     }
 
@@ -323,7 +324,7 @@ export class Character {
                 const random_cyberware = CyberwareList[Math.floor(Math.random() * CyberwareList.length)];
                 this.installCyberware({ cyberware: new Cyberware({ ...random_cyberware }) });
             } catch (e) {
-                console.error(e + "")
+                console.warn(`Could not add cyberware: ${e}`)
             }
         }
 
@@ -515,5 +516,12 @@ export class Character {
     randomize() {
         this.randomizeStats();
         this.randomizeSkills();
+    }
+    resetLifepath() {
+        this.lifepath = new Lifepath();
+        this.lifepath.setStartingTable(CulturalOriginTable);
+    }
+    walkLifepath() {
+        this.lifepath.walkPath();
     }
 }
