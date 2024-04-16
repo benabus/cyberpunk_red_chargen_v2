@@ -198,6 +198,12 @@ function walkLifepath() {
     char.value.resetLifepath();
     char.value.walkLifepath()
 }
+const lifepath_modal_visible = ref(false)
+const lifepath_modal_content = ref("")
+function openLifepathModal(content: string) {
+    lifepath_modal_content.value = content;
+    lifepath_modal_visible.value = true;
+}
 
 </script>
 
@@ -468,12 +474,24 @@ function walkLifepath() {
         <hr class="my-2" />
 
         <CPTable title="Lifepath" :randomize="walkLifepath">
-            <CPRow v-for="event, index in lifepath" :key="`lifepath_${event.table}_${index}`">
-                <CPCell>{{ event.table }}</CPCell>
-                <CPCell>{{ event.value }}</CPCell>
+            <CPRow v-for="event, index in lifepath" :key="`lifepath_${event.table?.name}_${index}`">
+                <CPCell class="w-1/3">
+                    <span v-if="event.table?.description === undefined || event.table?.description == ''">{{ event.table?.name || "---" }}</span>
+                    <span v-else class="cursor-pointer underline decoration-dashed" @click="openLifepathModal(event.table?.description || '')">{{ event.table?.name }}</span>
+                </CPCell>
+                <CPCell class="w-2/3">
+                    <span v-if="event.description" class="cursor-pointer underline decoration-dashed" @click="openLifepathModal(event.description || '')">{{ event.value }}</span>
+                    <span v-else>{{ event.value }}</span>
+                </CPCell>
             </CPRow>
         </CPTable>
-
+        <Modal :visible="lifepath_modal_visible" @close="lifepath_modal_visible = false">
+            <div class="p-1">
+                <h2 class="text-lg font-bold">Lifepath Event</h2>
+                <p>{{ lifepath_modal_content }}</p>
+                <button class="border rounded px-4" @click="lifepath_modal_visible = false">Close</button>
+            </div>
+        </Modal>
 
         <br /><br /><br />
 

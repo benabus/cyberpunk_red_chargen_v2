@@ -60,7 +60,7 @@ class LifepathTable {
     rows: LifepathRow[] = [];
     name = "";
     next_table: LifepathTable | undefined = undefined;
-    repeat: number = 1;
+    repeat: number | string = 1;
     description: string = "";
 
     constructor({ name, start, end, repeat = 1, rows, description }: { name: string, start?: boolean, end?: boolean, repeat?: number | string, rows?: LifepathRow[] | LifepathRow_Object[], description?: string }) {
@@ -68,8 +68,8 @@ class LifepathTable {
         this.start = start || false;
         this.end = end || false;
         this.description = description || "";
-        if (repeat === "d10-7") {
-            this.repeat = Math.floor(Math.random() * 10) - 7;
+        if (repeat === "1d10-7") {
+            this.repeat = repeat as string; //Math.floor(Math.random() * 10) - 7;
         }
         else {
             this.repeat = repeat as number;
@@ -80,7 +80,7 @@ class LifepathTable {
     }
     addRow(row: LifepathRow) {
 
-        row.table = this.name;
+        row.table = this;
         this.rows.push(row);
     }
     addRows(rows: LifepathRow[] | LifepathRow_Object[]) {
@@ -100,7 +100,16 @@ class LifepathTable {
         return this.rows[Math.floor(Math.random() * this.rows.length)];
     }
     walkPath(path: Lifepath) {
-        for (let i = 0; i < this.repeat; i++) {
+        let repeat = 1;
+        if (this.repeat === "1d10-7") {
+            // repeat = Math.floor(Math.random() * 10) - 7;
+            repeat = Math.floor(Math.random() * 4)
+        }
+        else {
+            repeat = this.repeat as number;
+        }
+
+        for (let i = 0; i < repeat; i++) {
             let row = this.getRandomRow();
             row.walkPath(path);
         }
@@ -113,24 +122,24 @@ class LifepathTable {
 }
 
 interface LifepathRow_Object {
-    table?: string;
+    table?: LifepathTable;
     value: string;
     description?: string;
     next_table?: LifepathTable | undefined;
 }
 
 class LifepathRow {
-    table?: string = "";
+    table?: LifepathTable;
     value: string = "";
     description?: string = "";
     next_table?: LifepathTable | undefined = undefined;
 
-    constructor({ table, value, description, next_table }: { table?: string, value: string, description?: string, next_table?: LifepathTable }) {
+    constructor({ table, value, description, next_table }: { table?: LifepathTable, value: string, description?: string, next_table?: LifepathTable }) {
         if (!value) {
             throw new Error("Value is required");
         }
         this.value = value;
-        this.table = table || this.table;
+        this.table = table;
         this.description = description || this.description;
         this.next_table = next_table || undefined;
     }
@@ -142,36 +151,12 @@ class LifepathRow {
         }
     }
     toString() {
-        return `${this.table} : ${this.value} : ${this.description}`;
+        return `${this.table?.name} : ${this.value} : ${this.description}`;
     }
 }
 
 
 
-
-// const table1 = new LifepathTable({
-//     name: "table1", start: true, rows: [
-//         { value: "something" },
-//         { value: "row2" },
-//         { value: "row3" },
-//     ]
-// });
-// const table2 = new LifepathTable({
-//     name: "table2", rows: [
-//         { value: "row4" },
-//         { value: "row5", next_table: table1 },
-//         { value: "row6" },
-//     ]
-// });
-// table1.setNextTable(table2);
-// const table3 = new LifepathTable({
-//     name: "table3", rows: [
-//         { value: "row7" },
-//         { value: "row8" },
-//         { value: "row9" },
-//     ]
-// });
-// table2.setNextTable(table3);
 
 
 
