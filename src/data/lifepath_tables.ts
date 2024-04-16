@@ -471,5 +471,20 @@ const tragic_love_affairs = new LifepathTable({
 enemies.setNextTable(tragic_love_affairs);
 
 
-
+const life_goals = new LifepathTable({
+    name: "Your Life Goals",
+    rows: [
+        { value: "Get rid of a bad reputation." },
+        { value: "Gain power and control." },
+        { value: "Get off The Street no matter what it takes." },
+        { value: "Cause pain and suffering to anyone who crosses you." },
+        { value: "Live down your past life and try to forget it." },
+        { value: "Hunt down those responsible for your miserable life and make them pay." },
+        { value: "Get what's rightfully yours." },
+        { value: "Save, if possible, anyone else involved in your background, like a lover, or family member." },
+        { value: "Gain fame and recognition." },
+        { value: "Become feared and respected." },
+    ]
+})
+tragic_love_affairs.setNextTable(life_goals);
 
