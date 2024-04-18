@@ -1,5 +1,4 @@
 import { LifepathTable, LifepathRow } from "@/classes/Lifepath";
-import type { LifepathRow_Object } from "@/classes/Lifepath";
 
 export { cultural_origin as CulturalOriginTable }
 

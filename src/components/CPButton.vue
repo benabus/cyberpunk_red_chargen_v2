@@ -1,15 +1,4 @@
 <script setup lang="ts">
-
-import { ref, getCurrentInstance } from 'vue'
-
-const instance = getCurrentInstance();
-
-function emitClick() {
-    if(instance){
-        instance.emit("click")
-    }
-}
-
 </script>
 
 <style>
@@ -54,7 +43,9 @@ function emitClick() {
 }
 </style>
 <template>
-    <button @click="emitClick()" class="notchbtn_cont">
-        <div class=" notchbtn bg-red-100 text-sm font-bold text-black active:bg-red-800 hover:bg-red-500 hover:text-white px-2 "><slot>Click Me!</slot></div>
+    <button class="notchbtn_cont">
+        <div class=" notchbtn bg-red-100 text-sm font-bold text-black active:bg-red-800 hover:bg-red-500 hover:text-white px-2 ">
+            <slot>Click Me!</slot>
+        </div>
     </button>
 </template>

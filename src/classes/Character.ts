@@ -18,6 +18,25 @@ import { Skill, Weapon, Lifepath, Cyberware } from ".";
 import type { Armor, GearItem } from "@/types";
 import { random_key } from "@/utilities";
 import { CulturalOriginTable } from "@/data/lifepath_tables";
+import type { setOriginalNode } from "typescript";
+import type { LifepathTable } from "./Lifepath";
+import { Solo as SoloLifepath } from "@/data/role_lifepath_tables";
+
+
+const role_lifepath_table: Record<Role, LifepathTable | undefined> = {
+    Solo: SoloLifepath,
+    Fixer: undefined,
+    Netrunner: undefined,
+    Civilian: undefined,
+    Rockerboy: undefined,
+    Tech: undefined,
+    Medtech: undefined,
+    Media: undefined,
+    Exec: undefined,
+    Lawman: undefined,
+    Nomad: undefined,
+
+}
 
 const Stat_Points: Record<string, number> = {
     "minor supporting": 50,
@@ -69,6 +88,7 @@ export class Character {
     creation_method: CreationMethod = "complete"
 
     lifepath: Lifepath = new Lifepath();
+    role_lifepath: Lifepath | undefined = undefined;
 
     constructor({ creation_method = "complete" }: { creation_method?: CreationMethod } = {}) {
         this.creation_method = creation_method || "complete";
@@ -523,5 +543,20 @@ export class Character {
     }
     walkLifepath() {
         this.lifepath.walkPath();
+    }
+    setRole(role: Role) {
+        this.role = role;
+        this.role_lifepath = undefined;
+        const role_start_table = role_lifepath_table[role];
+        if (role_start_table != undefined) {
+            this.role_lifepath = new Lifepath();
+            this.role_lifepath.setStartingTable(role_start_table);
+        }
+    }
+    walkRoleLifepath() {
+        if (this.role_lifepath === undefined) {
+            return;
+        }
+        this.role_lifepath.walkPath();
     }
 }

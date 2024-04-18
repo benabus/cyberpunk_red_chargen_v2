@@ -9,6 +9,7 @@ import { ArmorList } from './armor'
 import { ClipChart } from './clip_chart'
 import { AmmoTypes } from './ammo_types'
 import { Gear } from './gear'
+import { } from './role_lifepath_tables';
 
 export {
     Stat,
