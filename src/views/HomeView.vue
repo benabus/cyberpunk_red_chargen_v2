@@ -14,6 +14,7 @@ import {
 } from '@/data';
 import { Lifepath, Skill, Character, Cyberware } from '@/classes';
 import type { WeaponAttachment, AmmoType, Armor } from '@/types'
+import TextField from '@/components/TextField.vue';
 import TextFieldRow from '@/components/TextFieldRow.vue'
 import SkillTable from '@/components/SkillTable.vue'
 import SkillRow from '@/components/SkillRow.vue'
@@ -26,13 +27,21 @@ import CPRow from '@/components/CPRow.vue';
 import CPTitle from '@/components/CPTitle.vue';
 import CPButton from '@/components/CPButton.vue';
 
+import type { CreationMethod } from '@/classes/Character';
 
+
+
+const creation_method = ref<CreationMethod>("complete");
+const role = ref<Role>(Role.Solo);
 
 const char = ref(new Character()) // Initializes reactive variable for character.
-// walkLifepath();
-char.value.setRole(Role.Solo);
-walkRoleLifepath();
 
+
+function generateCharacter() {
+    char.value = new Character({ creation_method: creation_method.value });
+    char.value.setRole(role.value);
+    walkRoleLifepath();
+}
 
 /**
  * Valid Skill Sort Methods:
@@ -285,7 +294,32 @@ function openRoleLifepathModal(content: string) {
 <template>
     <main class="container p-4 mx-auto">
 
-        <TextFieldRow :values="char_info" />
+        <CPTitle class="flex justify-between pr-2" :bottom-border="true">
+            <div class="mr-4">Character Creation</div>
+            <div class="font-normal">
+                Creation Method: <select class="px-2 border-solid border-red-500 border-4" v-model="creation_method">
+                    <option value="streetrat">Streetrat (Template)</option>
+                    <option value="edgerunner">Edgerunner (Fast and Dirty)</option>
+                    <option value="complete">Complete Package (Calculated)</option>
+                </select>
+            </div>
+            <div>
+                <CPButton @click="generateCharacter()">Generate Character</CPButton>
+            </div>
+        </CPTitle>
+
+        <hr class="my-2" />
+
+        <div class="notch grid grid-cols-4">
+            <TextField class="p-4 border-red-500 border-r-4" title="Handle" :value="char_info.Handle" />
+            <TextField class="font-bold p-4 border-red-500 border-r-4" title="Role">
+                <select v-model="role" class="px-2 py-1">
+                    <option v-for="role in Object.values(Role)" :key="role" :value="role">{{ role }}</option>
+                </select>
+            </TextField>
+            <TextField class="p-4 border-red-500 border-r-4 text-center" title="Rank" :value="char_info.Rank" />
+            <TextField class="p-4" title="Notes" :value="char_info.Notes" />
+        </div>
 
         <hr class="my-2" />
 

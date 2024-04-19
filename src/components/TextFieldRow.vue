@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import TextField from '@/components/TextField.vue'
 
 const props = defineProps<{
-    values: Record<string, string | number>,
+    values: Record<string, string | number | { value: string | number, type: string }>,
 }>()
 const length = computed(() => {
     return Object.values(props.values).length;
@@ -19,10 +19,30 @@ function classes(key: string, value: string | number) {
     return classes;
 }
 
+const values = computed(() => {
+    let vals: Record<string, { type: string, value: string | number }> = {};
+    for (let key in props.values) {
+        let item = props.values[key];
+        if (typeof item === 'object') {
+            if (item.hasOwnProperty('type')) {
+                vals[key] = item;
+            } else {
+                vals[key] = { value: item.value, type: 'text' }
+            }
+            vals[key] = item;
+        } else {
+            vals[key] = { value: item, type: 'text' }
+        }
+    }
+    return vals;
+})
+
 </script>
 
 <template>
     <div :class="`notch grid grid-cols-${length}`">
-        <TextField v-for="value, key in values" :class="classes(key, value)" :title="key" :value="value" />
+        <template v-for="value, key in values">
+            <TextField v-if="value.type == 'text'" :class="classes(key, value.value)" :title="key" :value="value.value" />
+        </template>
     </div>
 </template>

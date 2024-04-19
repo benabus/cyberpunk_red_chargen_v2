@@ -52,7 +52,7 @@ const Starting_Cash: Record<CreationMethod, number> = {
 }
 
 type WeaponType = "melee" | "ranged" | "exotic";
-type CreationMethod = "complete" | "edgerunner" | "street rat";
+export type CreationMethod = "complete" | "edgerunner" | "street rat";
 
 export class Character {
     skill_points = 86
