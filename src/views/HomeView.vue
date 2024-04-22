@@ -31,15 +31,15 @@ import type { CreationMethod } from '@/classes/Character';
 
 
 
-const creation_method = ref<CreationMethod>("complete");
+const creation_method = ref<CreationMethod>("street rat");
 const role = ref<Role>(Role.Solo);
-
-const char = ref(new Character()) // Initializes reactive variable for character.
+const char = ref<Character>(new Character()) // Initializes reactive variable for character.
+generateCharacter(); // Generates a character on page load.
 
 
 function generateCharacter() {
-    char.value = new Character({ creation_method: creation_method.value });
-    char.value.setRole(role.value);
+    const new_char = new Character({ creation_method: creation_method.value, role: role.value });
+    char.value = new_char;
     walkRoleLifepath();
 }
 
@@ -53,7 +53,6 @@ function generateCharacter() {
 const sort_method = ref('base'); // Initializes reactive variable for sorting method, default 'base'.
 // Function to divide a skills array into three chunks.
 const createSkillsChunks = (skills: Skill[]) => {
-    console.debug(skills.length)
     const chunkSize = Math.ceil(skills.length / 6); // Calculates size of each chunk.
     return [0, 1, 2, 3, 4, 5].map(i => skills.slice(i * chunkSize, (i + 1) * chunkSize)); // Creates three chunks.
 };
@@ -298,7 +297,7 @@ function openRoleLifepathModal(content: string) {
             <div class="mr-4">Character Creation</div>
             <div class="font-normal">
                 Creation Method: <select class="px-2 border-solid border-red-500 border-4" v-model="creation_method">
-                    <option value="streetrat">Streetrat (Template)</option>
+                    <option value="street rat">Streetrat (Template)</option>
                     <option value="edgerunner">Edgerunner (Fast and Dirty)</option>
                     <option value="complete">Complete Package (Calculated)</option>
                 </select>

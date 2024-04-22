@@ -2,6 +2,7 @@
 
 ***Using this software assumes you have purchased the Cyberpunk Red Core Rulebook from R. Talsorian Games.  If this is not accurate, please refrain from using any part of this software.***
 
+https://cpr-char-gen-2.neocities.org/
 
 
 ## Recommended IDE Setup

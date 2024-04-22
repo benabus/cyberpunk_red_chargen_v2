@@ -22,6 +22,8 @@ import type { setOriginalNode } from "typescript";
 import type { LifepathTable } from "./Lifepath";
 import { Solo as SoloLifepath } from "@/data/role_lifepath_tables";
 
+import StatTables from "@/data/edge_runnner_stat_tables";
+
 
 const role_lifepath_table: Record<Role, LifepathTable | undefined> = {
     Solo: SoloLifepath,
@@ -61,7 +63,7 @@ export class Character {
 
     handle: string = "Unknown";
     role: Role = Role.Civilian;
-    role_ability_rank: number = 1;
+    role_ability_rank: number = 4;
     notes: string = ""
     humanity: number = 0
     stats: Record<string, number> = {}
@@ -85,13 +87,14 @@ export class Character {
 
     cyberware: Record<string, Cyberware | undefined> = {}
 
-    creation_method: CreationMethod = "complete"
+    creation_method: CreationMethod = "street rat"
 
     lifepath: Lifepath = new Lifepath();
     role_lifepath: Lifepath | undefined = undefined;
 
-    constructor({ creation_method = "complete" }: { creation_method?: CreationMethod } = {}) {
-        this.creation_method = creation_method || "complete";
+    constructor({ creation_method = "street rat", role = Role.Civilian }: { creation_method?: CreationMethod, role?: Role } = {}) {
+        this.creation_method = creation_method || "street rat";
+        this.setRole(role);
         this.cash = Starting_Cash[this.creation_method];
 
         for (const stat of Object.values(Stat)) {
@@ -103,65 +106,6 @@ export class Character {
 
         this.resetCyberware();
         this.lifepath.setStartingTable(CulturalOriginTable);
-
-        // const neural_link = CyberwareList.find(cyberware => cyberware.name === "Neural Link") as Cyberware;
-        // const chipware_socket = CyberwareList.find(cyberware => cyberware.name === "Chipware Socket") as Cyberware;
-        // this.installCyberware({ cyberware: neural_link });
-        // this.installCyberware({ cyberware: chipware_socket });
-
-        // try {
-        //     let cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Cybereye");
-        //     if (cyberware_prototype !== undefined) {
-        //         const cyberware = new Cyberware({ ...cyberware_prototype })
-        //         this.installCyberware({ cyberware: cyberware });
-        //     }
-
-        //     cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Cybereye");
-        //     if (cyberware_prototype !== undefined) {
-        //         const cyberware = new Cyberware({ ...cyberware_prototype })
-        //         this.installCyberware({ cyberware: cyberware });
-        //     }
-
-        //     // cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Cybereye");
-        //     // if (cyberware_prototype !== undefined) {
-        //     //     const cyberware = new Cyberware({ ...cyberware_prototype })
-        //     //     this.installCyberware({ cyberware: cyberware });
-        //     // }
-
-        //     cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Dartgun");
-        //     if (cyberware_prototype !== undefined) {
-        //         const cyberware = new Cyberware({ ...cyberware_prototype })
-        //         this.installCyberware({ cyberware: cyberware });
-        //     }
-
-
-        //     cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Anti-Dazzle");
-        //     if (cyberware_prototype !== undefined) {
-        //         const cyberware = new Cyberware({ ...cyberware_prototype })
-        //         this.installCyberware({ cyberware: cyberware });
-        //     }
-
-        // } catch (e) {
-        //     console.error(e.message)
-        // }
-
-        // cyberware_prototype = CyberwareList.find(cyberware => cyberware.name === "Cybereye");
-        // if (cyberware_prototype !== undefined) {
-        //     const cyberware = new Cyberware({ ...cyberware_prototype })
-        //     this.installCyberware({ cyberware: cyberware });
-        // }
-
-        // console.debug(this.cyberware)
-
-        // const cybereyeR = new Cyberware(CyberwareList.find(cyberware => cyberware.name === "Cybereye") as Cyberware);
-        // for (let i = 0; i < 100; i++) {
-        //     try {
-        //         const random_cyberware = CyberwareList[Math.floor(Math.random() * CyberwareList.length)];
-        //         this.installCyberware({ cyberware: random_cyberware });
-        //     } catch (e) {
-        //         console.error(e + "")
-        //     }
-        // }
 
         this.randomizeStats();
         this.randomizeSkills();
@@ -518,20 +462,43 @@ export class Character {
 
     }
     randomizeStats() {
-        let stat_points = Stat_Points[this.character_rank]
-        for (const stat in this.stats) {
-            this.stats[stat] = 2;
-            stat_points -= 2;
-        }
-
-        while (stat_points > 0) {
-            const stat = random_key(this.stats);
-            if (this.stats[stat] >= 8) {
-                continue;
+        if (this.creation_method == "complete") {
+            let stat_points = Stat_Points[this.character_rank]
+            for (const stat in this.stats) {
+                this.stats[stat] = 2;
+                stat_points -= 2;
             }
-            this.stats[stat] += 1;
-            stat_points -= 1;
+
+            while (stat_points > 0) {
+                const stat = random_key(this.stats);
+                if (this.stats[stat] >= 8) {
+                    continue;
+                }
+                this.stats[stat] += 1;
+                stat_points -= 1;
+            }
+
+            return
         }
+        else {
+            const stats = ['INT', 'REF', 'DEX', 'TECH', 'COOL', 'WILL', 'LUCK', 'MOVE', 'BODY', 'EMP'];
+            const table = StatTables[this.role as Role];
+            if (this.creation_method == "street rat") {
+                const random_row = table[Math.floor(Math.random() * table.length)];
+                for (let index in stats) {
+                    this.stats[stats[index]] = random_row[index];
+                }
+                return
+            }
+            else if (this.creation_method == "edgerunner") {
+                for (let index in stats) {
+                    const random_row = table[Math.floor(Math.random() * table.length)];
+                    this.stats[stats[index]] = random_row[index];
+                }
+                return;
+            }
+        }
+        throw new Error("Could not randomize stats")
     }
     randomize() {
         this.randomizeStats();
