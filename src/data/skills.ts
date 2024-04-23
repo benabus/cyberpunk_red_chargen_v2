@@ -116,6 +116,7 @@ const skill_info: { name: string, stat: Stat, x2?: boolean }[] = [
   { name: "Contortionist", stat: Stat.DEX },
   { name: "Criminology", stat: Stat.INT },
   { name: "Cryptography", stat: Stat.INT },
+  { name: "Cybertech", stat: Stat.TECH },
   { name: "Dance", stat: Stat.DEX },
   { name: "Deduction", stat: Stat.INT },
   { name: "Demolitions", stat: Stat.TECH, x2: true },

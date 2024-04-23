@@ -23,6 +23,7 @@ import type { LifepathTable } from "./Lifepath";
 import { Solo as SoloLifepath } from "@/data/role_lifepath_tables";
 
 import StatTables from "@/data/edge_runnner_stat_tables";
+import SkillTables from "@/data/edge_runner_skill_tables";
 
 
 const role_lifepath_table: Record<Role, LifepathTable | undefined> = {
@@ -431,35 +432,65 @@ export class Character {
         this.resetSkills();
 
         let skill_points = this.skill_points
-        let required_skills = [...RequiredSkills]
-        for (const weapon of this.weapons) {
-            const skill_name = this.skills[weapon.skill].name;
-            required_skills.push(skill_name)
-        }
-        for (const key in this.skills) {
-            if (required_skills.includes(this.skills[key].name)) {
-                this.skills[key].lvl += 2;
-                skill_points -= 2;
+        console.debug(this.creation_method);
+        if (this.creation_method == "complete") {
+
+            let required_skills = [...RequiredSkills]
+            for (const weapon of this.weapons) {
+                const skill_name = this.skills[weapon.skill].name;
+                required_skills.push(skill_name)
             }
-        }
-        while (skill_points > 0) {
-            const key = random_key(this.skills);
-            const skill = this.skills[key];
-            if (skill.lvl >= 6) {
-                continue;
+            for (const key in this.skills) {
+                if (required_skills.includes(this.skills[key].name)) {
+                    this.skills[key].lvl += 2;
+                    skill_points -= 2;
+                }
             }
-            if (skill.x2) {
-                if (skill_points < 2) {
+            while (skill_points > 0) {
+                const key = random_key(this.skills);
+                const skill = this.skills[key];
+                if (skill.lvl >= 6) {
                     continue;
                 }
-                skill_points -= 2;
+                if (skill.x2) {
+                    if (skill_points < 2) {
+                        continue;
+                    }
+                    skill_points -= 2;
+                }
+                else {
+                    skill_points -= 2;
+                }
+                skill.lvl += 1;
             }
-            else {
-                skill_points -= 2;
+            return
+        }
+        else {
+
+            const role_skill_table = SkillTables[this.role as Role];
+
+            if (this.creation_method == "street rat") {
+                for (const skill in role_skill_table) {
+                    const key = Skill.genKey(skill);
+                    try {
+                        // console.debug(key, role_skill_table[skill], role_skill_table);
+                        this.skills[key].lvl = role_skill_table[skill];
+                    }
+                    catch (e) {
+                        console.error(`Could not find skill: ${skill} with key ${key}`);
+                    }
+                }
+                return
             }
-            skill.lvl += 1;
+            else if (this.creation_method == "edgerunner") {
+                // for (const skill in role_skill_table) {
+                //     this.skills[skill].lvl = role_skill_table[skill];
+                // }
+                return
+            }
         }
 
+        throw new Error("Could not randomize skills");
     }
     randomizeStats() {
         if (this.creation_method == "complete") {

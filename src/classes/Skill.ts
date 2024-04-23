@@ -29,6 +29,9 @@ export class Skill {
 
 
   getKey(): string {
-    return this.name.toLowerCase().replace(/[^a-z0-9]+/g, '_');
+    return Skill.genKey(this.name);
+  }
+  static genKey(name: string): string {
+    return name.toLowerCase().replace(/[^a-z0-9]+/g, '_');
   }
 }
