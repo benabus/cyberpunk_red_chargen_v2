@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, defineEmits, watch } from 'vue';
 import {
     Stat,
     Role,
@@ -29,7 +29,7 @@ import CPButton from '@/components/CPButton.vue';
 
 import type { CreationMethod } from '@/classes/Character';
 
-
+// const emit = defineEmits(['update:modelValue'])
 
 const creation_method = ref<CreationMethod>("street rat");
 const role = ref<Role>(Role.Solo);
@@ -78,6 +78,29 @@ const skillChunks = computed(() => {
     }
 })
 
+const char_handle = computed({
+    get: () => char.value.handle,
+    set: (value) => char.value.handle = value
+})
+// const char_role = computed({
+//     get: () => char.value.role,
+//     set: (value) => char.value.role = value
+// })
+const char_rank = computed({
+    get: () => char.value.role_ability_rank,
+    set: (value) => {
+        if (value > 0 && value <= 10)
+            char.value.role_ability_rank = value
+        else
+            char.value.role_ability_rank = char.value.role_ability_rank
+
+    }
+})
+const char_notes = computed({
+    get: () => char.value.notes,
+    set: (value) => char.value.notes = value
+})
+
 const char_info = computed(() => {
     return {
         "Handle": char.value.handle,
@@ -86,6 +109,7 @@ const char_info = computed(() => {
         "Notes": char.value.notes
     }
 })
+
 
 const derived_stats = computed(() => {
     const humanity = char.value.stats.EMP * 10;
@@ -310,16 +334,11 @@ function openRoleLifepathModal(content: string) {
         <hr class="my-2" />
 
         <div class="notch grid grid-cols-4">
-            <TextField class="p-4 border-red-500 border-r-4" title="Handle" :value="char_info.Handle" />
-            <TextField class="font-bold p-4 border-red-500 border-r-4" title="Role">
-                <select v-model="role" class="px-2 py-1">
-                    <option v-for="role in Object.values(Role)" :key="role" :value="role">{{ role }}</option>
-                </select>
-            </TextField>
-            <TextField class="p-4 border-red-500 border-r-4 text-center" title="Rank" :value="char_info.Rank" />
-            <TextField class="p-4" title="Notes" :value="char_info.Notes" />
+            <TextField class="p-4 border-red-500 border-r-4" title="Handle" v-model="char_handle" />
+            <TextField class="font-bold p-4 border-red-500 border-r-4" title="Role" v-model="role" :options="Object.values(Role).sort((a, b) => a > b ? 1 : -1)"></TextField>
+            <TextField class="p-4 border-red-500 border-r-4 text-center" :valueClass="`text-center`" title="Rank" :min="1" v-model="char_rank" />
+            <TextField class="p-4" title="Notes" :value="char_notes" />
         </div>
-
         <hr class="my-2" />
 
         <CPTitle class="flex justify-between pr-2">
