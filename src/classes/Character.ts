@@ -120,6 +120,21 @@ export class Character {
 
     }
 
+    getStatPoints(): number {
+        return Stat_Points[this.character_rank];
+    }
+    getRemainingStatPoints(): number {
+        let remaining_points = this.getStatPoints();
+        for (const stat of Object.keys(this.stats)) {
+            if (!(['INT', 'REF', 'DEX', 'TECH', 'COOL', 'WILL', 'LUCK', 'MOVE', 'BODY', 'EMP'].includes(stat))) {
+                continue;
+            }
+
+            remaining_points -= this.stats[stat];
+        }
+        return remaining_points;
+    }
+
     resetCyberware() {
         let total_value_of_cyberware = 0;
         for (const cyberware of Object.values(this.cyberware)) {

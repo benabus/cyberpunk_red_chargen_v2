@@ -25,19 +25,20 @@ const model = defineModel()
     <div class="font-bold">
         <div :class="titleClass" class="text-xs">{{ title }}</div>
         <slot>
-            <template v-if="model !== undefined">
+
+            <template v-if="model && fixed">
+                <div :class="valueClass" class="" v-if="model">{{ model }}</div>
+                <div :class="valueClass" class="" v-else>-</div>
+            </template>
+            <template v-else-if="model !== undefined">
                 <div v-if="options && options.length > 0">
                     <select v-model="model" class="px-2 py-1">
                         <option v-for="option in options" :key="option" :value="option">{{ option }}</option>
                     </select>
                 </div>
                 <div v-else>
-                    <input :class="valueClass" class="w-full border-solid border-gray-500 border p-x-2" :min="min" :max="max" :type="typeof (model) === 'number' ? 'number' : 'text'" v-model="model" />
+                    <input :class="valueClass" class="w-full p-x-2 hover:bg-gray-200" :min="min" :max="max" :type="typeof (model) === 'number' ? 'number' : 'text'" v-model="model" />
                 </div>
-            </template>
-            <template v-else-if="model && fixed">
-                <div :class="valueClass" class="" v-if="model">{{ model }}</div>
-                <div :class="valueClass" class="" v-else>-</div>
             </template>
             <template v-else-if="value !== undefined">
                 <div :class="valueClass" class="" v-if="value">{{ value }}</div>
