@@ -377,7 +377,18 @@ export class Character {
         const randomIndex = Math.floor(Math.random() * allWeapons.length);
         return allWeapons[randomIndex];
     };
+    resetArmor() {
+        this.cash += this.armor.body == "None" ? 0 : this.armor.body.cost;
+        if (this.armor.body == "None" || this.armor.body.armor_type != "Bodyweight Suit") {
+            this.cash += this.armor.head == "None" ? 0 : this.armor.head.cost;
+        }
+        // this.cash += this.armor.shield == "None" ? 0 : this.armor.shield.cost;
+        this.armor.body = "None";
+        this.armor.head = "None";
+        // this.armor.shield = "None";
+    }
     randomizeArmor() {
+        this.resetArmor();
         let cash = this.cash;
         let body_armor: Armor | "None" = "None";
         let head_armor: Armor | "None" = "None";
@@ -409,7 +420,14 @@ export class Character {
         // this.armor.shield = shield
         this.cash -= armor_cost
     }
+    resetWeapons() {
+        for (const weapon of this.weapons) {
+            this.cash += weapon.cost;
+        }
+        this.weapons = [];
+    }
     randomizeWeapons() {
+        this.resetWeapons();
         for (let i = 0; i < Math.floor(Math.random() * 4); i++) {
             try {
                 const weapon: Weapon = this.getRandomWeapon({ max_cost: this.cash });
@@ -421,7 +439,14 @@ export class Character {
             }
         }
     }
+    resetGear() {
+        for (const item in this.gear) {
+            this.cash += this.gear[item].cost;
+        }
+        this.gear = [];
+    }
     randomizeGear() {
+        this.resetGear();
         while (this.cash > 0) {
             const rand = Math.random();
             if (rand < 0.25) {
@@ -446,9 +471,11 @@ export class Character {
     randomizeSkills() {
         this.resetSkills();
 
+        const role_skill_table = SkillTables[this.role as Role];
         let skill_points = this.skill_points
         console.debug(this.creation_method);
-        if (this.creation_method == "complete") {
+        if (this.creation_method == "complete" || this.creation_method == "edgerunner") {
+            let allowable_skills: string[] = [];
 
             let required_skills = [...RequiredSkills]
             for (const weapon of this.weapons) {
@@ -461,8 +488,21 @@ export class Character {
                     skill_points -= 2;
                 }
             }
+
+            if (this.creation_method == "complete") {
+                for (const skill_name in role_skill_table) {
+                    allowable_skills.push(Skill.genKey(skill_name))
+                }
+            }
+            else {
+                for (const skill_name in role_skill_table) {
+                    allowable_skills.push(Skill.genKey(skill_name))
+                }
+
+            }
+
             while (skill_points > 0) {
-                const key = random_key(this.skills);
+                const key = allowable_skills[Math.floor(Math.random() * allowable_skills.length)];
                 const skill = this.skills[key];
                 if (skill.lvl >= 6) {
                     continue;
@@ -482,7 +522,6 @@ export class Character {
         }
         else {
 
-            const role_skill_table = SkillTables[this.role as Role];
 
             if (this.creation_method == "street rat") {
                 for (const skill in role_skill_table) {
@@ -495,12 +534,6 @@ export class Character {
                         console.error(`Could not find skill: ${skill} with key ${key}`);
                     }
                 }
-                return
-            }
-            else if (this.creation_method == "edgerunner") {
-                // for (const skill in role_skill_table) {
-                //     this.skills[skill].lvl = role_skill_table[skill];
-                // }
                 return
             }
         }

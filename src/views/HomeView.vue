@@ -31,7 +31,7 @@ import type { CreationMethod } from '@/classes/Character';
 
 // const emit = defineEmits(['update:modelValue'])
 
-const creation_method = ref<CreationMethod>("street rat");
+const creation_method = ref<CreationMethod>("edgerunner");
 const role = ref<Role>(Role.Solo);
 const char = ref<Character>(new Character()) // Initializes reactive variable for character.
 generateCharacter(); // Generates a character on page load.
@@ -39,7 +39,15 @@ generateCharacter(); // Generates a character on page load.
 
 function generateCharacter() {
     const new_char = new Character({ creation_method: creation_method.value, role: role.value });
+    new_char.randomizeWeapons();
+    new_char.randomizeArmor();
+    new_char.randomizeGear();
+    new_char.randomizeCyberware();
+    new_char.randomizeStats();
+    new_char.randomizeSkills();
+
     char.value = new_char;
+    walkLifepath();
     walkRoleLifepath();
 }
 
@@ -56,27 +64,41 @@ const createSkillsChunks = (skills: Skill[]) => {
     const chunkSize = Math.ceil(skills.length / 6); // Calculates size of each chunk.
     return [0, 1, 2, 3, 4, 5].map(i => skills.slice(i * chunkSize, (i + 1) * chunkSize)); // Creates three chunks.
 };
-const skillChunks = computed(() => {
+// const skillChunks = computed(() => {
+
+// })
+
+function calculated_skills(sort_method: string) {
     // Sort skills alphabetically as a baseline.
     const alphabetical_skills = Object.values(char.value.skills).sort((a, b) => a.name.localeCompare(b.name))
-    if (sort_method.value === 'base') {
+    if (sort_method === 'base') {
         // Sorts skills by 'base' (stat + level) after initial alphabetical sort, then chunks.
         return createSkillsChunks(Object.values(alphabetical_skills).sort((a, b) => {
             const a_base = a.lvl + char.value.stats[a.stat] // Calculates 'base' for skill a.
             const b_base = b.lvl + char.value.stats[b.stat] // Calculates 'base' for skill b.
             return b_base - a_base // Descending sort.
         }));
-    } else if (sort_method.value === 'level') {
+    } else if (sort_method === 'level') {
         // Sorts skills by level, then chunks.
         return createSkillsChunks(Object.values(alphabetical_skills).sort((a, b) => b.lvl - a.lvl));
-    } else if (sort_method.value === 'alphabetical') {
+    } else if (sort_method === 'alphabetical') {
         // Uses the initial alphabetical sort, then chunks.
         return createSkillsChunks(alphabetical_skills);
     } else {
         // If no valid sort method is provided, returns an empty array.
         return [];
     }
-})
+}
+
+const skillChunks = ref(calculated_skills(sort_method.value));
+
+watch([char.value.skills, char.value.stats, sort_method, char], () => {
+    console.debug("watching skills");
+    // Recalculates skill chunks when skills or stats change.
+    // skillChunks.value = calculated_skills('base');
+    //TODO:  WILL NOT UPDATE!?!?!?!  Anything but base sort method won't update the skills table
+    skillChunks.value = [...calculated_skills(sort_method.value)];
+}, { deep: true });
 
 const char_handle = computed({
     get: () => char.value.handle,
@@ -267,6 +289,15 @@ function openRoleLifepathModal(content: string) {
     role_lifepath_modal_visible.value = true;
 }
 
+function randomizeWeapons() {
+    char.value.randomizeWeapons();
+}
+function randomizeGear() {
+    char.value.randomizeGear();
+}
+function randomizeArmor() {
+    char.value.randomizeArmor();
+}
 </script>
 
 
@@ -347,10 +378,8 @@ function openRoleLifepathModal(content: string) {
 
         <div class="notch grid grid-cols-4">
             <TextField class="p-4 border-red-500 border-r-4" title="Handle" v-model="char_handle" />
-            <TextField class="font-bold p-4 border-red-500 border-r-4" title="Role" v-model="role"
-                :options="Object.values(Role).sort((a, b) => a > b ? 1 : -1)"></TextField>
-            <TextField class="p-4 border-red-500 border-r-4 text-center" :valueClass="`text-center`" title="Rank"
-                :min="1" v-model="char_rank" />
+            <TextField class="font-bold p-4 border-red-500 border-r-4" title="Role" v-model="role" :options="Object.values(Role).sort((a, b) => a > b ? 1 : -1)"></TextField>
+            <TextField class="p-4 border-red-500 border-r-4 text-center" :valueClass="`text-center`" title="Rank" :min="1" v-model="char_rank" />
             <TextField class="p-4" title="Notes" :value="char_notes" />
         </div>
         <hr class="my-2" />
@@ -383,7 +412,7 @@ function openRoleLifepathModal(content: string) {
                     </div>
                 </div>
                 <div>
-                    <CPButton @click="randomizeSkills()">Randomize</CPButton>
+                    <CPButton v-if="creation_method == 'complete'" @click="randomizeSkills()">Randomize</CPButton>
                 </div>
             </CPTitle>
             <div class=" sm:columns-2 md:columns-3 columns-1 gap-1 bg-red-500 p-1">
@@ -397,8 +426,7 @@ function openRoleLifepathModal(content: string) {
         </div>
         <hr class="my-2" />
 
-        <CPTable title="Weapons"
-            :headers="['Weapon', 'Description', 'Skill', 'Damage', 'Ammo', 'ROF', 'Notes', 'Cost']">
+        <CPTable title="Weapons" :headers="['Weapon', 'Description', 'Skill', 'Damage', 'Ammo', 'ROF', 'Notes', 'Cost']" :creation_method :randomize="randomizeWeapons">
             <CPRow v-if="char.weapons.length <= 0">
                 <td colspan="7" class="text-center">No Weapons</td>
             </CPRow>
@@ -415,16 +443,13 @@ function openRoleLifepathModal(content: string) {
                     <div>{{ weapon.ammo_type.join(', ') }}</div>
                     <ul class="list-disc list-inside">
 
-                        <li v-if="weapon.ammo_type.some(type => ['arrow', 'grenade', 'rocket'].includes(type.toLowerCase()))"
-                            v-for="qty, ammo_name in weapon.ammo" :key="`ammo_agr_${ammo_name}`">
-                            {{ qty }} <span class="underline decoration-dashed cursor-pointer"
-                                @click="OpenAmmoTypeModal(ammo_types[ammo_name])">{{ ammo_name.split(" ")[0] }}</span>
+                        <li v-if="weapon.ammo_type.some(type => ['arrow', 'grenade', 'rocket'].includes(type.toLowerCase()))" v-for="qty, ammo_name in weapon.ammo" :key="`ammo_agr_${ammo_name}`">
+                            {{ qty }} <span class="underline decoration-dashed cursor-pointer" @click="OpenAmmoTypeModal(ammo_types[ammo_name])">{{ ammo_name.split(" ")[0] }}</span>
                             {{
                                 weapon.ammo_type[0].toLowerCase() }}{{ qty > 1 ? 's' : '' }}
                         </li>
                         <li v-else v-for="qty, ammo_name in weapon.ammo" :key="`ammo_${ammo_name}`">
-                            {{ qty }} rounds of <span class="underline decoration-dashed cursor-pointer"
-                                @click="OpenAmmoTypeModal(ammo_types[ammo_name])">{{ ammo_name }}</span>
+                            {{ qty }} rounds of <span class="underline decoration-dashed cursor-pointer" @click="OpenAmmoTypeModal(ammo_types[ammo_name])">{{ ammo_name }}</span>
                         </li>
                     </ul>
                 </CPCell>
@@ -444,8 +469,7 @@ function openRoleLifepathModal(content: string) {
                         <li v-if="weapon.attachments.length > 0">
                             Attachments:
                             <ul class="list-disc list-inside">
-                                <li v-for="attachment in weapon.attachments" class="cursor-pointer"
-                                    @click="OpenAttachmentModal(attachment)" :key="`attachment_${attachment}`">
+                                <li v-for="attachment in weapon.attachments" class="cursor-pointer" @click="OpenAttachmentModal(attachment)" :key="`attachment_${attachment}`">
                                     <span class="underline decoration-dashed">{{ attachment.name }}</span>
                                     <span v-if="['Drum Magazine', 'Extended Magazine'].includes(attachment.name)">
                                         ({{ clip_chart[weapon.getKey()][attachment.name.split(" ")[0].toLowerCase()]
@@ -478,12 +502,11 @@ function openRoleLifepathModal(content: string) {
 
         <hr class="my-2" />
 
-        <CPTable title="Armor" :headers="['Location', 'Armor', 'SP', 'Penalty', 'Cost']">
+        <CPTable title="Armor" :headers="['Location', 'Armor', 'SP', 'Penalty', 'Cost']" :creation_method :randomize="randomizeArmor">
             <CPRow v-for="armor, location in char.armor" :key="`armor_${location}`">
                 <CPCell>{{ location }}</CPCell>
                 <CPCell>
-                    <span v-if="armor != 'None'" class="underline decoration-dashed cursor-pointer"
-                        @click="OpenArmorModal(armor)">{{ armor.armor_type }}</span>
+                    <span v-if="armor != 'None'" class="underline decoration-dashed cursor-pointer" @click="OpenArmorModal(armor)">{{ armor.armor_type }}</span>
                     <span v-else>None</span>
                 </CPCell>
                 <CPCell>{{ armor == "None" ? "" : armor.sp }}</CPCell>
@@ -503,7 +526,7 @@ function openRoleLifepathModal(content: string) {
         </Modal>
         <hr class="my-2" />
 
-        <CPTable title="Gear" :headers="['Item', 'Description', 'Cost']">
+        <CPTable title="Gear" :headers="['Item', 'Description', 'Cost']" :creation_method :randomize="randomizeGear">
             <CPRow v-if="char.gear.length <= 0">
                 <td colspan="3" class="text-center">No Gear</td>
             </CPRow>
@@ -516,45 +539,36 @@ function openRoleLifepathModal(content: string) {
 
         <hr class="my-2" />
 
-        <CPTable title="Cyberware" :headers="['Name', 'Description', 'Cost', 'Humanity Loss']"
-            :randomize="randomizeCyberware">
+        <CPTable title="Cyberware" :headers="['Name', 'Description', 'Cost', 'Humanity Loss']" :creation_method :randomize="randomizeCyberware">
             <template v-for="(cyberware, location) in char.cyberware">
-                <template
-                    v-if="!(cyberware === undefined || (cyberware.placeholder && cyberware.slotted_options.length == 0))">
+                <template v-if="!(cyberware === undefined || (cyberware.placeholder && cyberware.slotted_options.length == 0))">
                     <CPRow>
                         <td colspan="4" class="font-bold p-2">{{ location }}</td>
                     </CPRow>
-                    <CPRow
-                        v-if="cyberware === undefined || (cyberware.placeholder && cyberware.slotted_options.length == 0)">
+                    <CPRow v-if="cyberware === undefined || (cyberware.placeholder && cyberware.slotted_options.length == 0)">
                         <td colspan="4" class="text-center">No Cyberware installed in {{ location }}</td>
                     </CPRow>
                     <template v-else-if="cyberware.placeholder === false">
                         <CPRow :key="`cyberware_${location}`">
                             <CPCell>{{ cyberware.name }}</CPCell>
-                            <CPCell><span class="cursor-pointer underline decoration-dashed"
-                                    @click="OpenCyberwareModal(cyberware)">{{ cyberware.description.slice(0, 25)
+                            <CPCell><span class="cursor-pointer underline decoration-dashed" @click="OpenCyberwareModal(cyberware)">{{ cyberware.description.slice(0, 25)
                                     }}...</span></CPCell>
                             <CPCell class="text-right">{{ cyberware.cost }}eb</CPCell>
                             <CPCell>{{ cyberware.humanity_loss }}</CPCell>
                         </CPRow>
                     </template>
-                    <template v-if="cyberware?.slotted_options && cyberware.slotted_options.length > 0"
-                        v-for="(option, index) in cyberware.slotted_options" :key="`cyberware_${location}_${index}`">
+                    <template v-if="cyberware?.slotted_options && cyberware.slotted_options.length > 0" v-for="(option, index) in cyberware.slotted_options" :key="`cyberware_${location}_${index}`">
                         <CPRow>
                             <CPCell>{{ option.name }}</CPCell>
-                            <CPCell><span class="cursor-pointer underline decoration-dashed"
-                                    @click="OpenCyberwareModal(option)">{{ option.description.slice(0, 25) }}...</span>
+                            <CPCell><span class="cursor-pointer underline decoration-dashed" @click="OpenCyberwareModal(option)">{{ option.description.slice(0, 25) }}...</span>
                             </CPCell>
                             <CPCell class="text-right">{{ option.cost }}eb</CPCell>
                             <CPCell>{{ option.humanity_loss }}</CPCell>
                         </CPRow>
-                        <template v-if="option?.slotted_options && option.slotted_options.length > 0"
-                            v-for="(option2, index2) in option.slotted_options"
-                            :key="`cyberware_option_${location}_${index}_${index2}`">
+                        <template v-if="option?.slotted_options && option.slotted_options.length > 0" v-for="(option2, index2) in option.slotted_options" :key="`cyberware_option_${location}_${index}_${index2}`">
                             <CPRow>
                                 <CPCell>{{ option2.name }}</CPCell>
-                                <CPCell><span class="cursor-pointer underline decoration-dashed"
-                                        @click="OpenCyberwareModal(option2)">{{ option2.description.slice(0, 25)
+                                <CPCell><span class="cursor-pointer underline decoration-dashed" @click="OpenCyberwareModal(option2)">{{ option2.description.slice(0, 25)
                                         }}...</span></CPCell>
                                 <CPCell class="text-right">{{ option2.cost }}eb</CPCell>
                                 <CPCell>{{ option2.humanity_loss }}</CPCell>
@@ -582,7 +596,7 @@ function openRoleLifepathModal(content: string) {
 
         <hr class="my-2" />
 
-        <CPTable title="Lifepath" :randomize="walkLifepath">
+        <CPTable title="Lifepath" :randomize="walkLifepath" :show_randomize_button="true">
             <CPRow v-if="lifepath.length <= 0">
                 <td colspan="2" class="text-center">The general Lifepath has not been walked.</td>
             </CPRow>
@@ -591,12 +605,10 @@ function openRoleLifepathModal(content: string) {
                     <span v-if="event.table?.description === undefined || event.table?.description == ''">{{
                         event.table?.name
                         || "---" }}</span>
-                    <span v-else class="cursor-pointer underline decoration-dashed"
-                        @click="openLifepathModal(event.table?.description || '')">{{ event.table?.name }}</span>
+                    <span v-else class="cursor-pointer underline decoration-dashed" @click="openLifepathModal(event.table?.description || '')">{{ event.table?.name }}</span>
                 </CPCell>
                 <CPCell class="w-2/3">
-                    <span v-if="event.description" class="cursor-pointer underline decoration-dashed"
-                        @click="openLifepathModal(event.description || '')">{{ event.value }}</span>
+                    <span v-if="event.description" class="cursor-pointer underline decoration-dashed" @click="openLifepathModal(event.description || '')">{{ event.value }}</span>
                     <span v-else>{{ event.value }}</span>
                 </CPCell>
             </CPRow>
@@ -611,7 +623,7 @@ function openRoleLifepathModal(content: string) {
 
         <hr class="my-2" />
 
-        <CPTable :title="`${char.role} Lifepath`" :randomize="walkRoleLifepath">
+        <CPTable :title="`${char.role} Lifepath`" :randomize="walkRoleLifepath" :show_randomize_button="true">
             <CPRow v-if="role_lifepath.length <= 0">
                 <td colspan="2" class="text-center">The {{ char.role }} Lifepath has not been walked.</td>
             </CPRow>
@@ -620,12 +632,10 @@ function openRoleLifepathModal(content: string) {
                     <span v-if="event.table?.description === undefined || event.table?.description == ''">{{
                         event.table?.name
                         || "---" }}</span>
-                    <span v-else class="cursor-pointer underline decoration-dashed"
-                        @click="openRoleLifepathModal(event.table?.description || '')">{{ event.table?.name }}</span>
+                    <span v-else class="cursor-pointer underline decoration-dashed" @click="openRoleLifepathModal(event.table?.description || '')">{{ event.table?.name }}</span>
                 </CPCell>
                 <CPCell class="w-2/3">
-                    <span v-if="event.description" class="cursor-pointer underline decoration-dashed"
-                        @click="openRoleLifepathModal(event.description || '')">{{ event.value }}</span>
+                    <span v-if="event.description" class="cursor-pointer underline decoration-dashed" @click="openRoleLifepathModal(event.description || '')">{{ event.value }}</span>
                     <span v-else>{{ event.value }}</span>
                 </CPCell>
             </CPRow>

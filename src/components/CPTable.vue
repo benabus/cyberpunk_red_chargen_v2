@@ -4,11 +4,13 @@ import CPButton from '@/components/CPButton.vue'
 const props = defineProps<{
     headers?: string[],
     title: string,
-    randomize?: Function
+    randomize?: Function,
+    creation_method?: string
+    show_randomize_button?: boolean
 }>()
 
 const show_randomize_button = computed(() => {
-    return props.randomize !== undefined
+    return props.show_randomize_button === true || (props.randomize !== undefined && props.creation_method === 'complete')
 })
 
 const show_header = computed(() => {
