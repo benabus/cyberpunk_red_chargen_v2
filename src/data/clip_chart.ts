@@ -58,6 +58,11 @@ const clip_chart: Record<string, Record<string, number>> = {
         standard: 1,
         extended: 1,
         drum: 1
+    },
+    grenade: {
+        standard: 1,
+        extended: 1,
+        drum: 1
     }
 };
 

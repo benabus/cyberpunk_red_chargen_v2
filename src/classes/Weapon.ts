@@ -43,7 +43,8 @@ export class Weapon {
         mag_size = 0,
         ammo_type = [],
         quality = "standard",
-        quality_variants = {}
+        quality_variants = {},
+        ammo
     }: {
         name: string,
         skill: string,
@@ -59,7 +60,8 @@ export class Weapon {
         mag_size?: number,
         ammo_type?: string[],
         quality?: string,
-        quality_variants?: Record<string, string>
+        quality_variants?: Record<string, string>,
+        ammo?: Record<string, number>
     }) {
         this.name = name;
         this.skill = skill;
@@ -90,7 +92,12 @@ export class Weapon {
                 this.description = this.quality_variants[variantKeys[randomIndex]];
             }
         }
-        if (this.ammo_type.length !== 0) {
+
+        if (ammo) {
+            for (const ammo_name in ammo) {
+                this.addAmmo(ammo_name, ammo[ammo_name]);
+            }
+        } else if (this.ammo_type.length !== 0) {
             const default_ammo_quantity = ClipChart[this.getKey()]["standard"];
             if (this.ammo_type.includes("Grenade")) {
                 this.addAmmo("Basic Grenade", default_ammo_quantity);

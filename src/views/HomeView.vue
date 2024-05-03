@@ -31,22 +31,29 @@ import type { CreationMethod } from '@/classes/Character';
 
 // const emit = defineEmits(['update:modelValue'])
 
-const creation_method = ref<CreationMethod>("edgerunner");
+const creation_method = ref<CreationMethod>("complete");
 const role = ref<Role>(Role.Solo);
 const char = ref<Character>(new Character()) // Initializes reactive variable for character.
-generateCharacter(); // Generates a character on page load.
-
 
 function generateCharacter() {
-    const new_char = new Character({ creation_method: creation_method.value, role: role.value });
-    new_char.randomizeWeapons();
-    new_char.randomizeArmor();
-    new_char.randomizeGear();
-    new_char.randomizeCyberware();
-    new_char.randomizeStats();
-    new_char.randomizeSkills();
+    char.value.reset({ creation_method: creation_method.value, role: role.value });
 
-    char.value = new_char;
+    if (creation_method.value === 'complete') {
+        char.value.randomizeWeapons();
+        char.value.randomizeArmor();
+        char.value.randomizeGear();
+        char.value.randomizeCyberware();
+    }
+    else {
+        try {
+            char.value.getEquipmentFromTable();
+        }
+        catch (e: { message: string }) {
+            console.warn(e.message);
+        }
+    }
+    char.value.randomizeStats();
+    char.value.randomizeSkills();
     walkLifepath();
     walkRoleLifepath();
 }
@@ -64,10 +71,6 @@ const createSkillsChunks = (skills: Skill[]) => {
     const chunkSize = Math.ceil(skills.length / 6); // Calculates size of each chunk.
     return [0, 1, 2, 3, 4, 5].map(i => skills.slice(i * chunkSize, (i + 1) * chunkSize)); // Creates three chunks.
 };
-// const skillChunks = computed(() => {
-
-// })
-
 function calculated_skills(sort_method: string) {
     // Sort skills alphabetically as a baseline.
     const alphabetical_skills = Object.values(char.value.skills).sort((a, b) => a.name.localeCompare(b.name))
@@ -89,16 +92,8 @@ function calculated_skills(sort_method: string) {
         return [];
     }
 }
-
 const skillChunks = ref(calculated_skills(sort_method.value));
 
-watch([char.value.skills, char.value.stats, sort_method, char], () => {
-    console.debug("watching skills");
-    // Recalculates skill chunks when skills or stats change.
-    // skillChunks.value = calculated_skills('base');
-    //TODO:  WILL NOT UPDATE!?!?!?!  Anything but base sort method won't update the skills table
-    skillChunks.value = [...calculated_skills(sort_method.value)];
-}, { deep: true });
 
 const char_handle = computed({
     get: () => char.value.handle,
@@ -123,14 +118,14 @@ const char_notes = computed({
     set: (value) => char.value.notes = value
 })
 
-const char_info = computed(() => {
-    return {
-        "Handle": char.value.handle,
-        "Role": char.value.role,
-        "Rank": char.value.role_ability_rank,
-        "Notes": char.value.notes
-    }
-})
+// const char_info = computed(() => {
+//     return {
+//         "Handle": char.value.handle,
+//         "Role": char.value.role,
+//         "Rank": char.value.role_ability_rank,
+//         "Notes": char.value.notes
+//     }
+// })
 
 
 const derived_stats = computed(() => {
@@ -298,6 +293,20 @@ function randomizeGear() {
 function randomizeArmor() {
     char.value.randomizeArmor();
 }
+
+
+
+
+watch([char.value.skills, char.value.stats, sort_method, stats_block], () => {
+    console.debug("watching skills");
+    // Recalculates skill chunks when skills or stats change.
+    // skillChunks.value = calculated_skills('base');
+    //TODO:  WILL NOT UPDATE!?!?!?!  Anything but base sort method won't update the skills table but only after the generate button is clicked
+    skillChunks.value = [...calculated_skills(sort_method.value)];
+}, { deep: true });
+
+
+generateCharacter(); // Generates a character on page load.
 </script>
 
 
@@ -360,6 +369,16 @@ function randomizeArmor() {
 <template>
     <main class="container p-4 mx-auto">
 
+
+
+        <div class="notch grid grid-cols-4">
+            <TextField class="p-4 border-red-500 border-r-4" title="Handle" v-model="char_handle" />
+            <TextField class="font-bold p-4 border-red-500 border-r-4" title="Role" v-model="role" :options="Object.values(Role).sort((a, b) => a > b ? 1 : -1)"></TextField>
+            <TextField class="p-4 border-red-500 border-r-4 text-center" :valueClass="`text-center`" title="Rank" :min="1" v-model="char_rank" />
+            <TextField class="p-4" title="Notes" :value="char_notes" />
+        </div>
+
+        <hr class="my-2" />
         <CPTitle class="flex justify-between pr-2" :bottom-border="true">
             <div class="mr-4">Character Creation</div>
             <div class="font-normal">
@@ -375,15 +394,6 @@ function randomizeArmor() {
         </CPTitle>
 
         <hr class="my-2" />
-
-        <div class="notch grid grid-cols-4">
-            <TextField class="p-4 border-red-500 border-r-4" title="Handle" v-model="char_handle" />
-            <TextField class="font-bold p-4 border-red-500 border-r-4" title="Role" v-model="role" :options="Object.values(Role).sort((a, b) => a > b ? 1 : -1)"></TextField>
-            <TextField class="p-4 border-red-500 border-r-4 text-center" :valueClass="`text-center`" title="Rank" :min="1" v-model="char_rank" />
-            <TextField class="p-4" title="Notes" :value="char_notes" />
-        </div>
-        <hr class="my-2" />
-
         <CPTitle class="flex justify-between pr-2">
             <span>Stats</span>
             <span v-if="can_change_stats">Points remaining: {{ remaining_stat_points }}</span>
@@ -399,20 +409,18 @@ function randomizeArmor() {
 
 
         <div class="skills">
-            <CPTitle class="flex justify-between pr-2">
-                <div>
-                    <div class="mr-4">Skills</div>
-                    <div class="font-normal">
-                        Sorting by: <select v-model="sort_method">
-                            <option value="alphabetical">Alphabetical</option>
-                            <option value="base">Base</option>
-                            <option value="group">Group</option>
-                            <option value="level">Level</option>
-                        </select>
-                    </div>
+            <CPTitle class="grid grid-cols-3 pr-2">
+                <div class="mr-4">Skills</div>
+                <div class="font-normal text-center">
+                    Sorting by: <select v-model="sort_method">
+                        <option value="alphabetical">Alphabetical</option>
+                        <option value="base">Base</option>
+                        <option value="group">Group</option>
+                        <option value="level">Level</option>
+                    </select>
                 </div>
-                <div>
-                    <CPButton v-if="creation_method == 'complete'" @click="randomizeSkills()">Randomize</CPButton>
+                <div class="text-right">
+                    <CPButton v-if="['complete', 'edgerunner'].includes(creation_method)" @click="randomizeSkills()">Randomize</CPButton>
                 </div>
             </CPTitle>
             <div class=" sm:columns-2 md:columns-3 columns-1 gap-1 bg-red-500 p-1">
@@ -532,7 +540,7 @@ function randomizeArmor() {
             </CPRow>
             <CPRow v-for="gear in char.gear" :key="`gear_${gear.name}`">
                 <CPCell>{{ gear.name }}</CPCell>
-                <CPCell>{{ gear.description }}</CPCell>
+                <CPCell><span class="whitespace-pre-wrap" v-html="gear.description"></span></CPCell>
                 <CPCell class="text-right">{{ gear.cost }}eb </CPCell>
             </CPRow>
         </CPTable>

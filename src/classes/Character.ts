@@ -22,8 +22,11 @@ import type { setOriginalNode } from "typescript";
 import type { LifepathTable } from "./Lifepath";
 import { Solo as SoloLifepath } from "@/data/role_lifepath_tables";
 
+
 import StatTables from "@/data/edge_runnner_stat_tables";
 import SkillTables from "@/data/edge_runner_skill_tables";
+
+import EquipmentTables from "@/data/role_equipment";
 
 
 const role_lifepath_table: Record<Role, LifepathTable | undefined> = {
@@ -94,9 +97,12 @@ export class Character {
     role_lifepath: Lifepath | undefined = undefined;
 
     constructor({ creation_method = "street rat", role = Role.Civilian }: { creation_method?: CreationMethod, role?: Role } = {}) {
+        this.reset({ creation_method, role })
+    }
+
+    reset({ creation_method, role }: { creation_method: CreationMethod, role: Role }) {
         this.creation_method = creation_method || "street rat";
         this.setRole(role);
-        this.cash = Starting_Cash[this.creation_method];
 
         for (const stat of Object.values(Stat)) {
             this.stats[stat] = 0;
@@ -104,20 +110,78 @@ export class Character {
         for (const skill of SkillList) {
             this.skills[skill.getKey()] = skill;
         }
-
-        this.resetCyberware();
         this.lifepath.setStartingTable(CulturalOriginTable);
 
-        this.randomizeStats();
-        this.randomizeSkills();
+        this.resetArmor();
+        this.resetWeapons();
+        this.resetGear();
+        this.resetCyberware();
+        this.resetLifepath();
+        this.resetCyberware();
 
-        // this.randomizeArmor();
-        // this.randomizeWeapons();
-        // this.randomizeGear();
+        this.cash = Starting_Cash[this.creation_method];
+    }
 
-        // this.randomizeCyberware();
+    getEquipmentFromTable() {
+        if (Object.keys(EquipmentTables).includes(this.role)) {
+            const table = EquipmentTables[this.role];
+            const weapons = [...RangedWeapons, ...MeleeWeapons];
+            for (let options of table) {
+                options.sort(() => Math.random() - 0.5);
+                const item = options[0];
+                if (item.type === "weapon") {
+                    const weapon = weapons.find(weapon => weapon.name === item.name);
+                    if (weapon) {
+                        let settings = { ...weapon }
+                        if (item.ammo) {
+                            settings["ammo"] = {
+                                [item.ammo[0]]: item.ammo[1]
+                            }
+                        };
+                        this.weapons.push(new Weapon(settings));
+                    }
+                }
+                else if (item.type === "armor") {
+                    const armor = ArmorList.find(armor => armor.armor_type === item.name);
+                    if (armor) {
+                        if (item.location === "body") {
+                            this.armor.body = armor;
+                        }
+                        else if (item.location === "head") {
+                            this.armor.head = armor;
+                        }
+                        else if (item.location === "shield") {
+                            this.armor.shield = armor;
+                        }
+                    }
+                }
+                else if (item.type === "gear") {
+                    const gear = Object.values(Gear).find((gearItem) => gearItem.name === item.name);
+                    if (gear) {
+                        this.gear.push(gear);
+                    }
+                }
 
+            }
+            // else if (item.type === "armor") {
+            //     if (item.armor_type === "Bodyweight Suit") {
+            //         this.armor.body = item;
+            //     }
+            //     else {
+            //         this.armor.head = item;
+            //     }
+            // }
+            // else if (item.type === "gear") {
+            //     this.gear.push(item);
+            // }
+            // else if (item.type === "cyberware") {
+            //     this.installCyberware({ cyberware: new Cyberware({ ...item }) });
+            // }
 
+        }
+        else {
+            throw new Error(`Could not find equipment table for role: ${this.role}`);
+        }
     }
 
     getStatPoints(): number {
@@ -298,16 +362,17 @@ export class Character {
     }
     randomizeCyberware() {
         this.resetCyberware();
-        const loops = 50;
-        for (let i = 0; i < loops; i++) {
-            try {
-                const random_cyberware = CyberwareList[Math.floor(Math.random() * CyberwareList.length)];
-                this.installCyberware({ cyberware: new Cyberware({ ...random_cyberware }) });
-            } catch (e) {
-                console.warn(`Could not add cyberware: ${e}`)
+        if (this.creation_method == "complete") {
+            const loops = 50;
+            for (let i = 0; i < loops; i++) {
+                try {
+                    const random_cyberware = CyberwareList[Math.floor(Math.random() * CyberwareList.length)];
+                    this.installCyberware({ cyberware: new Cyberware({ ...random_cyberware }) });
+                } catch (e) {
+                    console.warn(`Could not add cyberware: ${e}`)
+                }
             }
         }
-
         // const cyberarm = CyberwareList.find(cyberware => cyberware.name === "Cyberarm") as Cyberware;
         // this.installCyberware({ cyberware: cyberarm });
         // const rippers = CyberwareList.find(cyberware => cyberware.name === "Rippers") as Cyberware;
@@ -385,7 +450,7 @@ export class Character {
         // this.cash += this.armor.shield == "None" ? 0 : this.armor.shield.cost;
         this.armor.body = "None";
         this.armor.head = "None";
-        // this.armor.shield = "None";
+        this.armor.shield = "None";
     }
     randomizeArmor() {
         this.resetArmor();
@@ -394,31 +459,33 @@ export class Character {
         let head_armor: Armor | "None" = "None";
         // let shield: Armor | "None" = "None";
 
-        let armor_cost = 0;
-        do {
-            armor_cost = 0;
-            body_armor = this.getRandomArmor({ max_cost: cash - armor_cost });
-            armor_cost += body_armor == "None" ? 0 : body_armor.cost;
-            if (body_armor != "None" && body_armor.armor_type === "Bodyweight Suit") {
-                head_armor = body_armor
-            }
-            else {
-                do {
-                    head_armor = this.getRandomArmor({ max_cost: cash - armor_cost });
-                } while (head_armor != "None" && head_armor.armor_type === "Bodyweight Suit")
-                armor_cost += head_armor == "None" ? 0 : head_armor.cost;
-                // if (head_armor != "None" && head_armor.armor_type === "Bodyweight Suit") {
-                //     body_armor = head_armor
-                // }
-            }
-            // this.armor.shield = this.getRandomArmor("shield only");
-            // cash -= shield == "None" ? 0 : shield.cost;
-        } while (armor_cost > cash)
+        if (this.creation_method == "complete") {
+            let armor_cost = 0;
+            do {
+                armor_cost = 0;
+                body_armor = this.getRandomArmor({ max_cost: cash - armor_cost });
+                armor_cost += body_armor == "None" ? 0 : body_armor.cost;
+                if (body_armor != "None" && body_armor.armor_type === "Bodyweight Suit") {
+                    head_armor = body_armor
+                }
+                else {
+                    do {
+                        head_armor = this.getRandomArmor({ max_cost: cash - armor_cost });
+                    } while (head_armor != "None" && head_armor.armor_type === "Bodyweight Suit")
+                    armor_cost += head_armor == "None" ? 0 : head_armor.cost;
+                    // if (head_armor != "None" && head_armor.armor_type === "Bodyweight Suit") {
+                    //     body_armor = head_armor
+                    // }
+                }
+                // this.armor.shield = this.getRandomArmor("shield only");
+                // cash -= shield == "None" ? 0 : shield.cost;
+            } while (armor_cost > cash)
 
-        this.armor.body = body_armor
-        this.armor.head = head_armor
-        // this.armor.shield = shield
-        this.cash -= armor_cost
+            this.armor.body = body_armor
+            this.armor.head = head_armor
+            // this.armor.shield = shield
+            this.cash -= armor_cost
+        }
     }
     resetWeapons() {
         for (const weapon of this.weapons) {
@@ -428,14 +495,16 @@ export class Character {
     }
     randomizeWeapons() {
         this.resetWeapons();
-        for (let i = 0; i < Math.floor(Math.random() * 4); i++) {
-            try {
-                const weapon: Weapon = this.getRandomWeapon({ max_cost: this.cash });
-                this.weapons.push(weapon);
-                this.cash -= weapon.cost;
-                console.log("weapon cost", weapon.cost, weapon.name)
-            } catch (e) {
-                console.log(`Could not add any weapons: ${e}`)
+        if (this.creation_method == "complete") {
+            for (let i = 0; i < Math.floor(Math.random() * 4); i++) {
+                try {
+                    const weapon: Weapon = this.getRandomWeapon({ max_cost: this.cash });
+                    this.weapons.push(weapon);
+                    this.cash -= weapon.cost;
+                    console.log("weapon cost", weapon.cost, weapon.name)
+                } catch (e) {
+                    console.log(`Could not add any weapons: ${e}`)
+                }
             }
         }
     }
@@ -447,19 +516,21 @@ export class Character {
     }
     randomizeGear() {
         this.resetGear();
-        while (this.cash > 0) {
-            const rand = Math.random();
-            if (rand < 0.25) {
-                break;
-            }
-            try {
-                const gearItem: GearItem = this.getRandomGearItem({ max_cost: this.cash });
-                this.gear.push(gearItem);
-                this.cash -= gearItem.cost;
-                console.log("gear cost", gearItem.cost, gearItem.name)
-            } catch (e) {
-                console.log(`Could not add any gear: ${e}`)
-                break;
+        if (this.creation_method == "complete") {
+            while (this.cash > 0) {
+                const rand = Math.random();
+                if (rand < 0.25) {
+                    break;
+                }
+                try {
+                    const gearItem: GearItem = this.getRandomGearItem({ max_cost: this.cash });
+                    this.gear.push(gearItem);
+                    this.cash -= gearItem.cost;
+                    console.log("gear cost", gearItem.cost, gearItem.name)
+                } catch (e) {
+                    console.log(`Could not add any gear: ${e}`)
+                    break;
+                }
             }
         }
     }
@@ -473,7 +544,8 @@ export class Character {
 
         const role_skill_table = SkillTables[this.role as Role];
         let skill_points = this.skill_points
-        console.debug(this.creation_method);
+        // console.debug(this.creation_method);
+
         if (this.creation_method == "complete" || this.creation_method == "edgerunner") {
             let allowable_skills: string[] = [];
 
@@ -503,20 +575,27 @@ export class Character {
 
             while (skill_points > 0) {
                 const key = allowable_skills[Math.floor(Math.random() * allowable_skills.length)];
-                const skill = this.skills[key];
-                if (skill.lvl >= 6) {
-                    continue;
-                }
-                if (skill.x2) {
-                    if (skill_points < 2) {
+                try {
+                    const skill = this.skills[key];
+                    if (skill.lvl >= 6) {
                         continue;
                     }
-                    skill_points -= 2;
+                    if (skill.x2) {
+                        if (skill_points < 2) {
+                            continue;
+                        }
+                        skill_points -= 2;
+                    }
+                    else {
+                        skill_points -= 2;
+                    }
+                    skill.lvl += 1;
                 }
-                else {
-                    skill_points -= 2;
+                catch (e) {
+                    console.error(`Could not find skill: ${key}`);
+                    console.error(allowable_skills)
+                    break;
                 }
-                skill.lvl += 1;
             }
             return
         }

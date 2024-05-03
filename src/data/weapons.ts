@@ -255,6 +255,24 @@ const ranged_weapons = [
             "standard": "Militech Urban",
             "excellent": "Militech Hotshot"
         }
+    }),
+    new Weapon({
+        name: "Grenade",
+        skill: "athletics",
+        damage: "6d6",
+        mag_size: 1,
+        ammo_type: ["Grenade"],
+        rof: 1,
+        num_hands: 1,
+        concealed: true,
+        cost: 0,
+        alt_fire: ["Explosive"].join(", "),
+        special_features: "",
+        quality_variants: {
+            "poor": "",
+            "standard": "",
+            "excellent": ""
+        }
     })
 ];
 
