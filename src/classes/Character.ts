@@ -161,6 +161,12 @@ export class Character {
                         this.gear.push(gear);
                     }
                 }
+                else if (item.type == "cyberware") {
+                    const cyberware = CyberwareList.find(cyberware => cyberware.name === item.name);
+                    if (cyberware) {
+                        this.installCyberware({ cyberware: new Cyberware({ ...cyberware }), free: true });
+                    }
+                }
 
             }
             // else if (item.type === "armor") {

@@ -31,7 +31,7 @@ import type { CreationMethod } from '@/classes/Character';
 
 // const emit = defineEmits(['update:modelValue'])
 
-const creation_method = ref<CreationMethod>("complete");
+const creation_method = ref<CreationMethod>("street rat");
 const role = ref<Role>(Role.Solo);
 const char = ref<Character>(new Character()) // Initializes reactive variable for character.
 
@@ -48,8 +48,12 @@ function generateCharacter() {
         try {
             char.value.getEquipmentFromTable();
         }
-        catch (e: { message: string }) {
-            console.warn(e.message);
+        catch (e: any) {
+            if (e.message) {
+                console.warn(e.message);
+            } else {
+                console.warn(e);
+            }
         }
     }
     char.value.randomizeStats();
@@ -199,6 +203,16 @@ const ammo_type_modal = ref<AmmoType>({
 function OpenAmmoTypeModal(ammoType: AmmoType) {
     ammo_type_modal.value = ammoType;
     ammo_type_modal_visible.value = true;
+}
+
+const gear = computed(() => {
+    return char.value.gear;
+});
+const gear_modal_visible = ref(false)
+const gear_modal = ref({ name: '', description: '', cost: 0 })
+function OpenGearModal(gear: { name: string, description: string, cost: number }) {
+    gear_modal.value = gear;
+    gear_modal_visible.value = true;
 }
 
 const cash = computed(() => {
@@ -496,14 +510,14 @@ generateCharacter(); // Generates a character on page load.
             <div class="p-1">
                 <h2 class="text-lg font-bold">{{ weapon_attachment_modal.name }}</h2>
                 <p>{{ weapon_attachment_modal.description }}</p>
-                <button class="border rounded px-4" @click="weapon_attachment_modal_visible = false">Close</button>
+                <CPButton @click="weapon_attachment_modal_visible = false">Close</CPButton>
             </div>
         </Modal>
         <Modal :visible="ammo_type_modal_visible" @close="ammo_type_modal_visible = false">
             <div class="p-1">
                 <h2 class="text-lg font-bold">{{ ammo_type_modal.name }}</h2>
                 <p>{{ ammo_type_modal.description }}</p>
-                <button class="border rounded px-4" @click="ammo_type_modal_visible = false">Close</button>
+                <CPButton class="mt-4" @click="ammo_type_modal_visible = false">Close</CPButton>
             </div>
         </Modal>
 
@@ -529,21 +543,29 @@ generateCharacter(); // Generates a character on page load.
             <div class="p-1">
                 <h2 class="text-lg font-bold">{{ armor_modal.armor_type }}</h2>
                 <p>{{ armor_modal.description }}</p>
-                <button class="border rounded px-4" @click="armor_modal_visible = false">Close</button>
+                <CPButton class="mt-4" @click="armor_modal_visible = false">Close</CPButton>
             </div>
         </Modal>
         <hr class="my-2" />
 
         <CPTable title="Gear" :headers="['Item', 'Description', 'Cost']" :creation_method :randomize="randomizeGear">
-            <CPRow v-if="char.gear.length <= 0">
+            <CPRow v-if="gear.length <= 0">
                 <td colspan="3" class="text-center">No Gear</td>
             </CPRow>
-            <CPRow v-for="gear in char.gear" :key="`gear_${gear.name}`">
-                <CPCell>{{ gear.name }}</CPCell>
-                <CPCell><span class="whitespace-pre-wrap" v-html="gear.description"></span></CPCell>
-                <CPCell class="text-right">{{ gear.cost }}eb </CPCell>
+            <CPRow v-for="gear_item in gear" :key="`gear_${gear_item.name}`">
+                <CPCell>{{ gear_item.name }}</CPCell>
+                <!-- <CPCell><span class="whitespace-pre-wrap" v-html="gear_item.description"></span></CPCell> -->
+                <CPCell><span class="cursor-pointer underline decoration-dashed" @click="OpenGearModal(gear_item)">{{ gear_item.description.slice(0, 25) }}...</span></CPCell>
+                <CPCell class="text-right">{{ gear_item.cost }}eb </CPCell>
             </CPRow>
         </CPTable>
+        <Modal :visible="gear_modal_visible" @close="gear_modal_visible = false">
+            <div class="p-1">
+                <h2 class="text-lg font-bold">{{ gear_modal.name }}</h2>
+                <p class="whitespace-pre-wrap">{{ gear_modal.description }}</p>
+                <CPButton class="mt-4" @click="gear_modal_visible = false">Close</CPButton>
+            </div>
+        </Modal>
 
         <hr class="my-2" />
 
@@ -594,8 +616,8 @@ generateCharacter(); // Generates a character on page load.
         <Modal :visible="cyberware_modal_visible" @close="cyberware_modal_visible = false">
             <div class="p-1">
                 <h2 class="text-lg font-bold">{{ cyberware_modal.name }}</h2>
-                <p>{{ cyberware_modal.description }}</p>
-                <button class="border rounded px-4" @click="cyberware_modal_visible = false">Close</button>
+                <p class="whitespace-pre-wrap">{{ cyberware_modal.description }}</p>
+                <CPButton class="mt-4" @click="cyberware_modal_visible = false">Close</CPButton>
             </div>
         </Modal>
 
@@ -625,7 +647,7 @@ generateCharacter(); // Generates a character on page load.
             <div class="p-1">
                 <h2 class="text-lg font-bold">Lifepath Event</h2>
                 <p>{{ lifepath_modal_content }}</p>
-                <button class="border rounded px-4" @click="lifepath_modal_visible = false">Close</button>
+                <CPButton class="mt-4" @click="lifepath_modal_visible = false">Close</CPButton>
             </div>
         </Modal>
 
@@ -652,7 +674,7 @@ generateCharacter(); // Generates a character on page load.
             <div class="p-1">
                 <h2 class="text-lg font-bold">Role Lifepath Event</h2>
                 <p>{{ role_lifepath_modal_content }}</p>
-                <button class="border rounded px-4" @click="role_lifepath_modal_visible = false">Close</button>
+                <CPButton class="mt-4" @click="role_lifepath_modal_visible = false">Close</CPButton>
             </div>
         </Modal>
 

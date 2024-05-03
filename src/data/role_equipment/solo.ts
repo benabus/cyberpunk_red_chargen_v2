@@ -34,6 +34,21 @@ const items = [
     [{
         type: "other",
         name: "Leisurewear: Footwear x2, Jacket x3, Mirrorshades, Bottoms x2, Top x2"
+    }],
+    [{
+        type: "cyberware",
+        name: "Biomonitor",
+    }],
+    [{
+        type: "cyberware",
+        name: "Neural Link",
+    }],
+    [{
+        type: "cyberware",
+        name: "Sandevistan",
+    }, {
+        type: "cyberware",
+        name: "Wolvers"
     }]
 
 ]
