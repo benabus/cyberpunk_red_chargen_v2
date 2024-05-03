@@ -4,6 +4,10 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <RouterView />
+  <footer class="container p-4 mx-auto">
+    <p>Code &copy; Ben Serrette</p>
+    <p>Content &copy; R.Talsorian Games</p>
+  </footer>
 </template>
 
 <style scoped>

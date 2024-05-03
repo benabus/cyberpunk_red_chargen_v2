@@ -224,7 +224,7 @@ const gear: Record<string, GearItem> = {
         description: "Earpiece allowing user to communicate via radio, 1-mile range."
     },
     "radio_scanner_music_player": {
-        name: "Radio Scanner/ Music Player",
+        name: "Radio Scanner / Music Player",
         cost: 50,
         description: "Music player can link to the Data Pool to listen to the hottest music, or play directly from a Memory Chip. User can also scan all radio bands within a mile that are currently being used and tune into them, though some channels might require a Descrambler to understand."
     },
