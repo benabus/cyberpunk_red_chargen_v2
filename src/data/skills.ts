@@ -20,28 +20,32 @@ const required_skills: string[] = [
 const categories: Record<string, string[]> = {
   "Awareness": [
     "Concentration",
-    "Conceal/Reveal Object",
+    "Conceal / Reveal Object",
     "Lip Reading",
     "Perception",
-    "Tracking "],
+    "Tracking"
+  ],
   "Body": [
     "Athletics",
     "Contortionist",
     "Dance",
     "Endurance",
     "Resist Torture / Drugs",
-    "Stealth"],
+    "Stealth"
+  ],
   "Control": [
     "Drive Land Vehicle",
     "Pilot Air Vehicle",
     "Pilot Sea Vehicle",
-    "Riding"],
+    "Riding"
+  ],
   "Ranged Weapon": [
     "Archery",
     "Autofire",
     "Handgun",
     "Heavy Weapons",
-    "Shoulder Arms"],
+    "Shoulder Arms"
+  ],
   "Education": [
     "Accounting",
     "Animal Handling",
@@ -58,15 +62,18 @@ const categories: Record<string, string[]> = {
     "Local Expert - Home",
     "Science",
     "Tactics",
-    "Wilderness Survival"],
+    "Wilderness Survival"
+  ],
   "Fighting": [
     "Brawling",
     "Evasion",
     "Martial Arts",
-    "Melee Weapon"],
+    "Melee Weapon"
+  ],
   "Performance": [
     "Acting",
-    "Play Instrument"],
+    "Play Instrument"
+  ],
   "Social": [
     "Bribery",
     "Conversation",
@@ -76,7 +83,8 @@ const categories: Record<string, string[]> = {
     "Personal Grooming",
     "Streetwise",
     "Trading",
-    "Wardrobe & Style"],
+    "Wardrobe & Style"
+  ],
   "Technique": [
     "Air Vehicle Tech",
     "Basic Tech",
@@ -92,10 +100,8 @@ const categories: Record<string, string[]> = {
     "Pick Lock",
     "Pick Pocket",
     "Sea Vehicle Tech",
-    "Weaponstech"]
-
-
-
+    "Weaponstech"
+  ]
 }
 
 const skill_info: { name: string, stat: Stat, x2?: boolean }[] = [

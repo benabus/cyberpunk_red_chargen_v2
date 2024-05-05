@@ -569,50 +569,40 @@ generateCharacter(); // Generates a character on page load.
 
         <hr class="my-2" />
 
-        <CPTable title="Cyberware" :headers="['Name', 'Description', 'Cost', 'Humanity Loss']" :creation_method :randomize="randomizeCyberware">
-            <template v-for="(cyberware, location) in char.cyberware">
-                <template v-if="!(cyberware === undefined || (cyberware.placeholder && cyberware.slotted_options.length == 0))">
-                    <CPRow>
-                        <td colspan="4" class="font-bold p-2">{{ location }}</td>
-                    </CPRow>
-                    <CPRow v-if="cyberware === undefined || (cyberware.placeholder && cyberware.slotted_options.length == 0)">
-                        <td colspan="4" class="text-center">No Cyberware installed in {{ location }}</td>
-                    </CPRow>
-                    <template v-else-if="cyberware.placeholder === false">
-                        <CPRow :key="`cyberware_${location}`">
-                            <CPCell>{{ cyberware.name }}</CPCell>
-                            <CPCell><span class="cursor-pointer underline decoration-dashed" @click="OpenCyberwareModal(cyberware)">{{ cyberware.description.slice(0, 25)
-                                    }}...</span></CPCell>
-                            <CPCell class="text-right">{{ cyberware.cost }}eb</CPCell>
-                            <CPCell>{{ cyberware.humanity_loss }}</CPCell>
-                        </CPRow>
+        <CPTitle class="flex justify-between pr-2">
+            <span>Cyberware</span>
+            <CPButton @click="randomizeCyberware()">Randomize</CPButton>
+        </CPTitle>
+        <div class="grid grid-cols-2 items-stretch border-solid border-b-4 border-red-500">
+
+
+            <div class="h-full flex flex-col" v-for="(cyberware, location) in char.cyberware">
+                <CPTitle>{{ location }}</CPTitle>
+                <div class="flex-1 border-solid border-4 border-b-0 border-red-500 px-4 py-2">
+                    <template v-if="cyberware === undefined || (cyberware.placeholder && cyberware.slotted_options.length == 0)">
+                        &nbsp;<!-- <div class="text-center">No Cyberware installed in {{ location }}</div> -->
                     </template>
-                    <template v-if="cyberware?.slotted_options && cyberware.slotted_options.length > 0" v-for="(option, index) in cyberware.slotted_options" :key="`cyberware_${location}_${index}`">
-                        <CPRow>
-                            <CPCell>{{ option.name }}</CPCell>
-                            <CPCell><span class="cursor-pointer underline decoration-dashed" @click="OpenCyberwareModal(option)">{{ option.description.slice(0, 25) }}...</span>
-                            </CPCell>
-                            <CPCell class="text-right">{{ option.cost }}eb</CPCell>
-                            <CPCell>{{ option.humanity_loss }}</CPCell>
-                        </CPRow>
-                        <template v-if="option?.slotted_options && option.slotted_options.length > 0" v-for="(option2, index2) in option.slotted_options" :key="`cyberware_option_${location}_${index}_${index2}`">
-                            <CPRow>
-                                <CPCell>{{ option2.name }}</CPCell>
-                                <CPCell><span class="cursor-pointer underline decoration-dashed" @click="OpenCyberwareModal(option2)">{{ option2.description.slice(0, 25)
-                                        }}...</span></CPCell>
-                                <CPCell class="text-right">{{ option2.cost }}eb</CPCell>
-                                <CPCell>{{ option2.humanity_loss }}</CPCell>
-                            </CPRow>
+                    <template v-if="!(cyberware === undefined || (cyberware.placeholder && cyberware.slotted_options.length == 0))">
+                        <template v-if="cyberware.placeholder === false">
+                            <div :key="`cyberware_${location}`">
+                                <span><span class="cursor-pointer underline decoration-dashed" @click="OpenCyberwareModal(cyberware)">{{ cyberware.name }}</span></span>
+                            </div>
+                        </template>
+                        <template v-if="cyberware?.slotted_options && cyberware.slotted_options.length > 0" v-for="(option, index) in cyberware.slotted_options" :key="`cyberware_${location}_${index}`">
+                            <div>
+                                <span><span class="cursor-pointer underline decoration-dashed" @click="OpenCyberwareModal(option)">{{ option.name }}</span></span>
+                            </div>
+                            <template v-if="option?.slotted_options && option.slotted_options.length > 0" v-for="(option2, index2) in option.slotted_options" :key="`cyberware_option_${location}_${index}_${index2}`">
+                                <div>
+                                    <span><span class="cursor-pointer underline decoration-dashed" @click="OpenCyberwareModal(option2)">{{ option2.name }}</span></span>
+                                </div>
+                            </template>
                         </template>
                     </template>
-                </template>
-            </template>
-            <template v-if="cyberwareCount === 0">
-                <CPRow>
-                    <td colspan="4" class="text-center">No Cyberware</td>
-                </CPRow>
-            </template>
-        </CPTable>
+                </div>
+            </div>
+
+        </div>
         <Modal :visible="cyberware_modal_visible" @close="cyberware_modal_visible = false">
             <div class="p-1">
                 <h2 class="text-lg font-bold">{{ cyberware_modal.name }}</h2>

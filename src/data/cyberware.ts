@@ -3,12 +3,12 @@
 export enum BodyLocation {
     Brain = "Brain",
     Ear = "Ear",
-    LeftEye = "Left Eye",
     RightEye = "Right Eye",
-    LeftArm = "Left Arm",
+    LeftEye = "Left Eye",
     RightArm = "Right Arm",
-    LeftLeg = "Left Leg",
+    LeftArm = "Left Arm",
     RightLeg = "Right Leg",
+    LeftLeg = "Left Leg",
 
     Internal = "Internal",
     External = "External",
