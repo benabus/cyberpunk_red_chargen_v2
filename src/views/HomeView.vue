@@ -10,7 +10,8 @@ import {
     WeaponAttachments,
     ClipChart,
     AmmoTypes,
-    CyberwareType
+    CyberwareType,
+    Cyberware as CyberwareList
 } from '@/data';
 import { Lifepath, Skill, Character, Cyberware } from '@/classes';
 import type { WeaponAttachment, AmmoType, Armor } from '@/types'
@@ -31,7 +32,7 @@ import type { CreationMethod } from '@/classes/Character';
 
 // const emit = defineEmits(['update:modelValue'])
 
-const creation_method = ref<CreationMethod>("street rat");
+const creation_method = ref<CreationMethod>("complete");
 const role = ref<Role>(Role.Rockerboy);
 const char = ref<Character>(new Character()) // Initializes reactive variable for character.
 
@@ -61,6 +62,15 @@ function generateCharacter() {
     walkLifepath();
     walkRoleLifepath();
 }
+
+//  ######  ##    ## #### ##       ##       
+// ##    ## ##   ##   ##  ##       ##       
+// ##       ##  ##    ##  ##       ##       
+//  ######  #####     ##  ##       ##       
+//       ## ##  ##    ##  ##       ##       
+// ##    ## ##   ##   ##  ##       ##       
+//  ######  ##    ## #### ######## ######## 
+
 
 /**
  * Valid Skill Sort Methods:
@@ -99,6 +109,15 @@ function calculated_skills(sort_method: string) {
 const skillChunks = ref(calculated_skills(sort_method.value));
 
 
+
+//  ######  ########    ###    ########  ######  
+// ##    ##    ##      ## ##      ##    ##    ## 
+// ##          ##     ##   ##     ##    ##       
+//  ######     ##    ##     ##    ##     ######  
+//       ##    ##    #########    ##          ## 
+// ##    ##    ##    ##     ##    ##    ##    ## 
+//  ######     ##    ##     ##    ##     ######  
+
 const char_handle = computed({
     get: () => char.value.handle,
     set: (value) => char.value.handle = value
@@ -130,6 +149,11 @@ const char_notes = computed({
 //         "Notes": char.value.notes
 //     }
 // })
+
+
+const cash = computed(() => {
+    return char.value.cash;
+})
 
 
 const derived_stats = computed(() => {
@@ -171,6 +195,14 @@ const can_change_stats = computed(() => {
 })
 
 
+// ##      ## ########    ###    ########   #######  ##    ##  ######  
+// ##  ##  ## ##         ## ##   ##     ## ##     ## ###   ## ##    ## 
+// ##  ##  ## ##        ##   ##  ##     ## ##     ## ####  ## ##       
+// ##  ##  ## ######   ##     ## ########  ##     ## ## ## ##  ######  
+// ##  ##  ## ##       ######### ##        ##     ## ##  ####       ## 
+// ##  ##  ## ##       ##     ## ##        ##     ## ##   ### ##    ## 
+//  ###  ###  ######## ##     ## ##         #######  ##    ##  ######  
+
 const weapon_attachment_modal_visible = ref(false)
 const weapon_attachment_modal = ref<WeaponAttachment>({ name: '', description: '', cost: 0, eligible: [], attachment_slots: 0 })
 function OpenAttachmentModal(attachment: WeaponAttachment) {
@@ -205,6 +237,15 @@ function OpenAmmoTypeModal(ammoType: AmmoType) {
     ammo_type_modal_visible.value = true;
 }
 
+
+//  ######   ########    ###    ########  
+// ##    ##  ##         ## ##   ##     ## 
+// ##        ##        ##   ##  ##     ## 
+// ##   #### ######   ##     ## ########  
+// ##    ##  ##       ######### ##   ##   
+// ##    ##  ##       ##     ## ##    ##  
+//  ######   ######## ##     ## ##     ## 
+
 const gear = computed(() => {
     return char.value.gear;
 });
@@ -215,9 +256,14 @@ function OpenGearModal(gear: { name: string, description: string, cost: number }
     gear_modal_visible.value = true;
 }
 
-const cash = computed(() => {
-    return char.value.cash;
-})
+
+//  ######  ##    ## ########  ######## ########  
+// ##    ##  ##  ##  ##     ## ##       ##     ## 
+// ##         ####   ##     ## ##       ##     ## 
+// ##          ##    ########  ######   ########  
+// ##          ##    ##     ## ##       ##   ##   
+// ##    ##    ##    ##     ## ##       ##    ##  
+//  ######     ##    ########  ######## ##     ## 
 
 const cyberwareCount = computed(() => {
     let count = 0;
@@ -243,9 +289,18 @@ const cyberwareCount = computed(() => {
 
     return count;
 })
-function randomizeCyberware() {
-    char.value.randomizeCyberware();
-}
+const cyberware_icons = ref<Record<string, string>>({
+    "Brain": "",
+    "Ear": "",
+    "Left Eye": "",
+    "Right Eye": "",
+    "Left Arm": "",
+    "Right Arm": "",
+    "Left Leg": "",
+    "Right Leg": "",
+    "Borgware": "",
+    "Fashionware": "",
+})
 
 const cyberware_modal_visible = ref(false)
 const cyberware_modal = ref<Cyberware>(new Cyberware({ name: "", type: CyberwareType.Neuralware }))
@@ -254,19 +309,44 @@ function OpenCyberwareModal(cyberware: Cyberware) {
     cyberware_modal_visible.value = true;
 }
 
-const value_of_cyberware = computed(() => {
-    let total = 0;
-    for (const cyberware of Object.values(char.value.cyberware)) {
-        total += cyberware?.totalCost() || 0;
+function available_cyberware(location?: string) {
+    let cyberware = [];
+    if (location === undefined) {
+        cyberware = Object.values(CyberwareList).filter(cyberware => char.value.canInstallCyberware({ cyberware: cyberware, returning: true }));
     }
-    return total;
-})
-
-function randomizeStats() {
-    char.value.randomizeStats();
+    else {
+        cyberware = Object.values(CyberwareList).filter(cyberware => cyberware.body_location.includes(location) && char.value.canInstallCyberware({ cyberware: cyberware, returning: true }));
+    }
+    cyberware = cyberware.sort((a, b) => a.name.localeCompare(b.name));
+    return cyberware;
 }
-function randomizeSkills() { char.value.randomizeSkills() }
 
+const cyberware_to_add = ref<Cyberware | undefined>(undefined)
+function addCyberware() {
+    if (cyberware_to_add.value === undefined) {
+        return;
+    }
+    char.value.installCyberware({ cyberware: new Cyberware({ ...cyberware_to_add.value }) })
+    cyberware_to_add.value = undefined;
+}
+
+// const value_of_cyberware = computed(() => {
+//     let total = 0;
+//     for (const cyberware of Object.values(char.value.cyberware)) {
+//         total += cyberware?.totalCost() || 0;
+//     }
+//     return total;
+// })
+
+
+
+// ##       #### ######## ######## ########     ###    ######## ##     ## 
+// ##        ##  ##       ##       ##     ##   ## ##      ##    ##     ## 
+// ##        ##  ##       ##       ##     ##  ##   ##     ##    ##     ## 
+// ##        ##  ######   ######   ########  ##     ##    ##    ######### 
+// ##        ##  ##       ##       ##        #########    ##    ##     ## 
+// ##        ##  ##       ##       ##        ##     ##    ##    ##     ## 
+// ######## #### ##       ######## ##        ##     ##    ##    ##     ## 
 
 const lifepath = computed(() => {
     return char?.value?.lifepath?.path || [];
@@ -298,6 +378,15 @@ function openRoleLifepathModal(content: string) {
     role_lifepath_modal_visible.value = true;
 }
 
+
+// ########     ###    ##    ## ########   #######  ##     ## #### ######## ######## 
+// ##     ##   ## ##   ###   ## ##     ## ##     ## ###   ###  ##       ##  ##       
+// ##     ##  ##   ##  ####  ## ##     ## ##     ## #### ####  ##      ##   ##       
+// ########  ##     ## ## ## ## ##     ## ##     ## ## ### ##  ##     ##    ######   
+// ##   ##   ######### ##  #### ##     ## ##     ## ##     ##  ##    ##     ##       
+// ##    ##  ##     ## ##   ### ##     ## ##     ## ##     ##  ##   ##      ##       
+// ##     ## ##     ## ##    ## ########   #######  ##     ## #### ######## ######## 
+
 function randomizeWeapons() {
     char.value.randomizeWeapons();
 }
@@ -308,14 +397,19 @@ function randomizeArmor() {
     char.value.randomizeArmor();
 }
 
+function randomizeCyberware() {
+    char.value.randomizeCyberware();
+}
+
+function randomizeStats() {
+    char.value.randomizeStats();
+}
+function randomizeSkills() { char.value.randomizeSkills() }
+
 
 
 
 watch([char.value.skills, char.value.stats, sort_method, stats_block], () => {
-    console.debug("watching skills");
-    // Recalculates skill chunks when skills or stats change.
-    // skillChunks.value = calculated_skills('base');
-    //TODO:  WILL NOT UPDATE!?!?!?!  Anything but base sort method won't update the skills table but only after the generate button is clicked
     skillChunks.value = [...calculated_skills(sort_method.value)];
 }, { deep: true });
 
@@ -426,7 +520,7 @@ generateCharacter(); // Generates a character on page load.
             <CPTitle class="grid grid-cols-3 pr-2">
                 <div class="mr-4">Skills</div>
                 <div class="font-normal text-center">
-                    Sorting by: <select v-model="sort_method">
+                    <span class="align-top">Sorting by: </span><select v-model="sort_method" class="px-2 py-1 align-text-bottom">
                         <option value="alphabetical">Alphabetical</option>
                         <option value="base">Base</option>
                         <option value="group">Group</option>
@@ -568,16 +662,30 @@ generateCharacter(); // Generates a character on page load.
         </Modal>
 
         <hr class="my-2" />
+        <!-- 
+ ######  ##    ## ########  ######## ########  
+##    ##  ##  ##  ##     ## ##       ##     ## 
+##         ####   ##     ## ##       ##     ## 
+##          ##    ########  ######   ########  
+##          ##    ##     ## ##       ##   ##   
+##    ##    ##    ##     ## ##       ##    ##  
+ ######     ##    ########  ######## ##     ##  -->
 
         <CPTitle class="flex justify-between pr-2">
             <span>Cyberware</span>
-            <CPButton @click="randomizeCyberware()">Randomize</CPButton>
+            <div v-if="creation_method == 'complete'">
+                <select v-model="cyberware_to_add" class="px-2 py-1 align-text-bottom">
+                    <option :value="undefined" selected disabled>Select Cyberware</option>
+                    <option v-for="cyberware in available_cyberware()" :value="cyberware">{{ cyberware.name }} - {{ cyberware.cost }}eb</option>
+                </select>
+                &nbsp;
+                <CPButton @click="addCyberware">Add</CPButton>
+            </div>
+            <CPButton v-if="creation_method == 'complete'" @click="randomizeCyberware()">Randomize</CPButton>
         </CPTitle>
         <div class="grid grid-cols-2 items-stretch border-solid border-b-4 border-red-500">
-
-
             <div class="h-full flex flex-col" v-for="(cyberware, location) in char.cyberware">
-                <CPTitle>{{ location }}</CPTitle>
+                <CPTitle>{{ location }} <span v-html="cyberware_icons[location]"></span></CPTitle>
                 <div class="flex-1 border-solid border-4 border-b-0 border-red-500 px-4 py-2">
                     <template v-if="cyberware === undefined || (cyberware.placeholder && cyberware.slotted_options.length == 0)">
                         &nbsp;<!-- <div class="text-center">No Cyberware installed in {{ location }}</div> -->
@@ -599,6 +707,9 @@ generateCharacter(); // Generates a character on page load.
                             </template>
                         </template>
                     </template>
+                    <div>
+
+                    </div>
                 </div>
             </div>
 
@@ -606,7 +717,10 @@ generateCharacter(); // Generates a character on page load.
         <Modal :visible="cyberware_modal_visible" @close="cyberware_modal_visible = false">
             <div class="p-1">
                 <h2 class="text-lg font-bold">{{ cyberware_modal.name }}</h2>
-                <p class="whitespace-pre-wrap">{{ cyberware_modal.description }}</p>
+                <p class="whitespace-pre-wrap mb-2">{{ cyberware_modal.description }}</p>
+                <p>Cost: <span class="font-bold">{{ cyberware_modal.cost }}eb</span></p>
+                <p>Humanity Loss: <span class="font-bold">{{ cyberware_modal.humanity_loss }}</span></p>
+                <p v-if="cyberware_modal.slots_available > 0">Open Slots: <span class="font-bold">{{ cyberware_modal.getOpenSlots() }}</span></p>
                 <CPButton class="mt-4" @click="cyberware_modal_visible = false">Close</CPButton>
             </div>
         </Modal>
@@ -615,7 +729,20 @@ generateCharacter(); // Generates a character on page load.
         <TextFieldRow :values="{ 'Cash': cash.toString() + 'eb' }" />
 
         <hr class="my-2" />
+        <!-- 
 
+
+##       #### ######## ######## ########     ###    ######## ##     ## 
+##        ##  ##       ##       ##     ##   ## ##      ##    ##     ## 
+##        ##  ##       ##       ##     ##  ##   ##     ##    ##     ## 
+##        ##  ######   ######   ########  ##     ##    ##    ######### 
+##        ##  ##       ##       ##        #########    ##    ##     ## 
+##        ##  ##       ##       ##        ##     ##    ##    ##     ## 
+######## #### ##       ######## ##        ##     ##    ##    ##     ## 
+
+
+
+-->
         <CPTable title="Lifepath" :randomize="walkLifepath" :show_randomize_button="true">
             <CPRow v-if="lifepath.length <= 0">
                 <td colspan="2" class="text-center">The general Lifepath has not been walked.</td>

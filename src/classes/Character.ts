@@ -205,6 +205,14 @@ export class Character {
         return remaining_points;
     }
 
+    //  ######  ##    ## ########  ######## ########  ##      ##    ###    ########  ######## 
+    // ##    ##  ##  ##  ##     ## ##       ##     ## ##  ##  ##   ## ##   ##     ## ##       
+    // ##         ####   ##     ## ##       ##     ## ##  ##  ##  ##   ##  ##     ## ##       
+    // ##          ##    ########  ######   ########  ##  ##  ## ##     ## ########  ######   
+    // ##          ##    ##     ## ##       ##   ##   ##  ##  ## ######### ##   ##   ##       
+    // ##    ##    ##    ##     ## ##       ##    ##  ##  ##  ## ##     ## ##    ##  ##       
+    //  ######     ##    ########  ######## ##     ##  ###  ###  ##     ## ##     ## ######## 
+
     resetCyberware() {
         let total_value_of_cyberware = 0;
         for (const cyberware of Object.values(this.cyberware)) {
@@ -250,13 +258,100 @@ export class Character {
     //TODO: Throw error if the cyberware would reduce humanity below 0
     installCyberware({ cyberware, free = false }: { cyberware: Cyberware, free?: boolean }) {
         // this.cyberware[location] = cyberware;
+        cyberware = new Cyberware({ ...cyberware });
+        this.canInstallCyberware({ cyberware, free, returning: false })
+
+        const max_installs = cyberware.max_installs;
+        const current_installs = this.findCyberware(cyberware.name).length;
+        const possible_locations = cyberware.body_location;
+        const required_cyberware_names = cyberware.required_cyberware.split("/");
+        const required_slots = cyberware.slots_required;
+
+        let required_cyberware: Cyberware[] = [];
+        let required_cyberware_name = ""
+
+        while (required_cyberware_names.length > 0 && required_cyberware.length <= 0) {
+            required_cyberware_name = required_cyberware_names.shift() || "";
+            if (required_cyberware_name == "Meat") {
+                required_cyberware_name = "";
+            }
+            required_cyberware = this.findCyberware(required_cyberware_name);
+        }
+
+        required_cyberware = this.findCyberware(required_cyberware_name);
+
+        //if there are requirements and they've been installed
+        if (required_cyberware_name != "" && required_cyberware.length > 0) {
+            const available_foundational_cyberware = required_cyberware.filter(cyberware => {
+                const available_slot_count = cyberware.getOpenSlots();
+                return available_slot_count >= required_slots
+            });
+            available_foundational_cyberware.sort(() => Math.random() - 0.5);
+            available_foundational_cyberware[0].pushOption(cyberware);
+            if (!free) {
+                this.cash -= cyberware.cost;
+            }
+            if (cyberware.must_be_paired) {
+                available_foundational_cyberware[1].pushOption(cyberware);
+                if (!free) {
+                    this.cash -= cyberware.cost;
+                }
+            }
+            return;
+        }
+
+        //if there's no requirements, try to install it as a foundational cyberware
+        possible_locations.sort(() => Math.random() - 0.5);
+        for (let random_location of possible_locations) {
+            let current_cyberware_in_location = this.cyberware[random_location];
+            this.cyberware[random_location] = cyberware;
+            if (!free) {
+                this.cash -= cyberware.cost;
+            }
+            if (cyberware.name == "Cyberarm") {
+                const standard_hand = CyberwareList.find(cyberware => cyberware.name === "Standard Hand") as Cyberware;
+                //this.installCyberware({ cyberware: new Cyberware({...standard_hand}), free: true });
+                cyberware.pushOption(new Cyberware({ ...standard_hand }))
+            }
+            if (cyberware.name == "Cyberleg") {
+                const standard_foot = CyberwareList.find(cyberware => cyberware.name === "Standard Foot") as Cyberware;
+                // this.installCyberware({ cyberware: new Cyberware({...standard_foot}), free: true });
+                cyberware.pushOption(new Cyberware({ ...standard_foot }))
+
+            }
+            return;
+
+        }
+
+    }
+    hasSpeedware(): boolean {
+        const neural_link = this.findCyberware("Neural Link");
+        for (const cyberware of neural_link) {
+            if (cyberware.slotted_options) {
+                for (const option of cyberware.slotted_options) {
+                    if (option.type === CyberwareType.Speedware) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    canInstallCyberware({ cyberware, free = false, returning = false }: { cyberware: Cyberware, free?: boolean, returning?: boolean }): boolean {
+        // this.cyberware[location] = cyberware;
 
         if (cyberware.type === CyberwareType.Speedware && this.hasSpeedware()) {
+            if (returning) {
+                return false;
+            }
             throw new Error(`Cannot install ${cyberware.name}.  Only one piece of speedware is allowed.`);
         }
         const max_installs = cyberware.max_installs;
         const current_installs = this.findCyberware(cyberware.name).length;
         if (max_installs > 0 && current_installs >= max_installs) {
+            if (returning) {
+                return false;
+            }
             throw new Error(`Cannot install ${cyberware.name}.  Can install a maximum of ${max_installs}.`);
         }
 
@@ -278,9 +373,15 @@ export class Character {
         required_cyberware = this.findCyberware(required_cyberware_name);
 
         if (required_cyberware_name != "" && required_cyberware.length <= 0) {
+            if (returning) {
+                return false;
+            }
             throw new Error(`Cannot install ${cyberware.name} without ${required_cyberware_name}`);
         }
         if (cyberware.must_be_paired && required_cyberware.length < 2) {
+            if (returning) {
+                return false;
+            }
             throw new Error(`Cannot install ${cyberware.name} without 2x ${required_cyberware_name}`);
         }
 
@@ -291,24 +392,19 @@ export class Character {
                 return available_slot_count >= required_slots
             });
             if (available_foundational_cyberware.length <= 0 || (cyberware.must_be_paired && available_foundational_cyberware.length <= 1)) {
+                if (returning) {
+                    return false;
+                }
                 throw new Error(`Cannot install ${cyberware.name}.  Foundational cyberware doesn't have enough open slots.`);
             }
-            if (this.cash < cyberware.cost) {
+            if (!free && this.cash < cyberware.cost) {
+                if (returning) {
+                    return false;
+                }
                 throw new Error(`Cannot install ${cyberware.name}.  Not enough cash.`);
             }
 
-            available_foundational_cyberware.sort(() => Math.random() - 0.5);
-            available_foundational_cyberware[0].pushOption(cyberware);
-            if (!free) {
-                this.cash -= cyberware.cost;
-            }
-            if (cyberware.must_be_paired) {
-                available_foundational_cyberware[1].pushOption(cyberware);
-                if (!free) {
-                    this.cash -= cyberware.cost;
-                }
-            }
-            return;
+            return true;
         }
 
         //if there's no requirements, try to install it as a foundational cyberware
@@ -317,40 +413,36 @@ export class Character {
             let current_cyberware_in_location = this.cyberware[random_location];
             if (current_cyberware_in_location === undefined && cyberware.can_install_in_meat) {
                 if (this.cash < cyberware.cost) {
+                    if (returning) {
+                        return false;
+                    }
                     throw new Error(`Cannot install ${cyberware.name}.  Not enough cash.`);
                 }
-                this.cyberware[random_location] = cyberware;
-                if (!free) {
-                    this.cash -= cyberware.cost;
-                }
-                if (cyberware.name == "Cyberarm") {
-                    const standard_hand = CyberwareList.find(cyberware => cyberware.name === "Standard Hand") as Cyberware;
-                    this.installCyberware({ cyberware: standard_hand, free: true });
-                }
-                if (cyberware.name == "Cyberleg") {
-                    const standard_foot = CyberwareList.find(cyberware => cyberware.name === "Standard Foot") as Cyberware;
-                    this.installCyberware({ cyberware: standard_foot, free: true });
-                }
-                return;
+                // this.cyberware[random_location] = cyberware;
+                // if (!free) {
+                //     this.cash -= cyberware.cost;
+                // }
+                // if (cyberware.name == "Cyberarm") {
+                //     const standard_hand = CyberwareList.find(cyberware => cyberware.name === "Standard Hand") as Cyberware;
+                //     this.installCyberware({ cyberware: standard_hand, free: true });
+                // }
+                // if (cyberware.name == "Cyberleg") {
+                //     const standard_foot = CyberwareList.find(cyberware => cyberware.name === "Standard Foot") as Cyberware;
+                //     this.installCyberware({ cyberware: standard_foot, free: true });
+                // }
+                return true;
             } else if (current_cyberware_in_location === undefined && !cyberware.can_install_in_meat) {
+                if (returning) {
+                    return false;
+                }
                 throw new Error(`Cannot install ${cyberware.name} in meat`);
             }
         }
-
-        throw new Error(`Cannot install ${cyberware.name}.  No locations available.`);
-    }
-    hasSpeedware(): boolean {
-        const neural_link = this.findCyberware("Neural Link");
-        for (const cyberware of neural_link) {
-            if (cyberware.slotted_options) {
-                for (const option of cyberware.slotted_options) {
-                    if (option.type === CyberwareType.Speedware) {
-                        return true;
-                    }
-                }
-            }
+        if (returning) {
+            return false;
         }
-        return false;
+        throw new Error(`Cannot install ${cyberware.name}.  No locations available.`);
+
     }
 
     findCyberware(cyberware_name: string): Cyberware[] {
@@ -379,11 +471,6 @@ export class Character {
                 }
             }
         }
-        // const cyberarm = CyberwareList.find(cyberware => cyberware.name === "Cyberarm") as Cyberware;
-        // this.installCyberware({ cyberware: cyberarm });
-        // const rippers = CyberwareList.find(cyberware => cyberware.name === "Rippers") as Cyberware;
-        // this.installCyberware({ cyberware: rippers });
-
     }
 
 
@@ -540,6 +627,15 @@ export class Character {
             }
         }
     }
+
+    //  ######  ##    ## #### ##       ##        ######  
+    // ##    ## ##   ##   ##  ##       ##       ##    ## 
+    // ##       ##  ##    ##  ##       ##       ##       
+    //  ######  #####     ##  ##       ##        ######  
+    //       ## ##  ##    ##  ##       ##             ## 
+    // ##    ## ##   ##   ##  ##       ##       ##    ## 
+    //  ######  ##    ## #### ######## ########  ######  
+
     resetSkills() {
         for (const skill of Object.values(this.skills)) {
             skill.lvl = 0;
