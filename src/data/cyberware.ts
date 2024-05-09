@@ -48,6 +48,7 @@ export class Cyberware {
     can_install_in_meat: boolean = false;
     max_installs: number = 0;
     placeholder: boolean = false;
+    id: string = "";
     constructor({
         name,
         type,
@@ -97,6 +98,7 @@ export class Cyberware {
         this.can_install_in_meat = can_install_in_meat;
         this.max_installs = max_installs;
         this.placeholder = placeholder;
+        this.id = Math.random().toString(36).slice(2, 18);
     }
 
     getHumanityLoss(): number {
@@ -129,12 +131,62 @@ export class Cyberware {
         }
         return cyberware_list;
     }
+    // findCyberwareInSlotsById(id: string): Cyberware[] {
+    //     let cyberware_list: Cyberware[] = [];
+    //     for (let item of this.slotted_options) {
+    //         if (item.id === id) {
+    //             cyberware_list.push(item);
+    //         }
+    //         cyberware_list = cyberware_list.concat(item.findCyberwareInSlotsById(id));
+    //     }
+    //     return cyberware_list;
+    // }
     totalCost(): number {
         let cost = this.cost;
         cost += this.slotted_options.reduce((acc, option) => {
             return acc + option.totalCost();
         }, 0);
         return cost
+    }
+    uninstallAllOptions(): number {
+        let cost = 0;
+        for (let cyberware_index in this.slotted_options) {
+            let cyberware = this.slotted_options[cyberware_index];
+            cost += cyberware.uninstallAllOptions();
+            cost += cyberware.cost;
+            delete this.slotted_options[cyberware_index];
+        }
+        return cost;
+    }
+    // uninstallOption(name: string): number {
+    //     let cost = 0;
+    //     for (let cyberware_index in this.slotted_options) {
+    //         let cyberware = this.slotted_options[cyberware_index];
+    //         if (cyberware.name === name) {
+    //             cost += cyberware.uninstallAllOptions();
+    //             cost += cyberware.cost;
+    //             delete this.slotted_options[cyberware_index];
+    //         }
+    //     }
+    //     return cost;
+    // }
+    uninstallOptionById(id: string): number {
+        let cost = 0;
+        for (let i = 0; i < this.slotted_options.length; i++) {
+            let option = this.slotted_options[i];
+            if (option === undefined) {
+                continue;
+            }
+            else if (option.id === id) {
+                cost += option.uninstallAllOptions();
+                cost += option.cost;
+                this.slotted_options.splice(i, 1);
+            }
+            else {
+                cost += option.uninstallOptionById(id);
+            }
+        }
+        return cost;
     }
 }
 

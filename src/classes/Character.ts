@@ -458,6 +458,37 @@ export class Character {
         }
         return cyberware_list;
     }
+    // findCyberwareById(cyberware_id: string): Cyberware | undefined {
+    //     for (const location of Object.keys(this.cyberware)) {
+    //         const cyberware = this.cyberware[location];
+    //         if (cyberware === undefined) {
+    //             continue;
+    //         } else if (cyberware.id === cyberware_id) {
+    //             return cyberware;
+    //         }
+    //         const found_cyberware = cyberware.findCyberwareInSlotsById(cyberware_id);
+    //         if (found_cyberware !== undefined) {
+    //             return found_cyberware;
+    //         }
+    //     }
+    //     return undefined;
+    // }
+    uninstallCyberwareById(cyberware_id: string) {
+        for (const location of Object.keys(this.cyberware)) {
+            const cyberware = this.cyberware[location];
+            if (cyberware === undefined) {
+                continue;
+            } else if (cyberware.id === cyberware_id) {
+                this.cash += cyberware.cost;
+                this.cash += cyberware.uninstallAllOptions()
+                this.cyberware[location] = undefined;
+                return;
+            }
+            else {
+                this.cash += cyberware.uninstallOptionById(cyberware_id);
+            }
+        }
+    }
     randomizeCyberware() {
         this.resetCyberware();
         if (this.creation_method == "complete") {

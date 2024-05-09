@@ -330,13 +330,9 @@ function addCyberware() {
     cyberware_to_add.value = undefined;
 }
 
-// const value_of_cyberware = computed(() => {
-//     let total = 0;
-//     for (const cyberware of Object.values(char.value.cyberware)) {
-//         total += cyberware?.totalCost() || 0;
-//     }
-//     return total;
-// })
+function uninstallCyberware(id: string) {
+    char.value.uninstallCyberwareById(id);
+}
 
 
 
@@ -646,7 +642,7 @@ generateCharacter(); // Generates a character on page load.
             <CPRow v-if="gear.length <= 0">
                 <td colspan="3" class="text-center">No Gear</td>
             </CPRow>
-            <CPRow v-for="gear_item in gear" :key="`gear_${gear_item.name}`">
+            <CPRow v-for="gear_item in gear" :key="`gear_${Math.random()}`">
                 <CPCell>{{ gear_item.name }}</CPCell>
                 <!-- <CPCell><span class="whitespace-pre-wrap" v-html="gear_item.description"></span></CPCell> -->
                 <CPCell><span class="cursor-pointer underline decoration-dashed" @click="OpenGearModal(gear_item)">{{ gear_item.description.slice(0, 25) }}...</span></CPCell>
@@ -692,17 +688,20 @@ generateCharacter(); // Generates a character on page load.
                     </template>
                     <template v-if="!(cyberware === undefined || (cyberware.placeholder && cyberware.slotted_options.length == 0))">
                         <template v-if="cyberware.placeholder === false">
-                            <div :key="`cyberware_${location}`">
-                                <span><span class="cursor-pointer underline decoration-dashed" @click="OpenCyberwareModal(cyberware)">{{ cyberware.name }}</span></span>
+                            <div class="flex justify-between">
+                                <span class="cursor-pointer underline decoration-dashed" @click="OpenCyberwareModal(cyberware)">{{ cyberware.name }}</span>
+                                <CPButton v-if="creation_method == 'complete'" @click="uninstallCyberware(cyberware.id)">Uninstall</CPButton>
                             </div>
                         </template>
                         <template v-if="cyberware?.slotted_options && cyberware.slotted_options.length > 0" v-for="(option, index) in cyberware.slotted_options" :key="`cyberware_${location}_${index}`">
-                            <div>
-                                <span><span class="cursor-pointer underline decoration-dashed" @click="OpenCyberwareModal(option)">{{ option.name }}</span></span>
+                            <div class="flex justify-between">
+                                <span class="cursor-pointer underline decoration-dashed" @click="OpenCyberwareModal(option)">{{ option.name }}</span>
+                                <CPButton v-if="creation_method == 'complete'" @click="uninstallCyberware(option.id)">Uninstall</CPButton>
                             </div>
                             <template v-if="option?.slotted_options && option.slotted_options.length > 0" v-for="(option2, index2) in option.slotted_options" :key="`cyberware_option_${location}_${index}_${index2}`">
-                                <div>
-                                    <span><span class="cursor-pointer underline decoration-dashed" @click="OpenCyberwareModal(option2)">{{ option2.name }}</span></span>
+                                <div class="flex justify-between">
+                                    <span class="cursor-pointer underline decoration-dashed" @click="OpenCyberwareModal(option2)">{{ option2.name }}</span>
+                                    <CPButton v-if="creation_method == 'complete'" @click="uninstallCyberware(option.id)">Uninstall</CPButton>
                                 </div>
                             </template>
                         </template>
