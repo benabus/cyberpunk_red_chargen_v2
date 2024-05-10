@@ -58,7 +58,7 @@ const categories: Record<string, string[]> = {
     "Education",
     "Gamble",
     "Language - Streetslang",
-    "Library Search ",
+    "Library Search",
     "Local Expert - Home",
     "Science",
     "Tactics",
@@ -106,6 +106,7 @@ const categories: Record<string, string[]> = {
 
 const skill_info: { name: string, stat: Stat, x2?: boolean }[] = [
   { name: "Acting", stat: Stat.COOL },
+  { name: "Accounting", stat: Stat.INT },
   { name: "Air Vehicle Tech", stat: Stat.TECH },
   { name: "Animal Handling", stat: Stat.INT },
   { name: "Archery", stat: Stat.REF },
@@ -115,6 +116,7 @@ const skill_info: { name: string, stat: Stat, x2?: boolean }[] = [
   { name: "Brawling", stat: Stat.DEX },
   { name: "Bribery", stat: Stat.COOL },
   { name: "Business", stat: Stat.INT },
+  { name: "Bureaucracy", stat: Stat.INT },
   { name: "Composition", stat: Stat.INT },
   { name: "Concentration", stat: Stat.WILL },
   { name: "Conceal / Reveal Object", stat: Stat.INT },
@@ -159,6 +161,7 @@ const skill_info: { name: string, stat: Stat, x2?: boolean }[] = [
   { name: "Resist Torture / Drugs", stat: Stat.WILL },
   { name: "Riding", stat: Stat.REF },
   { name: "Science", stat: Stat.INT },
+  { name: "Sea Vehicle Tech", stat: Stat.TECH },
   { name: "Shoulder Arms", stat: Stat.REF },
   { name: "Stealth", stat: Stat.DEX },
   { name: "Streetwise", stat: Stat.COOL },

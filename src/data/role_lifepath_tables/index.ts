@@ -1,2 +1,3 @@
 import Solo from './solo';
-export { Solo }
+import Exec from './exec';
+export { Solo, Exec }

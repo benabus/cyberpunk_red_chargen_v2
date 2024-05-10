@@ -20,7 +20,7 @@ import { random_key } from "@/utilities";
 import { CulturalOriginTable } from "@/data/lifepath_tables";
 import type { setOriginalNode } from "typescript";
 import type { LifepathTable } from "./Lifepath";
-import { Solo as SoloLifepath } from "@/data/role_lifepath_tables";
+import { Solo as SoloLifepath, Exec as ExecLifepath } from "@/data/role_lifepath_tables";
 
 
 import { faker } from '@faker-js/faker';
@@ -40,7 +40,7 @@ const role_lifepath_table: Record<Role, LifepathTable | undefined> = {
     Tech: undefined,
     Medtech: undefined,
     Media: undefined,
-    Exec: undefined,
+    Exec: ExecLifepath,
     Lawman: undefined,
     Nomad: undefined,
 
