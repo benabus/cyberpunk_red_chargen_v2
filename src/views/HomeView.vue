@@ -32,8 +32,8 @@ import type { CreationMethod } from '@/classes/Character';
 
 // const emit = defineEmits(['update:modelValue'])
 
-const creation_method = ref<CreationMethod>("complete");
-const role = ref<Role>(Role.Rockerboy);
+const creation_method = ref<CreationMethod>("street rat");
+const role = ref<Role>(Role.Exec);
 const char = ref<Character>(new Character()) // Initializes reactive variable for character.
 
 function generateCharacter() {
@@ -61,6 +61,7 @@ function generateCharacter() {
     char.value.randomizeSkills();
     walkLifepath();
     walkRoleLifepath();
+    randomizeHandle();
 }
 
 //  ######  ##    ## #### ##       ##       
@@ -402,6 +403,7 @@ function randomizeStats() {
 }
 function randomizeSkills() { char.value.randomizeSkills() }
 
+function randomizeHandle() { char.value.randomizeName(); }
 
 
 
@@ -476,10 +478,12 @@ generateCharacter(); // Generates a character on page load.
 
 
         <div class="notch grid grid-cols-4">
-            <TextField class="p-4 border-red-500 border-r-4" title="Handle" v-model="char_handle" />
+            <div :title="char_handle" class="p-4 border-red-500 border-r-4">
+                <TextField title="Handle" v-model="char_handle" />
+            </div>
             <TextField class="font-bold p-4 border-red-500 border-r-4" title="Role" v-model="role" :options="Object.values(Role).sort((a, b) => a > b ? 1 : -1)"></TextField>
             <TextField class="p-4 border-red-500 border-r-4 text-center" :valueClass="`text-center`" title="Rank" :min="1" v-model="char_rank" />
-            <TextField class="p-4" title="Notes" :value="char_notes" />
+            <TextField class="p-4" title="Notes" :value-class="`font-normal`" :value="char_notes" />
         </div>
 
         <hr class="my-2" />

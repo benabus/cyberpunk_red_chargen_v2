@@ -23,6 +23,8 @@ import type { LifepathTable } from "./Lifepath";
 import { Solo as SoloLifepath } from "@/data/role_lifepath_tables";
 
 
+import { faker } from '@faker-js/faker';
+
 import StatTables from "@/data/edge_runnner_stat_tables";
 import SkillTables from "@/data/edge_runner_skill_tables";
 
@@ -66,6 +68,8 @@ export class Character {
     cash = 0;
 
     handle: string = "Unknown";
+    first_name: string = "";
+    last_name: string = "";
     role: Role = Role.Civilian;
     role_ability_rank: number = 4;
     notes: string = ""
@@ -120,6 +124,15 @@ export class Character {
         this.resetCyberware();
 
         this.cash = Starting_Cash[this.creation_method];
+    }
+
+    randomizeName() {
+        // let a = faker.word.adjective();
+        let n = faker.word.noun();
+        this.handle = n[0].toUpperCase() + n.slice(1);
+        this.first_name = faker.person.firstName();
+        this.last_name = faker.person.lastName();
+        this.notes = `${this.first_name} "${this.handle}" ${this.last_name}`;
     }
 
     getEquipmentFromTable() {
