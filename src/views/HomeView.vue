@@ -33,7 +33,7 @@ import type { CreationMethod } from '@/classes/Character';
 // const emit = defineEmits(['update:modelValue'])
 
 const creation_method = ref<CreationMethod>("street rat");
-const role = ref<Role>(Role.Exec);
+const role = ref<Role>(Role.Medtech);
 const char = ref<Character>(new Character()) // Initializes reactive variable for character.
 
 function generateCharacter() {

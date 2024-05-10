@@ -147,8 +147,8 @@ export class Character {
                     if (weapon) {
                         let settings = { ...weapon }
                         if (item.ammo) {
-                            settings["ammo"] = {
-                                [item.ammo[0]]: item.ammo[1]
+                            for (let i = 0; i < item.ammo.length; i += 2) {
+                                settings["ammo"][item.ammo[i]] = item.ammo[i + 1]
                             }
                         };
                         this.weapons.push(new Weapon(settings));

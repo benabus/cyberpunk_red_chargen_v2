@@ -55,4 +55,30 @@ const wherebased = new LifepathTable({
 });
 goodbad.setNextTable(wherebased);
 
+const gunning = new LifepathTable({
+    name: "Who's Gunning for Your Group?",
+    rows: [
+        { value: `Rival Corp in the same industry.` },
+        { value: `Law enforcement is watching you.` },
+        { value: `Local Media wants to bring you down.` },
+        { value: `Different divisions in your own company are feuding with each other.` },
+        { value: `Local government doesn't like your Corp.` },
+        { value: `International Corporations are eyeing you for a hostile takeover.` },
+    ]
+});
+wherebased.setNextTable(gunning);
+
+const boss = new LifepathTable({
+    name: "Current State with Your Boss",
+    rows: [
+        { value: "Your Boss mentors you but watch out for their enemies." },
+        { value: "Your Boss gives you a free hand and doesn't want to know what you're up to." },
+        { value: "Your Boss is a micromanager who tries to meddle in your work." },
+        { value: "Your Boss is a psycho whose unpredictable outbursts are offset by quiet paranoia." },
+        { value: "Your Boss is cool and watches your back against rivals." },
+        { value: "Your Boss is threatened by your meteoric rise and is planning to knife you." },
+    ]
+});
+gunning.setNextTable(boss);
+
 export default starting_table;
