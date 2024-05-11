@@ -33,7 +33,7 @@ const items = [
     }],
     [{
         type: "gear",
-        name: "Scrambler/Descrambler"
+        name: "Scrambler / Descrambler"
     }],
     [{
         type: "fashion",

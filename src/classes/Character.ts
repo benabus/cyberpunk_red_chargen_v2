@@ -142,42 +142,48 @@ export class Character {
             for (let options of table) {
                 options.sort(() => Math.random() - 0.5);
                 const item = options[0];
-                if (item.type === "weapon") {
-                    const weapon = weapons.find(weapon => weapon.name === item.name);
-                    if (weapon) {
-                        let settings = { ...weapon }
-                        if (item.ammo) {
-                            for (let i = 0; i < item.ammo.length; i += 2) {
-                                settings["ammo"][item.ammo[i]] = item.ammo[i + 1]
+                let loop = 1;
+                if (item.quantity && item.quantity > 1) {
+                    loop = item.quantity;
+                }
+                for (let i = 0; i < loop; i++) {
+                    if (item.type === "weapon") {
+                        const weapon = weapons.find(weapon => weapon.name === item.name);
+                        if (weapon) {
+                            let settings = { ...weapon }
+                            if (item.ammo) {
+                                for (let i = 0; i < item.ammo.length; i += 2) {
+                                    settings["ammo"][item.ammo[i]] = item.ammo[i + 1]
+                                }
+                            };
+                            this.weapons.push(new Weapon(settings));
+                        }
+                    }
+                    else if (item.type === "armor") {
+                        const armor = ArmorList.find(armor => armor.armor_type === item.name);
+                        if (armor) {
+                            if (item.location === "body") {
+                                this.armor.body = armor;
                             }
-                        };
-                        this.weapons.push(new Weapon(settings));
-                    }
-                }
-                else if (item.type === "armor") {
-                    const armor = ArmorList.find(armor => armor.armor_type === item.name);
-                    if (armor) {
-                        if (item.location === "body") {
-                            this.armor.body = armor;
-                        }
-                        else if (item.location === "head") {
-                            this.armor.head = armor;
-                        }
-                        else if (item.location === "shield") {
-                            this.armor.shield = armor;
+                            else if (item.location === "head") {
+                                this.armor.head = armor;
+                            }
+                            else if (item.location === "shield") {
+                                this.armor.shield = armor;
+                            }
                         }
                     }
-                }
-                else if (item.type === "gear") {
-                    const gear = Object.values(Gear).find((gearItem) => gearItem.name === item.name);
-                    if (gear) {
-                        this.gear.push(gear);
+                    else if (item.type === "gear") {
+                        const gear = Object.values(Gear).find((gearItem) => gearItem.name === item.name);
+                        if (gear) {
+                            this.gear.push(gear);
+                        }
                     }
-                }
-                else if (item.type == "cyberware") {
-                    const cyberware = CyberwareList.find(cyberware => cyberware.name === item.name);
-                    if (cyberware) {
-                        this.installCyberware({ cyberware: new Cyberware({ ...cyberware }), free: true });
+                    else if (item.type == "cyberware") {
+                        const cyberware = CyberwareList.find(cyberware => cyberware.name === item.name);
+                        if (cyberware) {
+                            this.installCyberware({ cyberware: new Cyberware({ ...cyberware }), free: true });
+                        }
                     }
                 }
 

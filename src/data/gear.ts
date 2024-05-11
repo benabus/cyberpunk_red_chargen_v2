@@ -155,7 +155,7 @@ const gear: Record<string, GearItem> = {
         description: "Device can follow a linked tracer up to 1-mile away. Comes with a free button sized linked tracer. Replacement linked tracers are 50eb."
     },
     "inflatable_bed_sleep_bag": {
-        name: "Inflatable Bed & Sleep-bag",
+        name: "Inflatable Bed & Sleep-Bag",
         cost: 20,
         description: `It's a self-inflating air mattress than comes packed with a thin sleeping bag. The whole thing folds to a 6"x6" package for easy storage.`
     },
@@ -239,7 +239,7 @@ const gear: Record<string, GearItem> = {
         description: "Nylon rope. Can come in colors if desired. Holds up to 800lbs (360kg)."
     },
     "scrambler_descrambler": {
-        name: "Scrambler/Descrambler",
+        name: "Scrambler / Descrambler",
         cost: 500,
         description: "Allows user to scramble outgoing communications so they cannot be understood without a descrambler, which is also included at no extra charge."
     },

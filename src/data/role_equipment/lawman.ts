@@ -30,11 +30,52 @@ const items = [
         type: "armor",
         location: "head",
         name: "Light Armorjack"
+    }],
+
+    [{
+        type: "gear",
+        name: "Agent"
+    }],
+    [{
+        type: "gear",
+        name: "Flashlight"
+    }],
+    [{
+        type: "gear",
+        name: "Handcuffs",
+        quantity: 2
+    }],
+    [{
+        type: "gear",
+        name: "Radio Communicator"
+    }],
+    [{
+        type: "gear",
+        name: "Road Flare",
+        quantity: 10
+    }],
+    [{
+        type: "fashion",
+        name: "Generic Chic: Jacket, Bottoms x2, Top x3"
+    }],
+    [{
+        type: "fashion",
+        name: "Leisurewear: Footwear x2, Jacket x2, Bottoms x2, Mirrorshades, Top x2"
     }]
 ]
 
 export default items;
 
+// Agent
+// Flashlight
+// Handcuffs x2
+// Radio Communicator
+// Road Flare x10
+// Generic Chic: Jacket, Bottoms
+// x2, Top x3
+// Leisurewear: Footwear x2,
+// Jacket x2, Bottoms x2,
+// Mirrorshades, Top x2
 
 // Assault Rifle or Shotgun
 // Heavy Pistol

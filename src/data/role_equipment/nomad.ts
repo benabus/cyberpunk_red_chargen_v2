@@ -25,10 +25,81 @@ const items = [
         type: "armor",
         location: "head",
         name: "Light Armorjack"
+    }],
+    [{
+        type: "gear",
+        name: "Agent"
+    }],
+    [{
+        type: "gear",
+        name: "Anti-Smog Breathing Mask"
+    }],
+    [{
+        type: "gear",
+        name: "Duct Tape"
+    }],
+    [{
+        type: "gear",
+        name: "Flashlight"
+    }],
+    [{
+        type: "gear",
+        name: "Grapple Gun"
+    }],
+    [{
+        type: "gear",
+        name: "Inflatable Bed & Sleep-Bag"
+    }],
+    [{
+        type: "gear",
+        name: "Medtech Bag"
+    }],
+    [{
+        type: "gear",
+        name: "Radio Communicator",
+        quantity: 2
+    }],
+    [{
+        type: "gear",
+        name: "Rope (60m/yds)"
+    }],
+    [{
+        type: "gear",
+        name: "Techtool"
+    }],
+    [{
+        type: "gear",
+        name: "Tent & Camping Equipment"
+    }],
+    [{
+        type: "fashion",
+        name: "Bohemian: Jewelry"
+    }],
+    [{
+        type: "fashion",
+        name: "Nomad Leathers: Top x4, Bottom x2, Footwear x2, Jacket, Hat"
     }]
+
 ]
 
 export default items;
+
+
+// Agent
+// Anti-Smog Breathing Mask
+// Duct Tape
+// Flashlight
+// Grapple Gun
+// Inflatable Bed & Sleep-Bag
+// Medtech Bag
+// Radio Communicator x2
+// Rope
+// Techtool
+// Tent and Camping Equipment
+// Bohemian: Jewelry
+// Nomad Leathers: Top x4,
+// Bottom x2, Footwear x2,
+// Jacket, Hat
 
 // Heavy Pistol or Very Heavy
 // Pistol

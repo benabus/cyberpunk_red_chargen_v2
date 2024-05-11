@@ -27,10 +27,52 @@ const items = [
         type: "armor",
         location: "shield",
         name: "Bulletproof Shield"
+    }],
+    [{
+        type: "gear",
+        name: "Agent"
+    }],
+    [{
+        type: "gear",
+        name: "Airhypo"
+    }],
+    [{
+        type: "gear",
+        name: "Handcuffs"
+    }],
+    [{
+        type: "gear",
+        name: "Flashlight"
+    }],
+    [{
+        type: "fashion",
+        name: "Generic Chic Jacket x3"
+    }],
+    [{
+        type: "gear",
+        name: "Glow Paint"
+    }],
+    [{
+        type: "gear",
+        name: "Medtech Bag"
+    }],
+    [{
+        type: "fashion",
+        name: "Leisurewear: Footwear, Bottoms x3, Top x5"
     }]
 ]
 
 export default items;
+
+// Agent
+// Airhypo
+// Handcuffs
+// Flashlight
+// Generic Chic Jacket x3
+// Glow Paint
+// Medtech Bag
+// Leisurewear: Footwear,
+// Bottoms x3, Top x5
 
 // Shotgun or Assault Rifle
 // Basic Shotgun Shell
