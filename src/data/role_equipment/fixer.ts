@@ -60,10 +60,36 @@ const items = [
     [{
         type: "fashion",
         name: "Urbanflash: Footwear, Jacket, Bottoms, Top"
+    }],
+    [{
+        type: "cyberware",
+        name: "Cyberaudio Suite"
+    }],
+    [{
+        type: "cyberware",
+        name: "Internal Agent"
+    }],
+    [{
+        type: "cyberware",
+        name: "Subdermal Pocket"
+    }],
+    [{
+        type: "cyberware",
+        name: "Voice Stress Analyzer"
+    }, {
+        type: "cyberware",
+        name: "Amplified Hearing"
     }]
 ]
 
 export default items;
+
+
+// Cyberaudio Suite
+// Internal Agent
+// Subdermal Pocket
+// Voice Stress Analyzer
+// or Amplified Hearing
 
 // Agent
 // Bug Detector

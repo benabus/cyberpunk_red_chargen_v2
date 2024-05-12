@@ -673,6 +673,10 @@ generateCharacter(); // Generates a character on page load.
 
         <CPTitle class="flex justify-between pr-2">
             <span>Cyberware</span>
+            <div>
+                <span class="font-bold">Total Humanity Loss: </span>
+                <span>{{ char.getHumanityLoss() }}</span>
+            </div>
             <div v-if="creation_method == 'complete'">
                 <select v-model="cyberware_to_add" class="px-2 py-1 align-text-bottom">
                     <option :value="undefined" selected disabled>Select Cyberware</option>

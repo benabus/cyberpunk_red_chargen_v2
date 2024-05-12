@@ -59,10 +59,37 @@ const items = [
     [{
         type: "fashion",
         name: "Leisurewear: Footwear, Bottoms x3, Top x5"
+    }],
+    [{
+        type: "cyberware",
+        name: "Biomonitor"
+    }],
+    [{
+        type: "cyberware",
+        name: "Cybereye"
+    }],
+    [{
+        type: "cyberware",
+        name: "Nasal Filters"
+    },
+    {
+        type: "cyberware",
+        name: "Toxin Binders"
+    }],
+    [{
+        type: "cyberware",
+        name: "TeleOptics"
     }]
+
 ]
 
 export default items;
+
+// Biomonitor
+// Cybereye
+// Nasal Filters or
+// Toxin Binders
+// TeleOptics
 
 // Agent
 // Airhypo

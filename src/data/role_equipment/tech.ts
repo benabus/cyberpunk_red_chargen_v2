@@ -96,13 +96,31 @@ const items = [
     [{
         type: "fashion",
         name: "Leisurewear: Footwear x2",
+    }],
+    [{
+        type: "cyberware",
+        name: "Cybereye"
+    }],
+    [{
+        type: "cyberware",
+        name: "MicroOptics"
+    }],
+    [{
+        type: "cyberware",
+        name: "Skinwatch"
+    }],
+    [{
+        type: "cyberware",
+        name: "Tool Hand"
     }]
-
 ]
 
 export default items;
 
-
+// Cybereye
+// MicroOptics
+// Skinwatch
+// Tool Hand
 
 // Agent
 // Anti-Smog Breathing Mask

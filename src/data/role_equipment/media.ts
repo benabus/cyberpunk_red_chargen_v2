@@ -70,10 +70,32 @@ const items = [
     [{
         type: "fashion",
         name: "Urbanflash: Mirrorshades"
+    }],
+    [{
+        type: "cyberware",
+        name: "Cyberaudio Suite"
+    }],
+    [{
+        type: "cyberware",
+        name: "Amplified Hearing"
+    },
+    {
+        type: "cyberware",
+        name: "Voice Stress Analyzer"
+    }],
+    [{
+        type: "cyberware",
+        name: "Light Tattoo"
+
     }]
 ]
 
 export default items;
+
+// Amplified Hearing
+// or Voice Stress Analyzer
+// Cyberaudio Suite
+// Light Tattoo
 
 // Agent
 // Audio Recorder

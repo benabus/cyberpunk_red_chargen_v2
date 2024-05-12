@@ -61,6 +61,14 @@ const items = [
     [{
         type: "fashion",
         name: "Leisurewear: Footwear x2, Jacket x2, Bottoms x2, Mirrorshades, Top x2"
+    }],
+    [{
+        type: "cyberware",
+        name: "Hidden Holster"
+    }],
+    [{
+        type: "cyberware",
+        name: "Subdermal Pocket"
     }]
 ]
 
